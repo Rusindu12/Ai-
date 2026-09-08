@@ -19,32 +19,32 @@ Daemon will be stopped at the end of the build
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
+> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:parseDebugLocalResources
-> Task :app:mergeDebugResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
-> Task :app:processDebugManifestForPackage
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:processDebugManifestForPackage
+> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugJavaResource
 > Task :app:mergeDebugStartupProfile
-> Task :app:mergeDebugJniLibFolders
-> Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:processDebugResources
 > Task :app:mergeExtDexDebug
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics
-> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:mergeDebugJniLibFolders
 > Task :app:mergeLibDexDebug
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
 > Task :app:mergeProjectDexDebug
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
@@ -53,10 +53,10 @@ Daemon will be stopped at the end of the build
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 22s
+BUILD SUCCESSFUL in 1m 17s
 33 actionable tasks: 33 executed
 ===== APK =====
--rw-r--r-- 1 runner runner 5912204 Sep  8 18:31 app/build/outputs/apk/debug/app-debug.apk
+-rw-r--r-- 1 runner runner 5912056 Sep  8 18:32 app/build/outputs/apk/debug/app-debug.apk
 ----- aapt2 badging -----
 package: name='com.rusindu.aitrade' versionCode='1' versionName='1.0.0-debug' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
 minSdkVersion:'26'
@@ -90,10 +90,10 @@ application-label-en-IN:'AI Trade Signals'
 application-label-en-XC:'AI Trade Signals'
 ----- apksigner verify -----
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: 6944aa59ac2c4dca6f2c3043f2f5ed19e035625878ee78decf2719c5c1270842
-V2 Signer: certificate SHA-1 digest: 2b1d252048da40d5d7c2a4ab31d824b648f2adf5
-V2 Signer: certificate MD5 digest: ec89380f01f74ff9c1615a66f4aadb61
+V2 Signer: certificate SHA-256 digest: 1e367c918b00bad3abed2bc89151427d3843b076f5bd2cde8f7daadc7b1b0ff8
+V2 Signer: certificate SHA-1 digest: 172c4e68eb34a952364f525c8970bddc46543242
+V2 Signer: certificate MD5 digest: 2b9efa647bd95965b6901b5b699789e9
 ----- zip -----
   1094924  1981-01-01 01:01   resources.arsc
 ---------                     -------
- 12396546                     902 files
+ 12396542                     902 files
