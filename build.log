@@ -27,22 +27,77 @@ Daemon will be stopped at the end of the build
 > Task :app:processDebugManifest
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
-> Task :app:processDebugManifestForPackage
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:processDebugResources
-> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugStartupProfile
+> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugJavaResource
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
 
 > Task :app:compileDebugJavaWithJavac
-/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:192: error: incompatible types: String cannot be converted to int
-            throw new BinanceException("missing_api_key", "API key / secret not configured");
-                                       ^
-Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
-1 error
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:88: error: unreported exception JSONException; must be caught or declared to be thrown
+        JSONArray arr = new JSONArray(body);
+                        ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:91: error: unreported exception JSONException; must be caught or declared to be thrown
+            JSONArray k = arr.getJSONArray(i);
+                                          ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:93: error: unreported exception JSONException; must be caught or declared to be thrown
+                    k.getLong(0),
+                             ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:94: error: unreported exception JSONException; must be caught or declared to be thrown
+                    parse(k.getString(1)),
+                                     ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:95: error: unreported exception JSONException; must be caught or declared to be thrown
+                    parse(k.getString(2)),
+                                     ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:96: error: unreported exception JSONException; must be caught or declared to be thrown
+                    parse(k.getString(3)),
+                                     ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:97: error: unreported exception JSONException; must be caught or declared to be thrown
+                    parse(k.getString(4)),
+                                     ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:98: error: unreported exception JSONException; must be caught or declared to be thrown
+                    parse(k.getString(5))));
+                                     ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:107: error: unreported exception JSONException; must be caught or declared to be thrown
+        return new JSONObject(publicGet("/api/v3/ticker/24hr", q));
+               ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:113: error: unreported exception JSONException; must be caught or declared to be thrown
+        JSONObject o = new JSONObject(publicGet("/api/v3/ticker/price", q));
+                       ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:114: error: unreported exception JSONException; must be caught or declared to be thrown
+        return parse(o.getString("price"));
+                                ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:119: error: unreported exception JSONException; must be caught or declared to be thrown
+        JSONObject o = new JSONObject(publicGet("/api/v3/exchangeInfo", new LinkedHashMap<>()));
+                       ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:120: error: unreported exception JSONException; must be caught or declared to be thrown
+        JSONArray arr = o.getJSONArray("symbols");
+                                      ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:123: error: unreported exception JSONException; must be caught or declared to be thrown
+            JSONObject s = arr.getJSONObject(i);
+                                            ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:127: error: unreported exception JSONException; must be caught or declared to be thrown
+            out.add(s.getString("symbol"));
+                               ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:136: error: unreported exception JSONException; must be caught or declared to be thrown
+        JSONObject o = new JSONObject(publicGetOn(base, "/api/v3/time", new LinkedHashMap<>()));
+                       ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:137: error: unreported exception JSONException; must be caught or declared to be thrown
+        return o.getLong("serverTime");
+                        ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:142: error: unreported exception JSONException; must be caught or declared to be thrown
+        return new JSONObject(signed(base, "/api/v3/account", new LinkedHashMap<>(), key, secret, false));
+               ^
+/home/runner/work/Ai-/Ai-/app/src/main/java/com/rusindu/aitrade/net/BinanceApi.java:161: error: unreported exception JSONException; must be caught or declared to be thrown
+        return new JSONObject(signed(base, "/api/v3/order", q, key, secret, true));
+               ^
+19 errors
 
 > Task :app:compileDebugJavaWithJavac FAILED
 
@@ -87,6 +142,35 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:com
 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:267)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:131)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler error output for details.
@@ -244,9 +328,38 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:267)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:131)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 
 
-BUILD FAILED in 45s
-21 actionable tasks: 21 executed
+BUILD FAILED in 1m 5s
+23 actionable tasks: 23 executed
