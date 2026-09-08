@@ -620,6 +620,7 @@ public class MainActivity extends AppCompatActivity implements TradeEngine.Liste
 
     private String translateError(String message) {
         if (message == null) return getString(R.string.err_generic, "");
+        if (message.startsWith("missing_api_key")) return getString(R.string.err_missing_api_key);
         switch (message) {
             case "insufficient_cash":
                 return getString(R.string.err_insufficient_cash);

@@ -189,7 +189,7 @@ public final class BinanceApi {
                                  String key, String secret, boolean post)
             throws IOException, BinanceException {
         if (key == null || key.trim().isEmpty() || secret == null || secret.trim().isEmpty()) {
-            throw new BinanceException("missing_api_key", "API key / secret not configured");
+            throw new BinanceException("missing_api_key: API key / secret not configured");
         }
         Map<String, String> q = new LinkedHashMap<>(query);
         q.put("recvWindow", "10000");
