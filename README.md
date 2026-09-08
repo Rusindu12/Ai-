@@ -40,13 +40,13 @@ Crypto can go to zero.
 
 ## Install the APK
 
-The APK is built by GitHub Actions (`.github/workflows/build-apk.yml`) because the Android SDK is
-not available in this workspace:
+**Ready-made APK:** [`apk/AITradeSignals-debug.apk`](apk/AITradeSignals-debug.apk) in this repo
+(5.9 MB, debug/V2-signed, `com.rusindu.aitrade`, minSdk 26). Copy it to the phone and install —
+you will need *Install unknown apps* enabled for your browser or file manager.
 
-1. **Releases / branch `apk-output`** — the workflow pushes the finished `AITradeSignals-debug.apk`
-   to the `apk-output` branch on every build.
-2. Or run the workflow yourself: *Actions → Build APK → Run workflow*, then download the
-   `AITradeSignals-debug-apk` artifact.
+It is built by GitHub Actions (`.github/workflows/build-apk.yml`) because the Android SDK is not
+available in this workspace. Every push rebuilds it and pushes the fresh APK plus the full Gradle
+log to the **`apk-output`** branch, so there is always a current binary and a build log to read.
 
 The APK is debug-signed, so enable *Install unknown apps* for your browser/file manager and install
 it directly. Minimum Android 8.0 (API 26).
@@ -54,7 +54,7 @@ it directly. Minimum Android 8.0 (API 26).
 ## Build it yourself
 
 ```bash
-gradle assembleDebug          # or ./gradlew once the wrapper is generated
+./gradlew assembleDebug
 # app/build/outputs/apk/debug/app-debug.apk
 ```
 
