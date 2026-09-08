@@ -26,32 +26,74 @@ Daemon will be stopped at the end of the build
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:mergeDebugShaders
-> Task :app:processDebugManifestForPackage
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:processDebugResources
+> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugJavaResource
+> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugStartupProfile
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics
-> Task :app:mergeDebugStartupProfile
+> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugJniLibFolders
-> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
-> Task :app:mergeLibDexDebug
 > Task :app:mergeProjectDexDebug
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
-> Task :app:mergeExtDexDebug
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 11s
+BUILD SUCCESSFUL in 1m 18s
 33 actionable tasks: 33 executed
+===== APK =====
+-rw-r--r-- 1 runner runner 5912140 Sep  8 18:28 app/build/outputs/apk/debug/app-debug.apk
+----- aapt2 badging -----
+package: name='com.rusindu.aitrade' versionCode='1' versionName='1.0.0-debug' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
+minSdkVersion:'26'
+targetSdkVersion:'34'
+uses-permission: name='android.permission.INTERNET'
+uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
+uses-permission: name='android.permission.VIBRATE'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_DATA_SYNC'
+uses-permission: name='com.rusindu.aitrade.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+application-label:'AI Trade Signals'
+application-label-af:'AI Trade Signals'
+application-label-am:'AI Trade Signals'
+application-label-ar:'AI Trade Signals'
+application-label-as:'AI Trade Signals'
+application-label-az:'AI Trade Signals'
+application-label-be:'AI Trade Signals'
+application-label-bg:'AI Trade Signals'
+application-label-bn:'AI Trade Signals'
+application-label-bs:'AI Trade Signals'
+application-label-ca:'AI Trade Signals'
+application-label-cs:'AI Trade Signals'
+application-label-da:'AI Trade Signals'
+application-label-de:'AI Trade Signals'
+application-label-el:'AI Trade Signals'
+application-label-en-AU:'AI Trade Signals'
+application-label-en-CA:'AI Trade Signals'
+application-label-en-GB:'AI Trade Signals'
+application-label-en-IN:'AI Trade Signals'
+application-label-en-XC:'AI Trade Signals'
+----- apksigner verify -----
+V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
+V2 Signer: certificate SHA-256 digest: 6eae873ee4774dc99fdbd388c77a82a9cedde6a1b346212a940726215431284a
+V2 Signer: certificate SHA-1 digest: 51a1074d6822601f4939d4d5111713ccfba39fe3
+V2 Signer: certificate MD5 digest: d8ea8eebb2bc26269cd8468a49f51d3b
+----- zip -----
+  1094924  1981-01-01 01:01   resources.arsc
+---------                     -------
+ 12396550                     902 files
