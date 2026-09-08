@@ -3,6 +3,7 @@ package com.rusindu.aitrade.net;
 import com.rusindu.aitrade.model.Candle;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -85,61 +86,85 @@ public final class BinanceApi {
         q.put("interval", interval);
         q.put("limit", String.valueOf(Math.max(5, Math.min(1000, limit))));
         String body = publicGet("/api/v3/klines", q);
-        JSONArray arr = new JSONArray(body);
-        List<Candle> out = new ArrayList<>(arr.length());
-        for (int i = 0; i < arr.length(); i++) {
-            JSONArray k = arr.getJSONArray(i);
-            out.add(new Candle(
-                    k.getLong(0),
-                    parse(k.getString(1)),
-                    parse(k.getString(2)),
-                    parse(k.getString(3)),
-                    parse(k.getString(4)),
-                    parse(k.getString(5))));
+        try {
+            JSONArray arr = new JSONArray(body);
+            List<Candle> out = new ArrayList<>(arr.length());
+            for (int i = 0; i < arr.length(); i++) {
+                JSONArray k = arr.getJSONArray(i);
+                out.add(new Candle(
+                        k.getLong(0),
+                        parse(k.getString(1)),
+                        parse(k.getString(2)),
+                        parse(k.getString(3)),
+                        parse(k.getString(4)),
+                        parse(k.getString(5))));
+            }
+            return out;
+        } catch (JSONException e) {
+            throw badJson(e);
         }
-        return out;
     }
 
     /** 24h rolling statistics for one symbol. */
     public static JSONObject ticker24h(String symbol) throws IOException, BinanceException {
         Map<String, String> q = new LinkedHashMap<>();
         q.put("symbol", symbol.toUpperCase());
-        return new JSONObject(publicGet("/api/v3/ticker/24hr", q));
+        try {
+            return new JSONObject(publicGet("/api/v3/ticker/24hr", q));
+        } catch (JSONException e) {
+            throw badJson(e);
+        }
     }
 
     public static double price(String symbol) throws IOException, BinanceException {
         Map<String, String> q = new LinkedHashMap<>();
         q.put("symbol", symbol.toUpperCase());
-        JSONObject o = new JSONObject(publicGet("/api/v3/ticker/price", q));
-        return parse(o.getString("price"));
+        try {
+            JSONObject o = new JSONObject(publicGet("/api/v3/ticker/price", q));
+            return parse(o.getString("price"));
+        } catch (JSONException e) {
+            throw badJson(e);
+        }
     }
 
     /** Symbols that are actually trading, so the picker never shows a dead pair. */
     public static List<String> tradingSymbols(String quote) throws IOException, BinanceException {
-        JSONObject o = new JSONObject(publicGet("/api/v3/exchangeInfo", new LinkedHashMap<>()));
-        JSONArray arr = o.getJSONArray("symbols");
-        List<String> out = new ArrayList<>();
-        for (int i = 0; i < arr.length(); i++) {
-            JSONObject s = arr.getJSONObject(i);
-            if (!"TRADING".equals(s.optString("status"))) continue;
-            if (quote != null && !quote.equalsIgnoreCase(s.optString("quoteAsset"))) continue;
-            if (!"SPOT".equals(s.optString("type", "SPOT"))) continue;
-            out.add(s.getString("symbol"));
+        try {
+            JSONObject o = new JSONObject(publicGet("/api/v3/exchangeInfo", new LinkedHashMap<>()));
+            JSONArray arr = o.getJSONArray("symbols");
+            List<String> out = new ArrayList<>();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject sym = arr.getJSONObject(i);
+                if (!"TRADING".equals(sym.optString("status"))) continue;
+                if (quote != null && !quote.equalsIgnoreCase(sym.optString("quoteAsset"))) continue;
+                if (!"SPOT".equals(sym.optString("type", "SPOT"))) continue;
+                out.add(sym.getString("symbol"));
+            }
+            return out;
+        } catch (JSONException e) {
+            throw badJson(e);
         }
-        return out;
     }
 
     // ------------------------------------------------------------------ signed / trading
 
     /** Exchange clock, used to avoid recvWindow rejections. */
     public static long serverTime(String base) throws IOException, BinanceException {
-        JSONObject o = new JSONObject(publicGetOn(base, "/api/v3/time", new LinkedHashMap<>()));
-        return o.getLong("serverTime");
+        try {
+            JSONObject o = new JSONObject(publicGetOn(base, "/api/v3/time", new LinkedHashMap<>()));
+            return o.getLong("serverTime");
+        } catch (JSONException e) {
+            throw badJson(e);
+        }
     }
 
     public static JSONObject account(String base, String key, String secret)
             throws IOException, BinanceException {
-        return new JSONObject(signed(base, "/api/v3/account", new LinkedHashMap<>(), key, secret, false));
+        try {
+            return new JSONObject(signed(base, "/api/v3/account", new LinkedHashMap<>(), key, secret, false));
+        } catch (JSONException e) {
+            throw badJson(e);
+        }
     }
 
     /**
@@ -158,7 +183,15 @@ public final class BinanceApi {
         if (newClientOrderId != null && !newClientOrderId.isEmpty()) {
             q.put("newClientOrderId", newClientOrderId);
         }
-        return new JSONObject(signed(base, "/api/v3/order", q, key, secret, true));
+        try {
+            return new JSONObject(signed(base, "/api/v3/order", q, key, secret, true));
+        } catch (JSONException e) {
+            throw badJson(e);
+        }
+    }
+
+    private static BinanceException badJson(JSONException e) {
+        return new BinanceException("bad_json: " + e.getMessage());
     }
 
     // ------------------------------------------------------------------ plumbing
