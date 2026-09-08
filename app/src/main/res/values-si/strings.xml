@@ -105,7 +105,7 @@
     <string name="section_model">ආකෘතිය</string>
     <string name="threshold">සංඥා සීමාව</string>
     <string name="min_confidence">ස්වයංක්‍රීය ගනුදෙනු සඳහා අවම විශ්වාසය</string>
-    <string name="auto_pct">ස්වයංක්‍රීය ගනුදෙනු ප්‍රමාණය (මුදලින් %%)</string>
+    <string name="auto_pct">ස්වයංක්‍රීය ගනුදෙනු ප්‍රමාණය (මුදලින් ප්‍රතිශතය)</string>
     <string name="learning_rate">ඉගෙනුම් වේගය</string>
     <string name="section_live">සජීවී ගනුදෙනු</string>
     <string name="live_warning">අවවාදයයි: සජීවී නියෝග සැබෑ මුදල් වියදම් කරන අතර ඒවා අහිමි විය හැක. විශ්වාසය ගොඩනගා ගන්නා තුරු Testnet එකේම සිටින්න. ඔබේ API රහස කිසිවෙකුට නොදෙන්න.</string>

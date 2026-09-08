@@ -558,7 +558,8 @@ public class MainActivity extends AppCompatActivity implements TradeEngine.Liste
             default:
                 return r.code;
         }
-        return value.isEmpty() ? getString(id) : getString(id, value);
+        // Always go through the formatter so escaped %% in the resource is unescaped.
+        return getString(id, value);
     }
 
     private void renderModelStats() {

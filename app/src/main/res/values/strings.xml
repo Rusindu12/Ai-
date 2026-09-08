@@ -105,7 +105,7 @@
     <string name="section_model">Model</string>
     <string name="threshold">Signal threshold</string>
     <string name="min_confidence">Minimum confidence for auto-trade</string>
-    <string name="auto_pct">Auto-trade size (%% of cash)</string>
+    <string name="auto_pct">Auto-trade size (percent of cash)</string>
     <string name="learning_rate">Learning rate</string>
     <string name="section_live">Live trading</string>
     <string name="live_warning">Warning: live orders spend real money and can lose it. Keep Testnet on until you trust the setup. Never share your API secret.</string>
