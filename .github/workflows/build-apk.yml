@@ -58,17 +58,26 @@ jobs:
       - name: Describe the APK
         run: |
           APK=app/build/outputs/apk/debug/app-debug.apk
+          {
           if [ -f "$APK" ]; then
+            echo "===== APK ====="
             ls -l "$APK"
             cp "$APK" AITradeSignals-debug.apk
             BT=$(ls -d "$ANDROID_HOME"/build-tools/* 2>/dev/null | tail -1)
             if [ -n "$BT" ] && [ -x "$BT/aapt2" ]; then
-              "$BT/aapt2" dump badging AITradeSignals-debug.apk | head -25 || true
+              echo "----- aapt2 badging -----"
+              "$BT/aapt2" dump badging AITradeSignals-debug.apk | head -30 || true
             fi
-            unzip -l AITradeSignals-debug.apk | tail -5
+            if [ -n "$BT" ] && [ -x "$BT/apksigner" ]; then
+              echo "----- apksigner verify -----"
+              "$BT/apksigner" verify --print-certs AITradeSignals-debug.apk 2>&1 | head -12 || true
+            fi
+            echo "----- zip -----"
+            unzip -l AITradeSignals-debug.apk | tail -3
           else
             echo "APK was not produced - see build.log"
           fi
+          } 2>&1 | tee -a /tmp/build.log
 
       - name: Upload APK artifact
         if: always()
@@ -97,6 +106,12 @@ jobs:
           fi
           cp /tmp/build.log "$WORK/build.log"
           [ -f AITradeSignals-debug.apk ] && cp AITradeSignals-debug.apk "$WORK/AITradeSignals-debug.apk" || true
+          # also ship the generated Gradle wrapper so `./gradlew assembleDebug` works locally
+          mkdir -p "$WORK/gradle/wrapper"
+          [ -f gradlew ] && cp gradlew "$WORK/gradlew" || true
+          [ -f gradlew.bat ] && cp gradlew.bat "$WORK/gradlew.bat" || true
+          [ -f gradle/wrapper/gradle-wrapper.jar ] && cp gradle/wrapper/gradle-wrapper.jar "$WORK/gradle/wrapper/gradle-wrapper.jar" || true
+          [ -f gradle/wrapper/gradle-wrapper.properties ] && cp gradle/wrapper/gradle-wrapper.properties "$WORK/gradle/wrapper/gradle-wrapper.properties" || true
           echo "$SHA" > "$WORK/BUILT_FROM"
           date -u +"%Y-%m-%dT%H:%M:%SZ" > "$WORK/BUILT_AT"
           cd "$WORK"
