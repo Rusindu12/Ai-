@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AI Trade Signals</string>
+
+    <!-- header / status -->
+    <string name="refresh">Refresh</string>
+    <string name="status_starting">Connecting to Binance…</string>
+    <string name="status_connected">Live · %1$s · updated %2$s</string>
+    <string name="status_error">Connection problem: %1$s</string>
+    <string name="legend">EMA 9 · EMA 21 · RSI 14</string>
+    <string name="change_24h">24h %1$s</string>
+    <string name="pending">pending</string>
+
+    <!-- cards -->
+    <string name="card_signal">Signal</string>
+    <string name="card_indicators">Indicators</string>
+    <string name="card_model">AI model</string>
+    <string name="model_help">Weights are updated on-device after every graded signal. Higher weight = the model trusts that feature more.</string>
+    <string name="card_trade">Trading</string>
+    <string name="card_signals">Signal history</string>
+    <string name="card_trades">Trade history</string>
+    <string name="no_signals">No signals yet — the model only speaks when the score passes the threshold.</string>
+    <string name="no_trades">No trades yet.</string>
+
+    <!-- signals -->
+    <string name="signal_buy">BUY</string>
+    <string name="signal_sell">SELL</string>
+    <string name="signal_neutral">NEUTRAL</string>
+    <string name="signal_score">score %1$s · confidence %2$d%% · ATR %3$s%%</string>
+
+    <!-- reasons -->
+    <string name="rsi_oversold">RSI %1$s — oversold</string>
+    <string name="rsi_overbought">RSI %1$s — overbought</string>
+    <string name="rsi_mid">RSI %1$s — neutral</string>
+    <string name="ema_bullish">EMA 9 above EMA 21</string>
+    <string name="ema_bearish">EMA 9 below EMA 21</string>
+    <string name="macd_bullish">MACD histogram positive (%1$s)</string>
+    <string name="macd_bearish">MACD histogram negative (%1$s)</string>
+    <string name="boll_below_lower">Below the lower Bollinger band</string>
+    <string name="boll_above_upper">Above the upper Bollinger band</string>
+    <string name="boll_inside">Inside the Bollinger bands (%1$s %%B)</string>
+    <string name="stoch_up">Stochastic %%K above %%D</string>
+    <string name="stoch_down">Stochastic %%K below %%D</string>
+    <string name="momentum_up">10-candle momentum %1$s</string>
+    <string name="momentum_down">10-candle momentum %1$s</string>
+    <string name="trend_up">Price above EMA 50</string>
+    <string name="trend_down">Price below EMA 50</string>
+    <string name="adx_trending">ADX %1$s — trending market</string>
+    <string name="adx_ranging">ADX %1$s — ranging market</string>
+    <string name="volume_high">Volume %1$s× the 20-candle average</string>
+    <string name="volume_low">Volume below average (%1$s×)</string>
+
+    <!-- model -->
+    <string name="model_stats">Accuracy %1$s · graded %2$d · avg %3$s</string>
+    <string name="model_stats_empty">Accuracy — · waiting for the first graded signal</string>
+    <string name="reset_model">Reset model</string>
+    <string name="reset_model_confirm">Reset all learned weights and the scoreboard?</string>
+
+    <!-- indicators -->
+    <string name="ind_rsi">RSI 14 · %1$s</string>
+    <string name="ind_macd">MACD hist · %1$s</string>
+    <string name="ind_ema">EMA 9/21 · %1$s</string>
+    <string name="ind_boll">Boll %%B · %1$s</string>
+    <string name="ind_stoch">Stoch %%K · %1$s</string>
+    <string name="ind_adx">ADX 14 · %1$s</string>
+    <string name="ind_vol">Vol ratio · %1$s×</string>
+    <string name="ind_atr">ATR · %1$s%%</string>
+
+    <!-- trading -->
+    <string name="buy">Buy</string>
+    <string name="sell">Sell</string>
+    <string name="amount_usdt">Amount (USDT)</string>
+    <string name="mode_paper">PAPER</string>
+    <string name="mode_live">LIVE</string>
+    <string name="account_summary">Equity %1$s USDT · cash %2$s · return %3$s</string>
+    <string name="position_line">Holding %1$s @ %2$s · unrealised %3$s</string>
+    <string name="no_position">No open position</string>
+    <string name="auto_trade">Auto-trade on signals</string>
+    <string name="auto_help">Trades automatically when confidence passes the minimum set in Settings.</string>
+    <string name="trade_ok">Order filled at %1$s</string>
+    <string name="err_insufficient_cash">Not enough cash</string>
+    <string name="err_no_position">No position to sell</string>
+    <string name="err_bad_price">No valid price yet</string>
+    <string name="err_bad_qty">Enter an amount first</string>
+    <string name="err_missing_api_key">Add your Binance API key in Settings</string>
+    <string name="err_generic">Failed: %1$s</string>
+
+    <!-- live trading -->
+    <string name="confirm_live_title">Live trading is on</string>
+    <string name="confirm_live_message">This sends a real MARKET order to %1$s using your API key. Continue?</string>
+    <string name="confirm_yes">Yes, place it</string>
+    <string name="confirm_no">Cancel</string>
+
+    <!-- settings -->
+    <string name="settings_title">Settings</string>
+    <string name="section_language">Language / භාෂාව</string>
+    <string name="lang_system">System default</string>
+    <string name="lang_en">English</string>
+    <string name="lang_si">සිංහල</string>
+    <string name="section_watcher">Watcher</string>
+    <string name="watch_background">Keep watching in the background</string>
+    <string name="notify_new_signal">Notify me on new signals</string>
+    <string name="poll_seconds">Refresh interval (seconds)</string>
+    <string name="horizon_candles">Grading horizon (candles)</string>
+    <string name="section_model">Model</string>
+    <string name="threshold">Signal threshold</string>
+    <string name="min_confidence">Minimum confidence for auto-trade</string>
+    <string name="auto_pct">Auto-trade size (%% of cash)</string>
+    <string name="learning_rate">Learning rate</string>
+    <string name="section_live">Live trading</string>
+    <string name="live_warning">Warning: live orders spend real money and can lose it. Keep Testnet on until you trust the setup. Never share your API secret.</string>
+    <string name="live_enabled">Enable live orders</string>
+    <string name="use_testnet">Use Binance Spot Testnet (recommended)</string>
+    <string name="api_key">API key</string>
+    <string name="api_secret">API secret</string>
+    <string name="test_connection">Test connection</string>
+    <string name="test_ok">Connected · %1$s</string>
+    <string name="test_fail">Failed: %1$s</string>
+    <string name="section_account">Paper account</string>
+    <string name="start_cash">Starting balance (USDT)</string>
+    <string name="reset_account">Reset paper account</string>
+    <string name="clear_history">Clear signal and trade history</string>
+    <string name="saved">Saved</string>
+    <string name="cleared">Cleared</string>
+
+    <!-- notifications -->
+    <string name="channel_signals">Trading signals</string>
+    <string name="channel_signals_desc">Alerts when the model emits a BUY or SELL signal</string>
+    <string name="channel_status">Watcher status</string>
+    <string name="channel_status_desc">Ongoing notification while the watcher runs</string>
+    <string name="notif_ongoing_title">AI watcher running</string>
+    <string name="notif_watching">%1$s %2$s · %3$s</string>
+    <string name="notif_buy_title">BUY signal · %1$s</string>
+    <string name="notif_sell_title">SELL signal · %1$s</string>
+    <string name="notif_body">Price %1$s · confidence %2$d%%</string>
+    <string name="permission_needed">Allow notifications to get signal alerts</string>
+    <string name="grant">Allow</string>
+    <string name="dismiss">Not now</string>
+
+    <string name="disclaimer">Market data from the public Binance REST API. Signals come from an on-device adaptive technical model and are educational — not financial advice. Trading crypto can lose all of your money.</string>
+</resources>

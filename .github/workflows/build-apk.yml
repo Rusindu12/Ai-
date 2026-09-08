@@ -1,0 +1,107 @@
+name: Build APK
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Gradle 8.9
+        run: |
+          set -e
+          curl -sSL -o /tmp/gradle.zip https://services.gradle.org/distributions/gradle-8.9-bin.zip
+          sudo unzip -q /tmp/gradle.zip -d /opt
+          echo "/opt/gradle-8.9/bin" >> "$GITHUB_PATH"
+
+      - name: Make sure Android SDK platform 34 is present
+        run: |
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/android-sdk}}"
+          echo "SDK root: $SDK"
+          SM=""
+          for p in "$SDK/cmdline-tools/latest/bin/sdkmanager" "$SDK/tools/bin/sdkmanager"; do
+            if [ -x "$p" ]; then SM="$p"; break; fi
+          done
+          if [ -n "$SM" ]; then
+            yes | "$SM" --licenses > /dev/null 2>&1 || true
+            "$SM" "platforms;android-34" "build-tools;34.0.0" "platform-tools" || true
+          else
+            echo "sdkmanager not found - relying on the preinstalled image"
+          fi
+
+      - name: Build debug APK
+        run: |
+          gradle --no-daemon --stacktrace assembleDebug
+
+      - name: Generate Gradle wrapper (for local builds)
+        run: |
+          gradle --no-daemon wrapper --gradle-version 8.9 || true
+
+      - name: Describe the APK
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          ls -l "$APK"
+          cp "$APK" AITradeSignals-debug.apk
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | tail -1)
+          if [ -n "$BT" ] && [ -x "$BT/aapt2" ]; then
+            "$BT/aapt2" dump badging AITradeSignals-debug.apk | head -20 || true
+          fi
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AITradeSignals-debug-apk
+          path: AITradeSignals-debug.apk
+          retention-days: 30
+
+      - name: Upload Gradle wrapper artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-wrapper
+          path: |
+            gradlew
+            gradlew.bat
+            gradle/wrapper/gradle-wrapper.jar
+            gradle/wrapper/gradle-wrapper.properties
+          retention-days: 30
+          if-no-files-found: ignore
+
+      # Fallback delivery channel: push the finished APK to the `apk-output`
+      # branch so it can be fetched with plain git even if artifact download
+      # hosts are unreachable from the build sandbox.
+      - name: Publish APK to apk-output branch
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          SHA=$(git rev-parse --short HEAD)
+          WORK=$(mktemp -d)
+          git fetch --depth=1 origin apk-output || true
+          if git rev-parse --verify FETCH_HEAD >/dev/null 2>&1; then
+            git worktree add "$WORK" FETCH_HEAD
+          else
+            git worktree add --detach "$WORK"
+          fi
+          cp AITradeSignals-debug.apk "$WORK/AITradeSignals-debug.apk"
+          echo "$SHA" > "$WORK/BUILT_FROM"
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > "$WORK/BUILT_AT"
+          cd "$WORK"
+          git add -A
+          git commit -m "apk: build from $SHA" || echo "no changes"
+          git push --force origin HEAD:refs/heads/apk-output

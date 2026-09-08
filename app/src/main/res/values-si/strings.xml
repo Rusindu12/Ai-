@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AI ට්‍රේඩ් සිග්නල්</string>
+
+    <!-- header / status -->
+    <string name="refresh">නැවුම් කරන්න</string>
+    <string name="status_starting">Binance වෙත සම්බන්ධ වෙමින්…</string>
+    <string name="status_connected">සජීවී · %1$s · යාවත්කාලීන %2$s</string>
+    <string name="status_error">සම්බන්ධතා දෝෂයක්: %1$s</string>
+    <string name="legend">EMA 9 · EMA 21 · RSI 14</string>
+    <string name="change_24h">පැය 24 %1$s</string>
+    <string name="pending">පරීක්ෂා වෙමින්</string>
+
+    <!-- cards -->
+    <string name="card_signal">සංඥාව</string>
+    <string name="card_indicators">දර්ශක</string>
+    <string name="card_model">AI ආකෘතිය</string>
+    <string name="model_help">සෑම තක්සේරු කළ සංඥාවකින් පසුව බර උපාංගය තුළම යාවත්කාලීන වේ. වැඩි බරක් යනු ආකෘතිය එම දර්ශකය වැඩියෙන් විශ්වාස කරන බවයි.</string>
+    <string name="card_trade">ගනුදෙනු</string>
+    <string name="card_signals">සංඥා ඉතිහාසය</string>
+    <string name="card_trades">ගනුදෙනු ඉතිහාසය</string>
+    <string name="no_signals">තවම සංඥා නැත — ලකුණු සීමාව ඉක්මවූ විට පමණක් ආකෘතිය සංඥාවක් දෙයි.</string>
+    <string name="no_trades">තවම ගනුදෙනු නැත.</string>
+
+    <!-- signals -->
+    <string name="signal_buy">BUY</string>
+    <string name="signal_sell">SELL</string>
+    <string name="signal_neutral">මධ්‍යස්ථ</string>
+    <string name="signal_score">ලකුණු %1$s · විශ්වාසය %2$d%% · ATR %3$s%%</string>
+
+    <!-- reasons -->
+    <string name="rsi_oversold">RSI %1$s — අධික ලෙස විකුණා ඇත</string>
+    <string name="rsi_overbought">RSI %1$s — අධික ලෙස මිලදී ගෙන ඇත</string>
+    <string name="rsi_mid">RSI %1$s — මධ්‍යස්ථ</string>
+    <string name="ema_bullish">EMA 9, EMA 21 ට වඩා ඉහළින්</string>
+    <string name="ema_bearish">EMA 9, EMA 21 ට වඩා පහළින්</string>
+    <string name="macd_bullish">MACD හිස්ටෝග්‍රෑම් ධන (%1$s)</string>
+    <string name="macd_bearish">MACD හිස්ටෝග්‍රෑම් ඍණ (%1$s)</string>
+    <string name="boll_below_lower">Bollinger පහළ සීමාවටත් පහළින්</string>
+    <string name="boll_above_upper">Bollinger ඉහළ සීමාවටත් ඉහළින්</string>
+    <string name="boll_inside">Bollinger සීමා තුළ (%1$s %%B)</string>
+    <string name="stoch_up">Stochastic %%K, %%D ට වඩා ඉහළින්</string>
+    <string name="stoch_down">Stochastic %%K, %%D ට වඩා පහළින්</string>
+    <string name="momentum_up">ඉටිපන්දම් 10 වේගය %1$s</string>
+    <string name="momentum_down">ඉටිපන්දම් 10 වේගය %1$s</string>
+    <string name="trend_up">මිල EMA 50 ට වඩා ඉහළින්</string>
+    <string name="trend_down">මිල EMA 50 ට වඩා පහළින්</string>
+    <string name="adx_trending">ADX %1$s — ප්‍රවණතා වෙළඳපොළක්</string>
+    <string name="adx_ranging">ADX %1$s — පරාස වෙළඳපොළක්</string>
+    <string name="volume_high">පරිමාව සාමාන්‍යය මෙන් %1$s ගුණයක්</string>
+    <string name="volume_low">පරිමාව සාමාන්‍යයට වඩා අඩුයි (%1$s×)</string>
+
+    <!-- model -->
+    <string name="model_stats">නිවැරදි බව %1$s · තක්සේරු %2$d · සාමාන්‍ය %3$s</string>
+    <string name="model_stats_empty">නිවැරදි බව — · පළමු තක්සේරු කළ සංඥාව බලාපොරොත්තුවෙන්</string>
+    <string name="reset_model">ආකෘතිය යළි සකසන්න</string>
+    <string name="reset_model_confirm">ඉගෙන ගත් සියලු බර සහ ලකුණු පුවරුව යළි සකසන්නද?</string>
+
+    <!-- indicators -->
+    <string name="ind_rsi">RSI 14 · %1$s</string>
+    <string name="ind_macd">MACD hist · %1$s</string>
+    <string name="ind_ema">EMA 9/21 · %1$s</string>
+    <string name="ind_boll">Boll %%B · %1$s</string>
+    <string name="ind_stoch">Stoch %%K · %1$s</string>
+    <string name="ind_adx">ADX 14 · %1$s</string>
+    <string name="ind_vol">පරිමා අනුපාතය · %1$s×</string>
+    <string name="ind_atr">ATR · %1$s%%</string>
+
+    <!-- trading -->
+    <string name="buy">මිලදී ගන්න</string>
+    <string name="sell">විකුණන්න</string>
+    <string name="amount_usdt">මුදල (USDT)</string>
+    <string name="mode_paper">ආදර්ශ (PAPER)</string>
+    <string name="mode_live">සජීවී (LIVE)</string>
+    <string name="account_summary">වටිනාකම %1$s USDT · මුදල් %2$s · ලාභ %3$s</string>
+    <string name="position_line">හිමිකම %1$s @ %2$s · නොලැබුණු ලාභ %3$s</string>
+    <string name="no_position">විවෘත තනතුරක් නැත</string>
+    <string name="auto_trade">සංඥා මත ස්වයංක්‍රීය ගනුදෙනු</string>
+    <string name="auto_help">සැකසුම්හි අවම විශ්වාසය ඉක්මවූ විට ස්වයංක්‍රීයව ගනුදෙනු කරයි.</string>
+    <string name="trade_ok">ගනුදෙනුව %1$s හි සම්පූර්ණ විය</string>
+    <string name="err_insufficient_cash">ප්‍රමාණවත් මුදල් නැත</string>
+    <string name="err_no_position">විකුණීමට තනතුරක් නැත</string>
+    <string name="err_bad_price">තවම වලංගු මිලක් නැත</string>
+    <string name="err_bad_qty">පළමුව මුදලක් ඇතුළත් කරන්න</string>
+    <string name="err_missing_api_key">සැකසුම් වලින් Binance API යතුර එක් කරන්න</string>
+    <string name="err_generic">අසාර්ථකයි: %1$s</string>
+
+    <!-- live trading -->
+    <string name="confirm_live_title">සජීවී ගනුදෙනු ක්‍රියාත්මකයි</string>
+    <string name="confirm_live_message">මෙය ඔබේ API යතුර භාවිතයෙන් %1$s වෙත සැබෑ MARKET නියෝගයක් යවයි. ඉදිරියට යන්නද?</string>
+    <string name="confirm_yes">ඔව්, යවන්න</string>
+    <string name="confirm_no">අවලංගු කරන්න</string>
+
+    <!-- settings -->
+    <string name="settings_title">සැකසුම්</string>
+    <string name="section_language">භාෂාව</string>
+    <string name="lang_system">පද්ධතියේ භාෂාව</string>
+    <string name="lang_en">English</string>
+    <string name="lang_si">සිංහල</string>
+    <string name="section_watcher">නිරීක්ෂණය</string>
+    <string name="watch_background">පසුබිමෙහි නරඹමින් සිටින්න</string>
+    <string name="notify_new_signal">නව සංඥා ගැන දැනුම් දෙන්න</string>
+    <string name="poll_seconds">යාවත්කාලීන අන්තරය (තත්පර)</string>
+    <string name="horizon_candles">තක්සේරු කාල පරාසය (ඉටිපන්දම්)</string>
+    <string name="section_model">ආකෘතිය</string>
+    <string name="threshold">සංඥා සීමාව</string>
+    <string name="min_confidence">ස්වයංක්‍රීය ගනුදෙනු සඳහා අවම විශ්වාසය</string>
+    <string name="auto_pct">ස්වයංක්‍රීය ගනුදෙනු ප්‍රමාණය (මුදලින් %%)</string>
+    <string name="learning_rate">ඉගෙනුම් වේගය</string>
+    <string name="section_live">සජීවී ගනුදෙනු</string>
+    <string name="live_warning">අවවාදයයි: සජීවී නියෝග සැබෑ මුදල් වියදම් කරන අතර ඒවා අහිමි විය හැක. විශ්වාසය ගොඩනගා ගන්නා තුරු Testnet එකේම සිටින්න. ඔබේ API රහස කිසිවෙකුට නොදෙන්න.</string>
+    <string name="live_enabled">සජීවී නියෝග සක්‍රීය කරන්න</string>
+    <string name="use_testnet">Binance Spot Testnet භාවිතා කරන්න (නිර්දේශිත)</string>
+    <string name="api_key">API යතුර</string>
+    <string name="api_secret">API රහස</string>
+    <string name="test_connection">සම්බන්ධතාවය පරීක්ෂා කරන්න</string>
+    <string name="test_ok">සම්බන්ධ විය · %1$s</string>
+    <string name="test_fail">අසාර්ථකයි: %1$s</string>
+    <string name="section_account">ආදර්ශ ගිණුම</string>
+    <string name="start_cash">ආරම්භක ශේෂය (USDT)</string>
+    <string name="reset_account">ආදර්ශ ගිණුම යළි සකසන්න</string>
+    <string name="clear_history">සංඥා හා ගනුදෙනු ඉතිහාසය මකන්න</string>
+    <string name="saved">සුරැකිණි</string>
+    <string name="cleared">මකා දමන ලදී</string>
+
+    <!-- notifications -->
+    <string name="channel_signals">ගනුදෙනු සංඥා</string>
+    <string name="channel_signals_desc">ආකෘතිය BUY හෝ SELL සංඥාවක් දුන් විට දැනුම්දීම්</string>
+    <string name="channel_status">නිරීක්ෂක තත්ත්වය</string>
+    <string name="channel_status_desc">නිරීක්ෂකයා ක්‍රියාත්මක වන තුරු පෙන්වන දැනුම්දීම</string>
+    <string name="notif_ongoing_title">AI නිරීක්ෂකයා ක්‍රියාත්මකයි</string>
+    <string name="notif_watching">%1$s %2$s · %3$s</string>
+    <string name="notif_buy_title">BUY සංඥාව · %1$s</string>
+    <string name="notif_sell_title">SELL සංඥාව · %1$s</string>
+    <string name="notif_body">මිල %1$s · විශ්වාසය %2$d%%</string>
+    <string name="permission_needed">සංඥා දැනුම්දීම් ලබා ගැනීමට අවසර දෙන්න</string>
+    <string name="grant">අවසර දෙන්න</string>
+    <string name="dismiss">පසුව</string>
+
+    <string name="disclaimer">වෙළඳපොළ දත්ත ලැබෙන්නේ Binance විවෘත REST API එකෙනි. සංඥා ලැබෙන්නේ උපාංගය තුළ ක්‍රියාත්මක වන අනුවර්තන තාක්ෂණික ආකෘතියකිනි — මෙය මූල්‍ය උපදෙසක් නොවේ. ක්‍රිප්ටෝ ගනුදෙනු වලින් ඔබේ සම්පූර්ණ මුදලම අහිමි විය හැක.</string>
+</resources>
