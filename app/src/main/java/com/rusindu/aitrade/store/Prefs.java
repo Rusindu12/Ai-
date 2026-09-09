@@ -180,4 +180,19 @@ public final class Prefs {
     public static float maxDrawdownPct(Context c) {
         return Math.max(1f, Math.min(90f, getFloat(c, K_MAX_DD, 15f)));
     }
+
+    public static final String K_LAST_AUTO_TRAIN = "last_auto_train";
+
+    /** Epoch ms of the last silent auto-training pass. */
+    public static long lastAutoTrain(Context c) {
+        try {
+            return Long.parseLong(getString(c, K_LAST_AUTO_TRAIN, "0"));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static void putLastAutoTrain(Context c, long ms) {
+        putString(c, K_LAST_AUTO_TRAIN, String.valueOf(ms));
+    }
 }

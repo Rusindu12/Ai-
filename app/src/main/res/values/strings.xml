@@ -89,6 +89,9 @@
     <string name="act_hold">hold — position inside stop, target and trail</string>
     <string name="act_exit_reverse">close — the model flipped against the position</string>
     <string name="act_exit_tp">close — take-profit target hit</string>
+    <string name="act_exit_tp1">close half — first target booked, the rest runs</string>
+    <string name="act_exit_be">close — break-even stop: it was in profit, back at entry</string>
+    <string name="act_exit_dead">close — dead trade, capital freed for the next setup</string>
     <string name="act_exit_sl">close — stop loss hit</string>
     <string name="act_exit_trail">close — trailing stop gave back the peak</string>
     <string name="risk_blocked_dd">auto-trade paused by the drawdown guard</string>

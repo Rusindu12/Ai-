@@ -41,6 +41,9 @@ public class Portfolio {
     public double stopLoss;
     public double takeProfit;
 
+    /** Set once the first (partial) take-profit of a position has been booked. */
+    public boolean partialTaken;
+
     public Portfolio(double startCash) {
         this.startCash = startCash;
         this.cash = startCash;
@@ -65,10 +68,12 @@ public class Portfolio {
         double fee = cost * feeRate;
         if (cost + fee > cash + 1e-9) return Result.fail("insufficient_cash");
 
+        boolean wasFlat = qty <= 0;
         double newQty = qty + amount;
         entryPrice = newQty == 0 ? 0 : (qty * entryPrice + cost) / newQty;
         qty = newQty;
         cash -= (cost + fee);
+        if (wasFlat) partialTaken = false; // fresh position cycle
 
         Trade t = new Trade();
         t.time = System.currentTimeMillis();
@@ -94,6 +99,7 @@ public class Portfolio {
         if (qty < 1e-12) {
             qty = 0;
             entryPrice = 0;
+            partialTaken = false;
         }
         realized += pnl;
 
@@ -133,6 +139,7 @@ public class Portfolio {
         realized = 0;
         stopLoss = 0;
         takeProfit = 0;
+        partialTaken = false;
     }
 
     public String toJson() {
@@ -146,6 +153,7 @@ public class Portfolio {
             o.put("fee", feeRate);
             o.put("sl", stopLoss);
             o.put("tp", takeProfit);
+            o.put("pt", partialTaken ? 1 : 0);
         } catch (Exception ignored) {
         }
         return o.toString();
@@ -162,6 +170,7 @@ public class Portfolio {
             p.feeRate = o.optDouble("fee", 0.001);
             p.stopLoss = o.optDouble("sl", 0);
             p.takeProfit = o.optDouble("tp", 0);
+            p.partialTaken = o.optInt("pt", 0) == 1;
             return p;
         } catch (Exception e) {
             return new Portfolio(defaultStart);

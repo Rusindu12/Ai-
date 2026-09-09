@@ -18,9 +18,12 @@ import com.rusindu.aitrade.trade.Portfolio;
 import com.rusindu.aitrade.trade.RiskManager;
 import com.rusindu.aitrade.trade.TradeExecutor;
 
+import com.rusindu.aitrade.util.Intervals;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
@@ -62,6 +65,7 @@ public class TradeEngine {
     private volatile Policy.Decision policy;
     private volatile String riskBlock;
     private double posPeak;
+    private long posOpenCandleTime;
 
     /** The latest BUY / HOLD / SELL call of the position-aware policy. */
     public Policy.Decision policy() {
@@ -197,6 +201,7 @@ public class TradeEngine {
                 publishSignalIfNeeded(c, snap, symbol, interval, livePrice);
                 if (graded > 0) Journal.get(c).save(c);
                 runPolicy(c, snap, symbol, livePrice, effThreshold, graded);
+                maybeAutoTrain(c, fresh, threshold);
             }
             checkProtection(c, symbol, livePrice);
 
@@ -292,12 +297,17 @@ public class TradeEngine {
         if (p.qty > 0) {
             if (posPeak <= 0) posPeak = price;
             posPeak = Math.max(posPeak, price);
+            if (posOpenCandleTime <= 0) posOpenCandleTime = snap.candleTime;
         } else {
             posPeak = 0;
+            posOpenCandleTime = 0;
         }
+        long intervalMs = Math.max(1, Intervals.millis(Prefs.interval(c)));
+        int candlesHeld = posOpenCandleTime > 0
+                ? (int) ((snap.candleTime - posOpenCandleTime) / intervalMs) : 0;
 
         Policy.Decision dec = Policy.decide(snap, effThreshold, Prefs.minConfidence(c),
-                p.qty > 0, p.entryPrice, posPeak);
+                p.qty > 0, p.entryPrice, posPeak, p.partialTaken, candlesHeld);
         policy = dec;
 
         String blocked = RiskManager.blocked(c, p, price);
@@ -317,9 +327,42 @@ public class TradeEngine {
                 if (!ok) for (Listener l : listeners) l.onEngineMessage(message);
             });
         } else if (dec.action == Policy.SELL && p.qty > 0) {
-            TradeExecutor.execute(c, symbol, "SELL", 0, price, (ok, message) -> {
-                if (!ok) for (Listener l : listeners) l.onEngineMessage(message);
+            final boolean partial = dec.fraction < 1;
+            double notional = partial ? p.qty * price * dec.fraction : 0;
+            TradeExecutor.execute(c, symbol, "SELL", notional, price, (ok, message) -> {
+                if (ok) {
+                    if (partial) {
+                        Portfolio after = Portfolio.load(c);
+                        after.partialTaken = true;
+                        after.save(c);
+                    }
+                } else {
+                    for (Listener l : listeners) l.onEngineMessage(message);
+                }
             });
         }
+    }
+
+    /**
+     * Silent self-training: at most every 15 minutes, run one walk-forward epoch over the
+     * candles we already have and keep the result only if the held-out validation window
+     * says it is better. The user never has to press anything.
+     */
+    private void maybeAutoTrain(final Context c, final List<Candle> dataset,
+                                final double baseThreshold) {
+        long now = System.currentTimeMillis();
+        if (now - Prefs.lastAutoTrain(c) < 15 * 60 * 1000L) return;
+        Prefs.putLastAutoTrain(c, now);
+        final AdaptiveModel m = Journal.get(c).model();
+        final int horizon = Prefs.horizonCandles(c);
+        final double minConf = Prefs.minConfidence(c);
+        scheduler.execute(() -> {
+            Trainer.Result tr = Trainer.run(Collections.singletonList(dataset), m,
+                    baseThreshold, horizon, minConf, 1, null);
+            if (tr.enough && tr.improved) {
+                m.copyFrom(AdaptiveModel.fromJson(tr.bestJson));
+                Journal.get(c).save(c);
+            }
+        });
     }
 }

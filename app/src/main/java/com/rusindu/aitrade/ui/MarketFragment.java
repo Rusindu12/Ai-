@@ -315,6 +315,9 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
             case "act_hold": return R.string.act_hold;
             case "act_exit_reverse": return R.string.act_exit_reverse;
             case "act_exit_tp": return R.string.act_exit_tp;
+            case "act_exit_tp1": return R.string.act_exit_tp1;
+            case "act_exit_be": return R.string.act_exit_be;
+            case "act_exit_dead": return R.string.act_exit_dead;
             case "act_exit_sl": return R.string.act_exit_sl;
             case "act_exit_trail": return R.string.act_exit_trail;
             default: return R.string.act_wait;

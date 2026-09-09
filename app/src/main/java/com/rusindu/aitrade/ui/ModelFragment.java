@@ -25,9 +25,11 @@ import com.rusindu.aitrade.core.Trainer;
 import com.rusindu.aitrade.model.BacktestResult;
 import com.rusindu.aitrade.model.Candle;
 import com.rusindu.aitrade.model.Signal;
+import com.rusindu.aitrade.net.BinanceApi;
 import com.rusindu.aitrade.store.Journal;
 import com.rusindu.aitrade.store.Prefs;
 import com.rusindu.aitrade.util.Fmt;
+import com.rusindu.aitrade.util.Watchlist;
 
 import org.json.JSONObject;
 
@@ -258,7 +260,21 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
         final AdaptiveModel model = Journal.get(requireContext()).model();
 
         TradeEngine.get().submit(() -> {
-            final Trainer.Result r = Trainer.run(candles, model, threshold, horizon, minConf, 4,
+            // train across the whole watchlist, not just the current chart
+            List<List<Candle>> datasets = new ArrayList<>();
+            datasets.add(candles);
+            String interval = Prefs.interval(requireContext());
+            String current = Prefs.symbol(requireContext());
+            for (String sym : Watchlist.get(requireContext())) {
+                if (datasets.size() >= 6) break;
+                if (sym.equals(current)) continue;
+                try {
+                    datasets.add(BinanceApi.klines(sym, interval, 300));
+                } catch (Exception ignored) {
+                    // a mirror failing on one symbol must not kill the session
+                }
+            }
+            final Trainer.Result r = Trainer.run(datasets, model, threshold, horizon, minConf, 4,
                     (epoch, acc) -> TradeEngine.get().postUi(() -> {
                         if (getContext() != null) {
                             tvTrainStatus.setText(getString(R.string.train_running,

@@ -89,6 +89,9 @@
     <string name="act_hold">hold — තනතුර stop/target/trail ඇතුළත</string>
     <string name="act_exit_reverse">වසන්න — model එක තනතුරට විරුද්ධව හැරුණා</string>
     <string name="act_exit_tp">වසන්න — ලාභ ඉලක්කය ළඟා වුණා</string>
+    <string name="act_exit_tp1">අඩක් වසන්න — පළමු ඉලක්කය වෙන් වුණා, ඉතිරිය දුවනවා</string>
+    <string name="act_exit_be">වසන්න — break-even stop: ලාභයෙන් තිබිලා entry එකටම ආපසු</string>
+    <string name="act_exit_dead">වසන්න — මියගිය trade එක, ඊළඟ setup එකට capital නිදහස්</string>
     <string name="act_exit_sl">වසන්න — පාඩු සීමාව ළඟා වුණා</string>
     <string name="act_exit_trail">වසන්න — trailing stop එක peak එකෙන් ආපසු දුන්නා</string>
     <string name="risk_blocked_dd">drawdown guard එකෙන් auto-trade නතරයි</string>

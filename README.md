@@ -83,8 +83,10 @@ Every tick the model answers one question with the open position taken into acco
 * **Flat:** BUY when score ≥ threshold and confidence ≥ the gate; otherwise HOLD — and a
   bearish call with no position is a HOLD too, because spot cannot short.
 * **In a position:** HOLD while the trade sits inside its levels; SELL on a model flip
-  against the position, a 2×ATR stop, a 3×ATR take-profit, or a 1.5×ATR trailing stop that
-  lets winners run until they give back the peak since entry.
+  against the position, a 2×ATR stop, or a 1.5×ATR trailing stop. Winners are managed: at
+  +2×ATR half the position is booked and once a trade has been +1×ATR a break-even stop
+  refuses to let it turn into a loss; the remainder exits at +3×ATR or the trail. A trade
+  that is still inside ±0.5×ATR after 12 candles is closed as dead weight.
 * **Risk rails:** a drawdown guard (equity more than 15% under its remembered peak pauses
   auto-trading) and a loss-streak cooldown (three graded misses pause new entries for three
   candles). Auto-trade sizes entries by confidence — between half and the full configured
@@ -92,10 +94,12 @@ Every tick the model answers one question with the open position taken into acco
 
 ## Training on the device
 
-The Model tab has a **Train on history** button. It replays the recent candles walk-forward
-for several epochs — the exact learning loop the model runs live — and after each epoch scores
-it on a held-out validation window. The best weights by out-of-sample hit rate are kept
-(early-stopped); if no epoch beats your current model, nothing is applied. Training, grading
+The Model tab has a **Train on history** button. It fetches the whole watchlist and replays
+every symbol walk-forward for several epochs — the exact learning loop the model runs live —
+and after each epoch scores it on held-out validation windows. The best weights by
+out-of-sample hit rate are kept (early-stopped); if no epoch beats your current model, nothing
+is applied. On top of that the engine silently runs one extra training epoch every 15 minutes
+while it polls, so the model keeps improving without you touching anything. Training, grading
 and backtesting all run on the phone.
 
 ## Other features
