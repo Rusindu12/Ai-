@@ -103,40 +103,7 @@
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
-            <!-- ============ symbol + interval chips ============ -->
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:scrollbars="none">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipSymbols"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:singleLine="true"
-                    app:singleSelection="true" />
-            </HorizontalScrollView>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:scrollbars="none">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipIntervals"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:singleLine="true"
-                    app:singleSelection="true" />
-            </HorizontalScrollView>
-
-            <!-- ============ signal ============ -->
+            <!-- ============ AI decision ============ -->
             <com.google.android.material.card.MaterialCardView style="@style/Card">
 
                 <LinearLayout
@@ -153,7 +120,7 @@
 
                         <TextView
                             style="@style/Overline"
-                            android:text="@string/card_signal" />
+                            android:text="@string/card_decision" />
 
                         <TextView
                             android:id="@+id/tvCountdown"
@@ -204,22 +171,208 @@
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <com.rusindu.aitrade.ui.GaugeView
-                        android:id="@+id/gauge"
-                        android:layout_width="match_parent"
-                        android:layout_height="170dp"
-                        android:layout_marginTop="6dp" />
-
-                    <TextView
-                        android:id="@+id/tvReasons"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:lineSpacingExtra="4dp"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/dec_regime" />
+
+                            <TextView
+                                android:id="@+id/tvDecRegime"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/dec_thr" />
+
+                            <TextView
+                                android:id="@+id/tvDecThreshold"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/dec_acc" />
+
+                            <TextView
+                                android:id="@+id/tvDecAcc"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/dec_graded" />
+
+                            <TextView
+                                android:id="@+id/tvDecGraded"
+                                style="@style/StatValue"
+                                android:text="0" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ position ============ -->
+            <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Overline"
+                        android:text="@string/card_position" />
+
+                    <TextView
+                        android:id="@+id/tvPosEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/no_position"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:id="@+id/posStats"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/pos_entry" />
+
+                            <TextView
+                                android:id="@+id/tvPosEntry"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/pos_qty" />
+
+                            <TextView
+                                android:id="@+id/tvPosQty"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/pos_pnl" />
+
+                            <TextView
+                                android:id="@+id/tvPosPnl"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/StatLabel"
+                                android:text="@string/pos_trail" />
+
+                            <TextView
+                                android:id="@+id/tvPosTrail"
+                                style="@style/StatValue"
+                                android:text="--" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ symbol + interval chips ============ -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipSymbols"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipIntervals"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
 
             <!-- ============ chart ============ -->
             <com.google.android.material.card.MaterialCardView style="@style/Card">
@@ -275,6 +428,36 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ evidence ============ -->
+            <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Overline"
+                        android:text="@string/card_evidence" />
+
+                    <com.rusindu.aitrade.ui.GaugeView
+                        android:id="@+id/gauge"
+                        android:layout_width="match_parent"
+                        android:layout_height="170dp"
+                        android:layout_marginTop="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvReasons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

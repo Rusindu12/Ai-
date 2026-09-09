@@ -18,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.rusindu.aitrade.R;
+import com.rusindu.aitrade.ai.AdaptiveModel;
 import com.rusindu.aitrade.ai.Policy;
 import com.rusindu.aitrade.ai.Snapshot;
 import com.rusindu.aitrade.core.TradeEngine;
@@ -26,6 +27,7 @@ import com.rusindu.aitrade.model.Direction;
 import com.rusindu.aitrade.model.Signal;
 import com.rusindu.aitrade.store.Journal;
 import com.rusindu.aitrade.store.Prefs;
+import com.rusindu.aitrade.trade.Portfolio;
 import com.rusindu.aitrade.util.Fmt;
 import com.rusindu.aitrade.util.Intervals;
 import com.rusindu.aitrade.util.Reasons;
@@ -52,6 +54,9 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
     private SwipeRefreshLayout swipe;
     private TextView tvPair, tvPrice, tvChange, tvUpdated, tvCountdown;
     private TextView tvSignal, tvSignalMeta, tvReasons, tvCrosshair, tvPolicy;
+    private TextView tvDecRegime, tvDecThreshold, tvDecAcc, tvDecGraded;
+    private TextView tvPosEmpty, tvPosEntry, tvPosQty, tvPosPnl, tvPosTrail;
+    private LinearLayout posStats;
     private LinearLayout signalBox, indicatorBox;
     private GaugeView gauge;
     private CandleChartView chart;
@@ -84,6 +89,16 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
         tvSignalMeta = root.findViewById(R.id.tvSignalMeta);
         tvReasons = root.findViewById(R.id.tvReasons);
         tvPolicy = root.findViewById(R.id.tvPolicy);
+        tvDecRegime = root.findViewById(R.id.tvDecRegime);
+        tvDecThreshold = root.findViewById(R.id.tvDecThreshold);
+        tvDecAcc = root.findViewById(R.id.tvDecAcc);
+        tvDecGraded = root.findViewById(R.id.tvDecGraded);
+        tvPosEmpty = root.findViewById(R.id.tvPosEmpty);
+        tvPosEntry = root.findViewById(R.id.tvPosEntry);
+        tvPosQty = root.findViewById(R.id.tvPosQty);
+        tvPosPnl = root.findViewById(R.id.tvPosPnl);
+        tvPosTrail = root.findViewById(R.id.tvPosTrail);
+        posStats = root.findViewById(R.id.posStats);
         tvCrosshair = root.findViewById(R.id.tvCrosshair);
         signalBox = root.findViewById(R.id.signalBox);
         indicatorBox = root.findViewById(R.id.indicatorBox);
@@ -255,6 +270,41 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
             tvPolicy.setTextColor(ContextCompat.getColor(getContext(),
                     dec.action == Policy.BUY ? R.color.up
                             : (dec.action == Policy.SELL ? R.color.down : R.color.text_secondary)));
+        }
+
+        // ---- decision stats: regime, live threshold, model health ----
+        AdaptiveModel model = Journal.get(getContext()).model();
+        tvDecRegime.setText(getString(snapshot.regime >= 0.5
+                ? R.string.regime_trending : R.string.regime_ranging)
+                + " " + Fmt.num(snapshot.regime * 100, 0));
+        tvDecRegime.setTextColor(ContextCompat.getColor(getContext(),
+                snapshot.regime >= 0.5 ? R.color.up : R.color.down));
+        tvDecThreshold.setText(Fmt.num(
+                model.effectiveThreshold(Prefs.threshold(getContext())), 2));
+        double acc = model.accuracy();
+        tvDecAcc.setText(Double.isNaN(acc) ? "--" : Fmt.pct(acc * 100, 0));
+        tvDecAcc.setTextColor(ContextCompat.getColor(getContext(),
+                !Double.isNaN(acc) && acc >= 0.5 ? R.color.up : R.color.text_primary));
+        tvDecGraded.setText(String.valueOf(model.gradedCount()));
+
+        // ---- position strip: what the engine is holding right now ----
+        Portfolio pf = Portfolio.load(getContext());
+        if (pf.qty <= 0 || snapshot.price <= 0) {
+            tvPosEmpty.setVisibility(View.VISIBLE);
+            posStats.setVisibility(View.GONE);
+        } else {
+            tvPosEmpty.setVisibility(View.GONE);
+            posStats.setVisibility(View.VISIBLE);
+            tvPosEntry.setText(Fmt.price(pf.entryPrice));
+            tvPosQty.setText(Fmt.num(pf.qty, 6));
+            double upPct = (snapshot.price - pf.entryPrice) / pf.entryPrice * 100.0;
+            tvPosPnl.setText(Fmt.pct(upPct, 2));
+            tvPosPnl.setTextColor(ContextCompat.getColor(getContext(),
+                    upPct >= 0 ? R.color.up : R.color.down));
+            double peak = Math.max(TradeEngine.get().positionPeak(), snapshot.price);
+            double dist = peak > 0 ? (peak - snapshot.price) / peak * 100.0 : 0;
+            tvPosTrail.setText(Fmt.num(dist, 2) + "/"
+                    + Fmt.num(Policy.TRAIL_ATR * snapshot.atrPct, 2));
         }
 
         StringBuilder reasons = new StringBuilder();

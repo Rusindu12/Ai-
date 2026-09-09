@@ -76,6 +76,11 @@ public class TradeEngine {
     public String riskBlock() {
         return riskBlock;
     }
+
+    /** Best price seen since the open position was entered (drives the trailing stop). */
+    public double positionPeak() {
+        return posPeak;
+    }
     private int scheduledEvery = -1;
     private volatile List<Candle> candles = new ArrayList<>();
     private volatile Snapshot snapshot;
