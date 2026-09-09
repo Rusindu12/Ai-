@@ -15,6 +15,7 @@ public class Signal {
     public double price;
     public double atrPct;
     public double[] features;
+    public double regime = 0.5; // market regime at signal time; grades go to the right expert
     public String reason;
 
     // Graded after the evaluation horizon has passed.
@@ -43,6 +44,7 @@ public class Signal {
             o.put("r", returnPct);
             o.put("ok", correct ? 1 : 0);
             o.put("why", reason == null ? "" : reason);
+            o.put("rg", regime);
             JSONArray arr = new JSONArray();
             for (double f : features) arr.put(f);
             o.put("f", arr);
@@ -66,6 +68,7 @@ public class Signal {
         s.returnPct = o.optDouble("r", 0);
         s.correct = o.optInt("ok", 0) == 1;
         s.reason = o.optString("why", "");
+        s.regime = o.optDouble("rg", 0.5);
         JSONArray arr = o.optJSONArray("f");
         if (arr != null) {
             s.features = new double[arr.length()];

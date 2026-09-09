@@ -63,6 +63,18 @@
     <string name="ind_adx">ADX 14</string>
     <string name="ind_vol">Volume ratio</string>
     <string name="ind_atr">ATR</string>
+    <string name="ind_htf">HTF trend</string>
+    <string name="regime_trend">Trending regime — trend expert in charge (%1$s)</string>
+    <string name="regime_range">Ranging regime — range expert in charge (%1$s)</string>
+    <string name="htf_up">Higher-timeframe trend up (%1$s)</string>
+    <string name="htf_down">Higher-timeframe trend down (%1$s)</string>
+    <string name="model_adaptive">Adaptive behaviour</string>
+    <string name="model_regime">Market regime</string>
+    <string name="regime_trending">Trending</string>
+    <string name="regime_ranging">Ranging</string>
+    <string name="model_threshold_eff">Threshold (auto)</string>
+    <string name="model_expert_trend">Trend expert</string>
+    <string name="model_expert_range">Range expert</string>
     <string name="ind_trend">Trend (EMA 50)</string>
 
     <!-- scanner -->

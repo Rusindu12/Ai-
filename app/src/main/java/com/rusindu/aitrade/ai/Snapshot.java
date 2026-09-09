@@ -21,6 +21,10 @@ public class Snapshot {
     public double score;
     public int direction;
     public double confidence;
+    /** 0 = ranging market, 1 = trending market; blends the two model experts. */
+    public double regime = 0.5;
+    /** The score threshold actually applied to this evaluation. */
+    public double threshold;
 
     public double price;
     public double atr;

@@ -38,22 +38,34 @@ log to the **`apk-output`** branch, so there is always a current binary and a bu
 ## How the model works
 
 ```
-score      = Σ (w_i · feature_i) / Σ |w_i|          →  [-1, +1]
-signal     = BUY  if score ≥ threshold
-             SELL if score ≤ -threshold
+regime     = 0.55 · clamp(ER · 2.5) + 0.45 · clamp(ADX / 40)   ER = Kaufman efficiency ratio
+score      = regime · lin(wT, f) + (1 − regime) · lin(wR, f)   →  [-1, +1]
+signal     = BUY  if score ≥ threshold_eff
+             SELL if score ≤ -threshold_eff
              else NEUTRAL
 outcome    = clamp( realised% / (1.5 · ATR%), -1, +1 )
-w_i        ← clip( w_i + lr · (outcome − score) · feature_i , 0.05, 5 )
+wE_i      ← clip( wE_i + lr·respE / √(ε + Σgrad²) · (outcome − score) · f_i , 0.05, 5 )
+threshold_eff = threshold · clamp(1.35 − 0.7 · hitEWMA, 0.65, 1.35)
 ```
 
-Seven ATR-normalised features: RSI 14, EMA 9/21 ribbon distance, MACD histogram, Bollinger %B,
-Stochastic %K with cross confirmation, 10-candle momentum, and distance from EMA 50. Confidence is
-a separate blend — 55% \|score\| + 25% feature agreement + 20% volume ratio, scaled by ADX 40 — so
-a strong trend on thin volume scores lower than the same trend on heavy volume.
+**A regime-aware mixture of two experts.** Eight ATR-normalised features — RSI 14, EMA 9/21
+ribbon distance, MACD histogram, Bollinger %B, Stochastic %K with cross confirmation, 10-candle
+momentum, distance from EMA 50, and a higher-timeframe trend (EMA slope on 3-candle aggregates) —
+feed two weight vectors: a trend expert and a range expert. The market regime (Kaufman efficiency
+ratio blended with ADX) decides how much each expert votes and how much each one learns from the
+next grade, so mean-reversion features stop polluting trends and trend features stop whipsawing
+in ranges. Each feature also keeps an AdaGrad squared-gradient accumulator, so loud features get
+smaller steps. Confidence is a separate blend — 55% \|score\| + 25% feature agreement + 20%
+volume ratio, scaled by ADX, plus a bonus when the higher-timeframe trend agrees with the call.
+
+An exponentially weighted hit-rate nudges the effective threshold up to ×1.35 while the model has
+been wrong (trade less, wait for better setups) and down to ×0.7 on a hot streak. The Model tab
+shows the live regime, the auto threshold and each expert's hit rate.
 
 After every signal the app waits for the grading horizon, measures what the market actually did
-and updates the weights with the delta rule — features that keep being wrong lose influence.
-Weights, accuracy and average return persist across restarts. **Everything runs on the phone.**
+and updates the responsible expert with the delta rule — features that keep being wrong lose
+influence. Weights, accumulators and per-expert stats persist across restarts.
+**Everything runs on the phone.**
 
 The **backtest** is honest about this: it replays the last N candles with a model that starts from
 uniform weights and learns as it goes, one position at a time, 0.1% fee each way — so it measures

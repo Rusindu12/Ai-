@@ -63,6 +63,18 @@
     <string name="ind_adx">ADX 14</string>
     <string name="ind_vol">පරිමා අනුපාතය</string>
     <string name="ind_atr">ATR</string>
+    <string name="ind_htf">HTF නැඹුරුව</string>
+    <string name="regime_trend">නැඹුරු රටාව — නැඹුරු විශේෂඥයා භාරයි (%1$s)</string>
+    <string name="regime_range">පරාස රටාව — පරාස විශේෂඥයා භාරයි (%1$s)</string>
+    <string name="htf_up">ඉහළ කාලරාමුවේ නැඹුරුව ඉහළට (%1$s)</string>
+    <string name="htf_down">ඉහළ කාලරාමුවේ නැඹුරුව පහළට (%1$s)</string>
+    <string name="model_adaptive">අනුවර්තී හැසිරීම</string>
+    <string name="model_regime">වෙළඳපොළ රටාව</string>
+    <string name="regime_trending">නැඹුරු</string>
+    <string name="regime_ranging">පරාස</string>
+    <string name="model_threshold_eff">සීමාව (ස්වයං)</string>
+    <string name="model_expert_trend">නැඹුරු විශේෂඥයා</string>
+    <string name="model_expert_range">පරාස විශේෂඥයා</string>
     <string name="ind_trend">ප්‍රවණතාව (EMA 50)</string>
 
     <!-- scanner -->

@@ -49,6 +49,7 @@ public final class Backtester {
         double entry = 0;
         double atrPctAtEntry = 0;
         double scoreAtEntry = 0;
+        double regimeAtEntry = 0.5;
         double[] featuresAtEntry = new double[0];
         int exitAt = 0;
         double sumReturn = 0;
@@ -69,7 +70,8 @@ public final class Backtester {
 
                     if (learn) {
                         double outcome = Math.max(-1, Math.min(1, raw / Math.max(atrPctAtEntry, 1e-6) / 1.5));
-                        model.learn(featuresAtEntry, scoreAtEntry, outcome);
+                        model.learn(featuresAtEntry, scoreAtEntry, outcome, regimeAtEntry);
+                        model.recordGrade(direction * raw > 0, direction * raw, raw, regimeAtEntry);
                     }
                     inPosition = false;
                 }
@@ -80,7 +82,8 @@ public final class Backtester {
                 continue;
             }
 
-            Snapshot s = SignalEngine.evaluate(candles.subList(0, i + 1), model, threshold, false);
+            Snapshot s = SignalEngine.evaluate(candles.subList(0, i + 1), model,
+                    model.effectiveThreshold(threshold), false);
             if (!s.valid || s.direction == Direction.NEUTRAL) {
                 r.equity.add(equity);
                 if (equity > peak) peak = equity;
@@ -98,6 +101,7 @@ public final class Backtester {
             entry = close;
             atrPctAtEntry = s.atrPct;
             scoreAtEntry = s.score;
+            regimeAtEntry = s.regime;
             featuresAtEntry = s.features;
             exitAt = i + Math.max(1, horizon);
         }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.rusindu.aitrade.ai.AdaptiveModel;
 import com.rusindu.aitrade.ai.SignalEngine;
 import com.rusindu.aitrade.ai.Snapshot;
 import com.rusindu.aitrade.model.Candle;
@@ -166,7 +167,9 @@ public class TradeEngine {
             }
             ticker = t;
 
-            Snapshot snap = SignalEngine.evaluate(fresh, Journal.get(c).model(), threshold, true);
+            AdaptiveModel model = Journal.get(c).model();
+            double effThreshold = model.effectiveThreshold(threshold);
+            Snapshot snap = SignalEngine.evaluate(fresh, model, effThreshold, true);
             snapshot = snap;
             lastError = null;
             lastUpdate = System.currentTimeMillis();
@@ -237,6 +240,7 @@ public class TradeEngine {
         s.price = livePrice;
         s.atrPct = snap.atrPct;
         s.features = snap.features;
+        s.regime = snap.regime;
         s.reason = topReason(snap);
         journal.addSignal(s);
         journal.save(c);

@@ -95,6 +95,22 @@ public final class Reasons {
                 id = R.string.volume_low;
                 value = Fmt.num(r.value, 2);
                 break;
+            case "regime_trend":
+                id = R.string.regime_trend;
+                value = Fmt.num(r.value, 0) + "%";
+                break;
+            case "regime_range":
+                id = R.string.regime_range;
+                value = Fmt.num(r.value, 0) + "%";
+                break;
+            case "htf_up":
+                id = R.string.htf_up;
+                value = Fmt.num(r.value, 2);
+                break;
+            case "htf_down":
+                id = R.string.htf_down;
+                value = Fmt.num(r.value, 2);
+                break;
             default:
                 return r.code;
         }

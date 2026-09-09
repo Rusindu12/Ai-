@@ -2,6 +2,7 @@ package com.rusindu.aitrade.core;
 
 import android.content.Context;
 
+import com.rusindu.aitrade.ai.AdaptiveModel;
 import com.rusindu.aitrade.ai.SignalEngine;
 import com.rusindu.aitrade.ai.Snapshot;
 import com.rusindu.aitrade.model.Candle;
@@ -48,8 +49,9 @@ public final class Scanner {
                 TradeEngine.get().postUi(() -> cb.onProgress(done, total, symbol));
                 try {
                     List<Candle> candles = BinanceApi.klines(symbol, interval, KLINE_LIMIT);
-                    Snapshot s = SignalEngine.evaluate(candles, Journal.get(app).model(),
-                            threshold, true);
+                    AdaptiveModel model = Journal.get(app).model();
+                    Snapshot s = SignalEngine.evaluate(candles, model,
+                            model.effectiveThreshold(threshold), true);
                     if (s.valid) {
                         out.add(new ScanResult(symbol, s.price, s.score, s.direction,
                                 s.confidence, s.rsi, s.atrPct));

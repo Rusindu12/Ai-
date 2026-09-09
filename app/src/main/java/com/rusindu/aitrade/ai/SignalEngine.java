@@ -101,6 +101,22 @@ public final class SignalEngine {
 
         double atrSafe = s.atr > 0 ? s.atr : Math.max(s.price * 0.001, 1e-9);
 
+        // ---- regime: 0 = ranging, 1 = trending -------------------------------
+        // Kaufman efficiency ratio (net move / total path) blended with ADX.
+        double er = 0;
+        int look = Math.min(18, n - 1);
+        if (look > 2) {
+            double net = Math.abs(close[n - 1] - close[n - 1 - look]);
+            double path = 0;
+            for (int i = n - look; i < n; i++) path += Math.abs(close[i] - close[i - 1]);
+            er = path > 0 ? net / path : 0;
+        }
+        double erNorm = Indicators.clamp(er * 2.5, 0, 1);
+        double adxNorm = Indicators.clamp(s.adx / 40.0, 0, 1);
+        double regime = Indicators.clamp(0.55 * erNorm + 0.45 * adxNorm, 0, 1);
+        s.regime = regime;
+        s.threshold = threshold;
+
         // ---- features, each in [-1, +1], positive = bullish -----------------
         double[] f = new double[AdaptiveModel.FEATURES.length];
 
@@ -132,8 +148,27 @@ public final class SignalEngine {
         // 6 Distance from the trend EMA, in ATR units
         f[6] = Indicators.clamp((s.price - s.ema50) / (3.0 * atrSafe), -1, 1);
 
+        // 7 Higher-timeframe trend: slope of the EMA on 3-candle aggregates, in ATR units
+        f[7] = 0;
+        int group = 3;
+        int m = n / group;
+        if (m >= 25) {
+            double[] hc = new double[m];
+            for (int j = 0; j < m; j++) {
+                double sum = 0;
+                for (int k = 0; k < group; k++) sum += close[j * group + k];
+                hc[j] = sum / group;
+            }
+            double[] he = Indicators.ema(hc, 17);
+            double hLast = Indicators.last(he);
+            double hPrev = he.length > 3 ? he[he.length - 4] : Double.NaN;
+            if (!Double.isNaN(hLast) && !Double.isNaN(hPrev)) {
+                f[7] = Indicators.clamp((hLast - hPrev) / (1.0 * atrSafe), -1, 1);
+            }
+        }
+
         s.features = f;
-        s.score = model.score(f);
+        s.score = model.score(f, regime);
         s.direction = Direction.of(s.score, threshold);
 
         // ---- confidence ------------------------------------------------------
@@ -148,6 +183,8 @@ public final class SignalEngine {
         double adxFactor = Indicators.clamp(s.adx / 40.0, 0, 1);
         double conf = 0.55 * Math.abs(s.score) + 0.25 * agreement + 0.20 * volFactor;
         conf *= (0.75 + 0.25 * adxFactor);
+        // higher-timeframe confluence: a small bonus when the HTF trend agrees with the call
+        if (f[7] != 0 && s.score != 0 && (f[7] > 0) == (s.score > 0)) conf += 0.05;
         s.confidence = Indicators.clamp(conf, 0, 0.98);
 
         // ---- evidence --------------------------------------------------------
@@ -160,6 +197,8 @@ public final class SignalEngine {
         addReason(s, s.price > s.ema50 ? "trend_up" : "trend_down", s.atrPct);
         addReason(s, s.adx >= 25 ? "adx_trending" : "adx_ranging", s.adx);
         addReason(s, s.volRatio >= 1 ? "volume_high" : "volume_low", s.volRatio);
+        addReason(s, regime >= 0.5 ? "regime_trend" : "regime_range", regime * 100);
+        addReason(s, f[7] >= 0 ? "htf_up" : "htf_down", f[7]);
 
         s.valid = true;
         return s;

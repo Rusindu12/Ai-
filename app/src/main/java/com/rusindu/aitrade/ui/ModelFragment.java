@@ -40,6 +40,7 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
     private final List<TextView> values = new ArrayList<>();
 
     private TextView tvAccuracy, tvGraded, tvAvgReturn, tvAvgMove, tvModelEmpty;
+    private TextView tvRegime, tvThresholdEff, tvExpertTrend, tvExpertRange;
     private LinearProgressIndicator pbAccuracy;
     private LinearLayout weightsBox, backtestStats;
     private TextView tvBacktestStatus, tvBacktestHelp;
@@ -64,6 +65,10 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
         tvAvgMove = root.findViewById(R.id.tvAvgMove);
         tvModelEmpty = root.findViewById(R.id.tvModelEmpty);
         pbAccuracy = root.findViewById(R.id.pbAccuracy);
+        tvRegime = root.findViewById(R.id.tvRegime);
+        tvThresholdEff = root.findViewById(R.id.tvThresholdEff);
+        tvExpertTrend = root.findViewById(R.id.tvExpertTrend);
+        tvExpertRange = root.findViewById(R.id.tvExpertRange);
         weightsBox = root.findViewById(R.id.weightsBox);
         backtestStats = root.findViewById(R.id.backtestStats);
         tvBacktestStatus = root.findViewById(R.id.tvBacktestStatus);
@@ -160,6 +165,24 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
         tvAvgReturn.setTextColor(ContextCompat.getColor(requireContext(),
                 m.averageReturn() >= 0 ? R.color.up : R.color.down));
         tvAvgMove.setText(Fmt.pct(m.averageMove(), 3));
+        renderAdaptive(m);
+    }
+
+    /** Regime, adaptive threshold and the two experts' hit rates. */
+    private void renderAdaptive(AdaptiveModel m) {
+        if (tvRegime == null) return;
+        double regime = m.regime();
+        tvRegime.setText(getString(regime >= 0.5 ? R.string.regime_trending : R.string.regime_ranging)
+                + " · " + Fmt.num(regime * 100, 0));
+        tvRegime.setTextColor(ContextCompat.getColor(requireContext(),
+                regime >= 0.5 ? R.color.up : R.color.down));
+        tvThresholdEff.setText(Fmt.num(m.effectiveThreshold(Prefs.threshold(requireContext())), 2));
+        double accT = m.accuracyTrend();
+        double accR = m.accuracyRange();
+        tvExpertTrend.setText(m.gradedTrend() == 0 ? "--"
+                : Fmt.pct(accT * 100, 0) + " (" + m.gradedTrend() + ")");
+        tvExpertRange.setText(m.gradedRange() == 0 ? "--"
+                : Fmt.pct(accR * 100, 0) + " (" + m.gradedRange() + ")");
     }
 
     // ------------------------------------------------------------------ backtest

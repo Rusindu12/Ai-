@@ -40,8 +40,8 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
 
     private static final int[] INDICATOR_LABELS = {
             R.string.ind_rsi, R.string.ind_macd, R.string.ind_ema, R.string.ind_boll,
-            R.string.ind_stoch, R.string.ind_trend, R.string.ind_adx, R.string.ind_vol,
-            R.string.ind_atr
+            R.string.ind_stoch, R.string.ind_trend, R.string.ind_htf, R.string.ind_adx,
+            R.string.ind_vol, R.string.ind_atr
     };
 
     private final Handler ticker = new Handler(Looper.getMainLooper());
@@ -262,14 +262,16 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
         setIndicator(4, s.features.length > 4 ? s.features[4] : 0, Fmt.num(s.stochK, 0));
         setIndicator(5, s.features.length > 6 ? s.features[6] : 0,
                 Fmt.signed(s.price - s.ema50, 2));
-        setIndicator(6, 0, Fmt.num(s.adx, 1));
-        setIndicator(7, 0, Fmt.num(s.volRatio, 2) + "×");
-        setIndicator(8, 0, Fmt.num(s.atrPct, 2) + "%");
+        setIndicator(6, s.features.length > 7 ? s.features[7] : 0,
+                Fmt.num(s.features.length > 7 ? s.features[7] : 0, 2));
+        setIndicator(7, 0, Fmt.num(s.adx, 1));
+        setIndicator(8, 0, Fmt.num(s.volRatio, 2) + "×");
+        setIndicator(9, 0, Fmt.num(s.atrPct, 2) + "%");
 
-        if (bars.size() > 6) {
-            bars.get(6).setValue(Math.max(-1, Math.min(1, (s.adx - 25) / 25.0)));
-            bars.get(7).setValue(Math.max(-1, Math.min(1, s.volRatio - 1)));
-            bars.get(8).setValue(Math.max(-1, Math.min(1, s.atrPct / 3.0)));
+        if (bars.size() > 9) {
+            bars.get(7).setValue(Math.max(-1, Math.min(1, (s.adx - 25) / 25.0)));
+            bars.get(8).setValue(Math.max(-1, Math.min(1, s.volRatio - 1)));
+            bars.get(9).setValue(Math.max(-1, Math.min(1, s.atrPct / 3.0)));
         }
     }
 

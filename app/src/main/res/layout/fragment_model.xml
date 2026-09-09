@@ -126,6 +126,92 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- ============ adaptive behaviour ============ -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Overline"
+                    android:text="@string/model_adaptive" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/StatLabel"
+                            android:text="@string/model_regime" />
+
+                        <TextView
+                            android:id="@+id/tvRegime"
+                            style="@style/StatValue"
+                            android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/StatLabel"
+                            android:text="@string/model_threshold_eff" />
+
+                        <TextView
+                            android:id="@+id/tvThresholdEff"
+                            style="@style/StatValue"
+                            android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/StatLabel"
+                            android:text="@string/model_expert_trend" />
+
+                        <TextView
+                            android:id="@+id/tvExpertTrend"
+                            style="@style/StatValue"
+                            android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/StatLabel"
+                            android:text="@string/model_expert_range" />
+
+                        <TextView
+                            android:id="@+id/tvExpertRange"
+                            style="@style/StatValue"
+                            android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- ============ weights ============ -->
         <com.google.android.material.card.MaterialCardView style="@style/Card">
 

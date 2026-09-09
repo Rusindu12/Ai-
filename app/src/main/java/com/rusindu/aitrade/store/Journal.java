@@ -122,8 +122,8 @@ public class Journal {
             double outcome = Math.max(-1, Math.min(1, r / volScale));
             boolean hit = s.direction * r > 0;
 
-            model.learn(s.features, s.score, outcome);
-            model.recordGrade(hit, s.direction * r, r);
+            model.learn(s.features, s.score, outcome, s.regime);
+            model.recordGrade(hit, s.direction * r, r, s.regime);
 
             s.graded = true;
             s.outcome = outcome;
@@ -140,11 +140,7 @@ public class Journal {
         signals.clear();
         trades.clear();
         String modelJson = Prefs.getString(c, Prefs.K_MODEL, "");
-        AdaptiveModel loaded = AdaptiveModel.fromJson(modelJson);
-        model.setWeights(loaded.weights());
-        model.setLearningRate(loaded.learningRate());
-        model.restoreStats(loaded.gradedCount(), loaded.correctCount(),
-                loaded.sumDirectionalReturn(), loaded.sumAbsoluteReturn());
+        model.copyFrom(AdaptiveModel.fromJson(modelJson));
 
         signals.addAll(readSignals(Prefs.getString(c, Prefs.K_SIGNALS, "")));
         trades.addAll(readTrades(Prefs.getString(c, Prefs.K_TRADES, "")));
