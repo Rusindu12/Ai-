@@ -40,8 +40,8 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeExtDexDebug
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
-> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugGlobalSynthetics
+> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
@@ -53,10 +53,10 @@ Daemon will be stopped at the end of the build
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 17s
+BUILD SUCCESSFUL in 1m 13s
 33 actionable tasks: 33 executed
 ===== APK =====
--rw-r--r-- 1 runner runner 6008346 Sep  9 09:07 app/build/outputs/apk/debug/app-debug.apk
+-rw-r--r-- 1 runner runner 6008854 Sep  9 09:43 app/build/outputs/apk/debug/app-debug.apk
 ----- aapt2 badging -----
 package: name='com.rusindu.aitrade' versionCode='1' versionName='1.0.0-debug' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
 minSdkVersion:'26'
@@ -90,10 +90,10 @@ application-label-en-IN:'AI Trade Signals'
 application-label-en-XC:'AI Trade Signals'
 ----- apksigner verify -----
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: f985865dcb386e2a5cb30f734fb27438f82ab4f0084292014e078d4e7bc0fa55
-V2 Signer: certificate SHA-1 digest: 9fbacb09f74881a64c09678cc1c08ad198fa92d0
-V2 Signer: certificate MD5 digest: 41f2394f698b3da1801414ee6ebeb5ff
+V2 Signer: certificate SHA-256 digest: 61a47b8c1868446fc4f9c056bbcd6d6334d25b637757aff91fd338e6d6d61265
+V2 Signer: certificate SHA-1 digest: 64bb6284250262f800436ab84da7428bfa52d63e
+V2 Signer: certificate MD5 digest: f801862f3f6a73bcc4a355a408a29eb8
 ----- zip -----
   1132088  1981-01-01 01:01   resources.arsc
 ---------                     -------
- 12561160                     929 files
+ 12562240                     929 files
