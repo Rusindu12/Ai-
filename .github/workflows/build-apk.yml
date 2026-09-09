@@ -119,6 +119,24 @@ jobs:
           git commit -m "build: results from $SHA" || echo "no changes"
           git push --force origin HEAD:refs/heads/apk-output
 
+      - name: Publish GitHub release with the APK
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          [ -f AITradeSignals-debug.apk ] || { echo "no APK to publish"; exit 0; }
+          TAG="latest-build"
+          NOTES="Auto-published debug build from ${GITHUB_SHA} on ${GITHUB_REF_NAME}.
+Install: allow 'unknown apps' for your browser/file manager. Android 8.0+ (minSdk 26).
+Live trading is OFF by default; Testnet is ON."
+          gh release create "$TAG" \
+            --title "AI Trade Signals (debug build)" \
+            --notes "$NOTES" \
+            --target "$GITHUB_REF_NAME" 2>/dev/null || true
+          gh release upload "$TAG" AITradeSignals-debug.apk --clobber
+          echo "release URL: https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG"
+
       - name: Fail the job if the APK is missing
         run: |
           test -f AITradeSignals-debug.apk || { echo "::error::assembleDebug did not produce an APK"; exit 1; }
