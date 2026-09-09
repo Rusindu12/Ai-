@@ -125,17 +125,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          [ -f AITradeSignals-debug.apk ] || { echo "no APK to publish"; exit 0; }
+          if [ ! -f AITradeSignals-debug.apk ]; then echo "no APK to publish"; exit 0; fi
           TAG="latest-build"
-          NOTES="Auto-published debug build from ${GITHUB_SHA} on ${GITHUB_REF_NAME}.
-Install: allow 'unknown apps' for your browser/file manager. Android 8.0+ (minSdk 26).
-Live trading is OFF by default; Testnet is ON."
-          gh release create "$TAG" \
-            --title "AI Trade Signals (debug build)" \
-            --notes "$NOTES" \
-            --target "$GITHUB_REF_NAME" 2>/dev/null || true
+          NOTES="Auto-published debug build from ${GITHUB_SHA}. Install: allow unknown apps for your browser or file manager. Android 8.0+ (minSdk 26). Live trading is OFF by default and Binance Spot Testnet is ON."
+          gh release create "$TAG" --title "AI Trade Signals (debug build)" --notes "$NOTES" --target "$GITHUB_REF_NAME" 2>/dev/null || true
           gh release upload "$TAG" AITradeSignals-debug.apk --clobber
-          echo "release URL: https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG"
+          echo "release URL: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
 
       - name: Fail the job if the APK is missing
         run: |
