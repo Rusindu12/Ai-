@@ -40,9 +40,18 @@ Crypto can go to zero.
 
 ## Install the APK
 
-**Ready-made APK:** [`apk/AITradeSignals-debug.apk`](apk/AITradeSignals-debug.apk) in this repo
-(5.9 MB, debug/V2-signed, `com.rusindu.aitrade`, minSdk 26). Copy it to the phone and install —
-you will need *Install unknown apps* enabled for your browser or file manager.
+### Download links
+
+| Link | What it is |
+| --- | --- |
+| **[Release page](https://github.com/Rusindu12/Ai-/releases/tag/latest-build)** | Latest build, always current |
+| [Direct APK (release asset)](https://github.com/Rusindu12/Ai-/releases/download/latest-build/AITradeSignals-debug.apk) | One tap / one click download |
+| [Direct APK (`apk-output` branch)](https://github.com/Rusindu12/Ai-/raw/apk-output/AITradeSignals-debug.apk) | Same file, second channel |
+| [`apk/AITradeSignals-debug.apk`](apk/AITradeSignals-debug.apk) | Copy committed next to the source |
+
+~5.9 MB, debug/V2-signed (`apksigner`: `CN=Android Debug`), `com.rusindu.aitrade`, minSdk 26.
+Copy it to the phone and install — you will need *Install unknown apps* enabled for your browser
+or file manager.
 
 It is built by GitHub Actions (`.github/workflows/build-apk.yml`) because the Android SDK is not
 available in this workspace. Every push rebuilds it and pushes the fresh APK plus the full Gradle
