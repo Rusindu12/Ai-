@@ -211,9 +211,13 @@ public class CandleChartView extends View {
         max += span;
         double range = max - min;
 
+        double last = candles.get(n - 1).close;
+        float yLast = (float) (padTop + (max - last) / range * priceH);
+
         for (int g = 0; g <= 4; g++) {
             float y = padTop + priceH * g / 4f;
             canvas.drawLine(padLeft, y, padLeft + plotW, y, gridPaint);
+            if (Math.abs(y - yLast) < dp(12)) continue; // keep the axis readable next to the last-price tag
             double value = max - range * g / 4.0;
             canvas.drawText(Fmt.price(value), padLeft + plotW + dp(6), y + dp(3.5f), textPaint);
         }
@@ -249,10 +253,9 @@ public class CandleChartView extends View {
         drawSeries(canvas, emaSlow, start, n, padLeft, padTop, priceH, cw, max, range, emaSlowPaint);
 
         // last price marker
-        double last = candles.get(n - 1).close;
-        float yLast = (float) (padTop + (max - last) / range * priceH);
         canvas.drawLine(padLeft, yLast, padLeft + plotW, yLast, crossPaint);
-        canvas.drawText(Fmt.price(last), padLeft + plotW + dp(6), yLast - dp(3), textPaint);
+        canvas.drawText(Fmt.price(last), padLeft + plotW + dp(6),
+                Math.max(yLast - dp(3), dp(9)), textPaint);
 
         // crosshair
         if (crossIndex >= start && crossIndex < n && crossY > 0) {

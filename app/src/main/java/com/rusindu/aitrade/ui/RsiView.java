@@ -78,15 +78,27 @@ public class RsiView extends View {
         float y70 = padTop + h * 0.3f;
         float y30 = padTop + h * 0.7f;
         float y50 = padTop + h * 0.5f;
+
+        int n = rsi.length;
+        double lastV = n > 0 ? rsi[n - 1] : Double.NaN;
+        float lastY = Float.NaN;
+        if (!Double.isNaN(lastV)) {
+            lastY = (float) (padTop + (100 - lastV) / 100.0 * h);
+            lastY = Math.max(padTop + dp(8), Math.min(padTop + h - dp(1), lastY));
+        }
+
         canvas.drawRect(padLeft, padTop, padLeft + w, y70, zoneUp);
         canvas.drawRect(padLeft, y30, padLeft + w, padTop + h, zoneDown);
         canvas.drawLine(padLeft, y70, padLeft + w, y70, band);
         canvas.drawLine(padLeft, y30, padLeft + w, y30, band);
         canvas.drawLine(padLeft, y50, padLeft + w, y50, mid);
-        canvas.drawText("70", padLeft + w + dp(4), y70 + dp(3.5f), text);
-        canvas.drawText("30", padLeft + w + dp(4), y30 + dp(3.5f), text);
+        if (Float.isNaN(lastY) || Math.abs(lastY - y70) > dp(10)) {
+            canvas.drawText("70", padLeft + w + dp(4), y70 + dp(3.5f), text);
+        }
+        if (Float.isNaN(lastY) || Math.abs(lastY - y30) > dp(10)) {
+            canvas.drawText("30", padLeft + w + dp(4), y30 + dp(3.5f), text);
+        }
 
-        int n = rsi.length;
         if (n < 2) return;
         int count = Math.min(70, n);
         int start = n - count;
@@ -111,9 +123,8 @@ public class RsiView extends View {
         }
         if (started) canvas.drawPath(path, line);
 
-        double lastV = rsi[n - 1];
         if (!Double.isNaN(lastV)) {
-            canvas.drawText(Fmt.num(lastV, 0), padLeft + w + dp(4), padTop + h * 0.5f + dp(14), text);
+            canvas.drawText(Fmt.num(lastV, 0), padLeft + w + dp(4), lastY + dp(3.5f), text);
         }
     }
 }

@@ -35,9 +35,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int TAB_TRADE = 2;
     private static final int TAB_MODEL = 3;
     private static final int PERMISSION_NOTIFICATIONS = 100;
+    private static final String KEY_TAB = "tab";
 
     private final Fragment[] tabs = new Fragment[4];
     private MaterialToolbar toolbar;
+    private int currentTab = TAB_MARKET;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -48,6 +50,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // After a theme/language recreate or a process restore the FragmentManager
+        // re-attaches previously added tab fragments as *visible*. Left alone, every
+        // tab then draws on top of every other tab. Drop the stale copies first.
+        int initial = TAB_MARKET;
+        if (savedInstanceState != null) {
+            initial = savedInstanceState.getInt(KEY_TAB, TAB_MARKET);
+            FragmentTransaction clean = getSupportFragmentManager().beginTransaction();
+            for (Fragment f : getSupportFragmentManager().getFragments()) clean.remove(f);
+            clean.commitNowAllowingStateLoss();
+        }
 
         toolbar = findViewById(R.id.toolbar);
         setupToolbar();
@@ -74,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        select(TAB_MARKET);
+        select(initial);
         TradeEngine.get().start(this);
         maybeAskNotificationPermission();
     }
@@ -83,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         syncWatchToggle();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_TAB, currentTab);
     }
 
     /** Called when the scanner picks a pair: jump back to the market tab. */
@@ -94,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     // ------------------------------------------------------------------ tabs
 
     private void select(int index) {
+        currentTab = index;
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         for (int i = 0; i < tabs.length; i++) {
             if (i == index) {
