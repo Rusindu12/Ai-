@@ -81,6 +81,25 @@
     <string name="press_low">විකුණුම් පීඩනය — පරිමාව විකුණුම්කරුවන් සමඟ (%1$s)</string>
     <string name="cand_bull">ගෝණික ඉටිපන්දම් රටාව — engulfing හෝ hammer (%1$s)</string>
     <string name="cand_bear">වලහ ඉටිපන්දම් රටාව — engulfing හෝ shooting star (%1$s)</string>
+    <string name="policy_line">AI ක්‍රියාව: %1$s</string>
+    <string name="act_buy">long එකක් අරිනවා — score සහ confidence සීමා පැනුවා</string>
+    <string name="act_wait">රැඳී සිටිනවා — threshold එක පැනුණු setup එකක් නෑ</string>
+    <string name="act_wait_conf">රැඳී සිටිනවා — දිශාව හරි, confidence සීමාවට අඩුයි</string>
+    <string name="act_flat_bear">රැඳී සිටිනවා — තනතුරක් නැතිව bearish call; spot වල short නෑ</string>
+    <string name="act_hold">hold — තනතුර stop/target/trail ඇතුළත</string>
+    <string name="act_exit_reverse">වසන්න — model එක තනතුරට විරුද්ධව හැරුණා</string>
+    <string name="act_exit_tp">වසන්න — ලාභ ඉලක්කය ළඟා වුණා</string>
+    <string name="act_exit_sl">වසන්න — පාඩු සීමාව ළඟා වුණා</string>
+    <string name="act_exit_trail">වසන්න — trailing stop එක peak එකෙන් ආපසු දුන්නා</string>
+    <string name="risk_blocked_dd">drawdown guard එකෙන් auto-trade නතරයි</string>
+    <string name="risk_blocked_cool">පාඩු-streak cooldown එකෙන් auto-trade නතරයි</string>
+    <string name="train_title">පුහුණුව</string>
+    <string name="train_btn">ඉතිහාසයෙන් පුහුණු කරන්න</string>
+    <string name="train_start">පුහුණුව සූදානම් වෙමින්…</string>
+    <string name="train_running">පුහුණු වෙමින්… epoch %1$d, validation %2$s</string>
+    <string name="train_done">Validation %1$s → %2$s · epochs %3$d · trades %4$d — හොඳම weights යෙදුවා</string>
+    <string name="train_noimp">Validation %1$s — කිසිම epoch එකක් දැනට ඉදිරියෙන් නෑ; weights වෙනස් නෑ</string>
+    <string name="train_none">පුහුණුවට තරම් ඉතිහාසයක් නෑ.</string>
     <string name="ind_trend">ප්‍රවණතාව (EMA 50)</string>
 
     <!-- scanner -->

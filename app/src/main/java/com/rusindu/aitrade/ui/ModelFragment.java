@@ -21,6 +21,7 @@ import com.rusindu.aitrade.ai.AdaptiveModel;
 import com.rusindu.aitrade.ai.Snapshot;
 import com.rusindu.aitrade.core.Backtester;
 import com.rusindu.aitrade.core.TradeEngine;
+import com.rusindu.aitrade.core.Trainer;
 import com.rusindu.aitrade.model.BacktestResult;
 import com.rusindu.aitrade.model.Candle;
 import com.rusindu.aitrade.model.Signal;
@@ -44,6 +45,9 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
     private LinearProgressIndicator pbAccuracy;
     private LinearLayout weightsBox, backtestStats;
     private TextView tvBacktestStatus, tvBacktestHelp;
+    private MaterialButton btnTrain;
+    private TextView tvTrainStatus;
+    private volatile boolean training;
     private TextView tvBtTrades, tvBtWinRate, tvBtReturn, tvBtBuyHold, tvBtDrawdown, tvBtAvg;
     private EquityCurveView btEquity;
     private MaterialButton btnBacktest;
@@ -81,8 +85,12 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
         tvBtAvg = root.findViewById(R.id.tvBtAvg);
         btEquity = root.findViewById(R.id.btEquity);
         btnBacktest = root.findViewById(R.id.btnBacktest);
+        btnTrain = root.findViewById(R.id.btnTrain);
+        tvTrainStatus = root.findViewById(R.id.tvTrainStatus);
 
         tvBacktestHelp.setText(getString(R.string.backtest_help, TradeEngine.get().candles().size()));
+
+        btnTrain.setOnClickListener(v -> runTrain());
 
         buildWeightRows();
         renderScoreboard();
@@ -226,6 +234,58 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
                 tvBtDrawdown.setText(Fmt.num(r.maxDrawdownPct, 2) + "%");
                 tvBtAvg.setText(Fmt.pct(r.averageTradePct, 3));
                 btEquity.setData(r.equity);
+            });
+        });
+    }
+
+    // ------------------------------------------------------------------ training
+
+    /** Replays history walk-forward and keeps the best weights by validation accuracy. */
+    private void runTrain() {
+        if (training) return;
+        final List<Candle> candles = TradeEngine.get().candles();
+        if (candles.size() < 150) {
+            tvTrainStatus.setText(R.string.train_none);
+            return;
+        }
+        training = true;
+        btnTrain.setEnabled(false);
+        tvTrainStatus.setText(R.string.train_start);
+
+        final double threshold = Prefs.threshold(requireContext());
+        final int horizon = Prefs.horizonCandles(requireContext());
+        final double minConf = Prefs.minConfidence(requireContext());
+        final AdaptiveModel model = Journal.get(requireContext()).model();
+
+        TradeEngine.get().submit(() -> {
+            final Trainer.Result r = Trainer.run(candles, model, threshold, horizon, minConf, 4,
+                    (epoch, acc) -> TradeEngine.get().postUi(() -> {
+                        if (getContext() != null) {
+                            tvTrainStatus.setText(getString(R.string.train_running,
+                                    epoch, Fmt.pct(acc, 0)));
+                        }
+                    }));
+            TradeEngine.get().postUi(() -> {
+                training = false;
+                if (getContext() == null) return;
+                btnTrain.setEnabled(true);
+                if (!r.enough) {
+                    tvTrainStatus.setText(R.string.train_none);
+                    return;
+                }
+                if (r.improved) {
+                    model.copyFrom(AdaptiveModel.fromJson(r.bestJson));
+                    Journal.get(requireContext()).save(requireContext());
+                    tvTrainStatus.setText(getString(R.string.train_done,
+                            Fmt.pct(r.valBefore, 0), Fmt.pct(r.valBest, 0),
+                            r.epochsRun, r.trainTrades));
+                } else {
+                    tvTrainStatus.setText(getString(R.string.train_noimp,
+                            Fmt.pct(r.valBefore, 0)));
+                }
+                renderScoreboard();
+                renderWeights();
+                Snackbar.make(requireView(), R.string.saved, Snackbar.LENGTH_SHORT).show();
             });
         });
     }

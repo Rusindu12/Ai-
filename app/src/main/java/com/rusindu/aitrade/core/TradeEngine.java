@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.rusindu.aitrade.ai.AdaptiveModel;
+import com.rusindu.aitrade.ai.Policy;
 import com.rusindu.aitrade.ai.SignalEngine;
 import com.rusindu.aitrade.ai.Snapshot;
 import com.rusindu.aitrade.model.Candle;
@@ -14,6 +15,7 @@ import com.rusindu.aitrade.net.BinanceApi;
 import com.rusindu.aitrade.store.Journal;
 import com.rusindu.aitrade.store.Prefs;
 import com.rusindu.aitrade.trade.Portfolio;
+import com.rusindu.aitrade.trade.RiskManager;
 import com.rusindu.aitrade.trade.TradeExecutor;
 
 import org.json.JSONObject;
@@ -56,6 +58,20 @@ public class TradeEngine {
     private volatile Context app;
     private volatile boolean running;
     private volatile java.util.concurrent.ScheduledFuture<?> loop;
+
+    private volatile Policy.Decision policy;
+    private volatile String riskBlock;
+    private double posPeak;
+
+    /** The latest BUY / HOLD / SELL call of the position-aware policy. */
+    public Policy.Decision policy() {
+        return policy;
+    }
+
+    /** Why auto-trading is currently blocked, or null. String-resource code. */
+    public String riskBlock() {
+        return riskBlock;
+    }
     private int scheduledEvery = -1;
     private volatile List<Candle> candles = new ArrayList<>();
     private volatile Snapshot snapshot;
@@ -180,6 +196,7 @@ public class TradeEngine {
                         Prefs.horizonCandles(c));
                 publishSignalIfNeeded(c, snap, symbol, interval, livePrice);
                 if (graded > 0) Journal.get(c).save(c);
+                runPolicy(c, snap, symbol, livePrice, effThreshold, graded);
             }
             checkProtection(c, symbol, livePrice);
 
@@ -249,8 +266,6 @@ public class TradeEngine {
         main.post(() -> {
             for (Listener l : listeners) l.onNewSignal(s);
         });
-
-        maybeAutoTrade(c, s, livePrice);
     }
 
     private String topReason(Snapshot snap) {
@@ -267,28 +282,44 @@ public class TradeEngine {
         return snap.reasons.get(best).code;
     }
 
-    private void maybeAutoTrade(final Context c, Signal s, double price) {
-        if (!Prefs.autoTrade(c)) return;
-        if (s.confidence < Prefs.minConfidence(c)) return;
-
+    /**
+     * The spot-trading brain of the app: ask the policy BUY / HOLD / SELL for the open
+     * position, respect the risk rails, and when auto-trade is on, execute the call.
+     */
+    private void runPolicy(Context c, Snapshot snap, String symbol, double price,
+                           double effThreshold, int graded) {
         Portfolio p = Portfolio.load(c);
-        String side;
-        double notional;
-        if (s.direction == Direction.BUY) {
-            if (p.qty > 0) return; // already long
-            side = "BUY";
-            notional = p.cash * Prefs.autoPct(c) / 100.0;
+        if (p.qty > 0) {
+            if (posPeak <= 0) posPeak = price;
+            posPeak = Math.max(posPeak, price);
         } else {
-            if (p.qty <= 0) return; // nothing to close
-            side = "SELL";
-            notional = 0; // 0 = close the whole position
+            posPeak = 0;
         }
-        if (side.equals("BUY") && notional <= 0) return;
 
-        TradeExecutor.execute(c, s.symbol, side, notional, price, (ok, message) -> {
-            if (!ok) {
-                for (Listener l : listeners) l.onEngineMessage(message);
-            }
-        });
+        Policy.Decision dec = Policy.decide(snap, effThreshold, Prefs.minConfidence(c),
+                p.qty > 0, p.entryPrice, posPeak);
+        policy = dec;
+
+        String blocked = RiskManager.blocked(c, p, price);
+        riskBlock = blocked;
+        if (graded > 0) {
+            RiskManager.noteGrades(c, Journal.get(c).signals(), System.currentTimeMillis());
+        }
+
+        if (!Prefs.autoTrade(c) || blocked != null) return;
+
+        if (dec.action == Policy.BUY && p.qty <= 0) {
+            double minC = Prefs.minConfidence(c);
+            double extra = Math.max(0, Math.min(1, (snap.confidence - minC) / Math.max(1e-6, 1 - minC)));
+            double notional = p.cash * Prefs.autoPct(c) * (0.5 + 0.5 * extra) / 100.0;
+            if (notional <= 0) return;
+            TradeExecutor.execute(c, symbol, "BUY", notional, price, (ok, message) -> {
+                if (!ok) for (Listener l : listeners) l.onEngineMessage(message);
+            });
+        } else if (dec.action == Policy.SELL && p.qty > 0) {
+            TradeExecutor.execute(c, symbol, "SELL", 0, price, (ok, message) -> {
+                if (!ok) for (Listener l : listeners) l.onEngineMessage(message);
+            });
+        }
     }
 }

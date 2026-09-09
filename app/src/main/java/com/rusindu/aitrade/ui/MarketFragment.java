@@ -18,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.rusindu.aitrade.R;
+import com.rusindu.aitrade.ai.Policy;
 import com.rusindu.aitrade.ai.Snapshot;
 import com.rusindu.aitrade.core.TradeEngine;
 import com.rusindu.aitrade.model.Candle;
@@ -50,7 +51,7 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
 
     private SwipeRefreshLayout swipe;
     private TextView tvPair, tvPrice, tvChange, tvUpdated, tvCountdown;
-    private TextView tvSignal, tvSignalMeta, tvReasons, tvCrosshair;
+    private TextView tvSignal, tvSignalMeta, tvReasons, tvCrosshair, tvPolicy;
     private LinearLayout signalBox, indicatorBox;
     private GaugeView gauge;
     private CandleChartView chart;
@@ -82,6 +83,7 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
         tvSignal = root.findViewById(R.id.tvSignal);
         tvSignalMeta = root.findViewById(R.id.tvSignalMeta);
         tvReasons = root.findViewById(R.id.tvReasons);
+        tvPolicy = root.findViewById(R.id.tvPolicy);
         tvCrosshair = root.findViewById(R.id.tvCrosshair);
         signalBox = root.findViewById(R.id.signalBox);
         indicatorBox = root.findViewById(R.id.indicatorBox);
@@ -243,6 +245,18 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
                 getString(buy ? R.string.signal_buy : (sell ? R.string.signal_sell : R.string.signal_neutral)),
                 getString(R.string.signal_confidence, (int) Math.round(snapshot.confidence * 100)));
 
+        Policy.Decision dec = TradeEngine.get().policy();
+        if (dec != null && tvPolicy != null) {
+            String line = getString(R.string.policy_line, Policy.key(dec.action))
+                    + " — " + getString(policyString(dec.code));
+            String block = TradeEngine.get().riskBlock();
+            if (block != null) line += "  ·  " + getString(blockString(block));
+            tvPolicy.setText(line);
+            tvPolicy.setTextColor(ContextCompat.getColor(getContext(),
+                    dec.action == Policy.BUY ? R.color.up
+                            : (dec.action == Policy.SELL ? R.color.down : R.color.text_secondary)));
+        }
+
         StringBuilder reasons = new StringBuilder();
         for (Snapshot.Reason r : snapshot.reasons) {
             if (reasons.length() > 0) reasons.append("\n");
@@ -291,5 +305,23 @@ public class MarketFragment extends Fragment implements TradeEngine.Listener {
         if (tvUpdated == null || getContext() == null) return;
         tvUpdated.setText(getString(R.string.status_error,
                 message == null ? "" : message));
+    }
+
+    private static int policyString(String code) {
+        switch (code) {
+            case "act_buy": return R.string.act_buy;
+            case "act_wait_conf": return R.string.act_wait_conf;
+            case "act_flat_bear": return R.string.act_flat_bear;
+            case "act_hold": return R.string.act_hold;
+            case "act_exit_reverse": return R.string.act_exit_reverse;
+            case "act_exit_tp": return R.string.act_exit_tp;
+            case "act_exit_sl": return R.string.act_exit_sl;
+            case "act_exit_trail": return R.string.act_exit_trail;
+            default: return R.string.act_wait;
+        }
+    }
+
+    private static int blockString(String code) {
+        return "risk_blocked_cool".equals(code) ? R.string.risk_blocked_cool : R.string.risk_blocked_dd;
     }
 }

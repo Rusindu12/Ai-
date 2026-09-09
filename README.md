@@ -76,6 +76,28 @@ The **backtest** is honest about this: it replays the last N candles with a mode
 uniform weights and learns as it goes, one position at a time, 0.1% fee each way — so it measures
 the learning loop, not a look-ahead oracle.
 
+## The trading policy — BUY / HOLD / SELL
+
+Every tick the model answers one question with the open position taken into account:
+
+* **Flat:** BUY when score ≥ threshold and confidence ≥ the gate; otherwise HOLD — and a
+  bearish call with no position is a HOLD too, because spot cannot short.
+* **In a position:** HOLD while the trade sits inside its levels; SELL on a model flip
+  against the position, a 2×ATR stop, a 3×ATR take-profit, or a 1.5×ATR trailing stop that
+  lets winners run until they give back the peak since entry.
+* **Risk rails:** a drawdown guard (equity more than 15% under its remembered peak pauses
+  auto-trading) and a loss-streak cooldown (three graded misses pause new entries for three
+  candles). Auto-trade sizes entries by confidence — between half and the full configured
+  share of cash.
+
+## Training on the device
+
+The Model tab has a **Train on history** button. It replays the recent candles walk-forward
+for several epochs — the exact learning loop the model runs live — and after each epoch scores
+it on a held-out validation window. The best weights by out-of-sample hit rate are kept
+(early-stopped); if no epoch beats your current model, nothing is applied. Training, grading
+and backtesting all run on the phone.
+
 ## Other features
 
 * Foreground watcher service — keeps polling with the screen off, one notification per signal and

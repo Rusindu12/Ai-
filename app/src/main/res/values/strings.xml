@@ -81,6 +81,25 @@
     <string name="press_low">Selling pressure — volume sits with the bears (%1$s)</string>
     <string name="cand_bull">Bullish candle pattern — engulfing or hammer (%1$s)</string>
     <string name="cand_bear">Bearish candle pattern — engulfing or shooting star (%1$s)</string>
+    <string name="policy_line">AI action: %1$s</string>
+    <string name="act_buy">open a long — score and confidence pass the gates</string>
+    <string name="act_wait">wait — no setup past the threshold</string>
+    <string name="act_wait_conf">wait — direction right, confidence below the gate</string>
+    <string name="act_flat_bear">wait — bearish call with no position; spot cannot short</string>
+    <string name="act_hold">hold — position inside stop, target and trail</string>
+    <string name="act_exit_reverse">close — the model flipped against the position</string>
+    <string name="act_exit_tp">close — take-profit target hit</string>
+    <string name="act_exit_sl">close — stop loss hit</string>
+    <string name="act_exit_trail">close — trailing stop gave back the peak</string>
+    <string name="risk_blocked_dd">auto-trade paused by the drawdown guard</string>
+    <string name="risk_blocked_cool">auto-trade paused by the loss-streak cooldown</string>
+    <string name="train_title">Training</string>
+    <string name="train_btn">Train on history</string>
+    <string name="train_start">Preparing training…</string>
+    <string name="train_running">Training… epoch %1$d, validation %2$s</string>
+    <string name="train_done">Validation %1$s → %2$s · %3$d epochs · %4$d training trades — best weights applied</string>
+    <string name="train_noimp">Validation %1$s — no epoch beat the current model; weights unchanged</string>
+    <string name="train_none">Not enough history to train on.</string>
     <string name="ind_trend">Trend (EMA 50)</string>
 
     <!-- scanner -->

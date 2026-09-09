@@ -26,6 +26,9 @@ public final class Prefs {
     public static final String K_AUTO = "auto_trade";
     public static final String K_AUTO_PCT = "auto_quote_pct";
     public static final String K_MIN_CONF = "min_confidence";
+    public static final String K_EQ_PEAK = "equity_peak";
+    public static final String K_COOLDOWN_UNTIL = "cooldown_until";
+    public static final String K_MAX_DD = "max_drawdown_pct";
     public static final String K_MODEL = "model";
     public static final String K_SIGNALS = "signals";
     public static final String K_TRADES = "trades";
@@ -149,5 +152,32 @@ public final class Prefs {
     /** Confidence a signal must reach before it is traded automatically. */
     public static float minConfidence(Context c) {
         return Math.max(0f, Math.min(1f, getFloat(c, K_MIN_CONF, 0.45f)));
+    }
+
+    /** Remembered equity peak for the drawdown guard. */
+    public static float equityPeak(Context c) {
+        return getFloat(c, K_EQ_PEAK, 0f);
+    }
+
+    public static void putEquityPeak(Context c, double v) {
+        putFloat(c, K_EQ_PEAK, (float) v);
+    }
+
+    /** Epoch ms until which the loss-streak cooldown blocks new entries. */
+    public static long cooldownUntil(Context c) {
+        try {
+            return Long.parseLong(getString(c, K_COOLDOWN_UNTIL, "0"));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static void putCooldownUntil(Context c, long ms) {
+        putString(c, K_COOLDOWN_UNTIL, String.valueOf(ms));
+    }
+
+    /** Equity drawdown percent that pauses auto-trading. */
+    public static float maxDrawdownPct(Context c) {
+        return Math.max(1f, Math.min(90f, getFloat(c, K_MAX_DD, 15f)));
     }
 }
