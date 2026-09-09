@@ -38,6 +38,10 @@ public class TradeEngine {
         void onNewSignal(Signal signal);
 
         void onEngineMessage(String message);
+
+        /** @param kind 1 = stop loss, 2 = take profit */
+        default void onProtectionTriggered(int kind, double price) {
+        }
     }
 
     private static final int KLINE_LIMIT = 300;
@@ -131,6 +135,16 @@ public class TradeEngine {
         scheduler.execute(this::tick);
     }
 
+    /** Runs work on the single background thread (scanner, backtest, orders). */
+    public void submit(Runnable r) {
+        scheduler.execute(r);
+    }
+
+    /** Posts to the main thread. */
+    public void postUi(Runnable r) {
+        main.post(r);
+    }
+
     // ------------------------------------------------------------------ loop
 
     private void tick() {
@@ -157,14 +171,14 @@ public class TradeEngine {
             lastError = null;
             lastUpdate = System.currentTimeMillis();
 
+            double livePrice = fresh.get(fresh.size() - 1).close;
             if (snap.valid) {
-                double livePrice = fresh.get(fresh.size() - 1).close;
-                long closedTime = snap.candleTime;
-                int graded = Journal.get(c).gradeDue(symbol, interval, closedTime, livePrice,
+                int graded = Journal.get(c).gradeDue(symbol, interval, snap.candleTime, livePrice,
                         Prefs.horizonCandles(c));
                 publishSignalIfNeeded(c, snap, symbol, interval, livePrice);
                 if (graded > 0) Journal.get(c).save(c);
             }
+            checkProtection(c, symbol, livePrice);
 
             final List<Candle> published = new ArrayList<>(fresh);
             final Snapshot publishedSnap = snap;
@@ -181,6 +195,23 @@ public class TradeEngine {
                 for (Listener l : listeners) l.onEngineMessage(msg);
             });
         }
+    }
+
+    /** Closes the paper position when a stop loss or take profit level is touched. */
+    private void checkProtection(final Context c, final String symbol, final double price) {
+        Portfolio p = Portfolio.load(c);
+        final int hit = p.protectionHit(price);
+        if (hit == 0) return;
+        // clear first so a slow fill cannot trigger the same level twice
+        p.clearProtection();
+        p.save(c);
+        TradeExecutor.execute(c, symbol, "SELL", 0, price, (ok, message) -> {
+            if (ok) {
+                for (Listener l : listeners) l.onProtectionTriggered(hit, price);
+            } else {
+                for (Listener l : listeners) l.onEngineMessage(message);
+            }
+        });
     }
 
     private void publishSignalIfNeeded(Context c, Snapshot snap, String symbol, String interval,

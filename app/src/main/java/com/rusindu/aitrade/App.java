@@ -14,7 +14,28 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        applyTheme(this);
         createChannels();
+    }
+
+    /** Applies the saved light / dark / system preference. */
+    public static void applyTheme(android.content.Context c) {
+        String theme = com.rusindu.aitrade.store.Prefs.theme(c);
+        switch (theme) {
+            case "light":
+                androidx.appcompat.app.AppCompatDelegate
+                        .setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case "dark":
+                androidx.appcompat.app.AppCompatDelegate
+                        .setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            default:
+                androidx.appcompat.app.AppCompatDelegate
+                        .setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate
+                                .MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+        }
     }
 
     private void createChannels() {

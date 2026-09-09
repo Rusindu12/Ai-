@@ -9,7 +9,9 @@ public final class Prefs {
     public static final String FILE = "ai_trade_prefs";
 
     public static final String K_LANG = "lang";
+    public static final String K_THEME = "theme";
     public static final String K_SYMBOL = "symbol";
+    public static final String K_WATCHLIST = "watchlist";
     public static final String K_INTERVAL = "interval";
     public static final String K_THRESHOLD = "threshold";
     public static final String K_POLL = "poll_seconds";
@@ -72,6 +74,11 @@ public final class Prefs {
 
     public static String lang(Context c) {
         return getString(c, K_LANG, "system");
+    }
+
+    /** "system" | "light" | "dark" */
+    public static String theme(Context c) {
+        return getString(c, K_THEME, "system");
     }
 
     public static String symbol(Context c) {

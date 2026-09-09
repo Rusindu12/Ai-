@@ -7,15 +7,20 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.core.content.ContextCompat;
+
+import com.rusindu.aitrade.R;
 import com.rusindu.aitrade.util.Fmt;
 
-/** RSI oscillator strip with 30 / 70 bands. */
+/** RSI oscillator strip with 30 / 70 bands, shaded by overbought / oversold. */
 public class RsiView extends View {
 
     private final Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint band = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint mid = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint zoneUp = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint zoneDown = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path path = new Path();
 
     private double[] rsi = new double[0];
@@ -29,14 +34,16 @@ public class RsiView extends View {
         super(context, attrs);
         density = getResources().getDisplayMetrics().density;
         line.setStyle(Paint.Style.STROKE);
-        line.setStrokeWidth(dp(1.4f));
-        line.setColor(0xFFAB47BC);
-        band.setColor(0x22FFFFFF);
+        line.setStrokeWidth(dp(1.5f));
+        line.setColor(ContextCompat.getColor(context, R.color.rsi_line));
+        band.setColor(ContextCompat.getColor(context, R.color.grid));
         band.setStrokeWidth(dp(1));
-        mid.setColor(0x11FFFFFF);
+        mid.setColor(ContextCompat.getColor(context, R.color.hairline));
         mid.setStrokeWidth(dp(1));
-        text.setColor(0x99FFFFFF);
+        text.setColor(ContextCompat.getColor(context, R.color.text_tertiary));
         text.setTextSize(dp(9));
+        zoneUp.setColor(ContextCompat.getColor(context, R.color.up_soft));
+        zoneDown.setColor(ContextCompat.getColor(context, R.color.down_soft));
     }
 
     private float dp(float v) {
@@ -51,8 +58,9 @@ public class RsiView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int w = MeasureSpec.getSize(widthMeasureSpec);
-        int h = MeasureSpec.getSize(heightMeasureSpec);
-        if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) h = (int) dp(70);
+        int h = MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
+                ? MeasureSpec.getSize(heightMeasureSpec)
+                : (int) dp(76);
         setMeasuredDimension(w, h);
     }
 
@@ -60,7 +68,7 @@ public class RsiView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         float padLeft = dp(6);
-        float padRight = dp(34);
+        float padRight = dp(36);
         float padTop = dp(4);
         float padBottom = dp(4);
         float w = getWidth() - padLeft - padRight;
@@ -70,6 +78,8 @@ public class RsiView extends View {
         float y70 = padTop + h * 0.3f;
         float y30 = padTop + h * 0.7f;
         float y50 = padTop + h * 0.5f;
+        canvas.drawRect(padLeft, padTop, padLeft + w, y70, zoneUp);
+        canvas.drawRect(padLeft, y30, padLeft + w, padTop + h, zoneDown);
         canvas.drawLine(padLeft, y70, padLeft + w, y70, band);
         canvas.drawLine(padLeft, y30, padLeft + w, y30, band);
         canvas.drawLine(padLeft, y50, padLeft + w, y50, mid);
@@ -103,7 +113,7 @@ public class RsiView extends View {
 
         double lastV = rsi[n - 1];
         if (!Double.isNaN(lastV)) {
-            canvas.drawText(Fmt.num(lastV, 1), padLeft + w + dp(4), padTop + h * 0.5f + dp(12), text);
+            canvas.drawText(Fmt.num(lastV, 0), padLeft + w + dp(4), padTop + h * 0.5f + dp(14), text);
         }
     }
 }

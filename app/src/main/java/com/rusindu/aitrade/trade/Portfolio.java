@@ -37,6 +37,10 @@ public class Portfolio {
     public double feeRate = 0.001;
     public double startCash;
 
+    /** Absolute price levels, 0 = disabled. Checked by the polling loop. */
+    public double stopLoss;
+    public double takeProfit;
+
     public Portfolio(double startCash) {
         this.startCash = startCash;
         this.cash = startCash;
@@ -104,12 +108,31 @@ public class Portfolio {
         return Result.ok(t);
     }
 
+    public void clearProtection() {
+        stopLoss = 0;
+        takeProfit = 0;
+    }
+
+    public boolean hasProtection() {
+        return qty > 0 && (stopLoss > 0 || takeProfit > 0);
+    }
+
+    /** @return {@code 1} stop loss, {@code 2} take profit, {@code 0} nothing triggered */
+    public int protectionHit(double price) {
+        if (qty <= 0 || price <= 0) return 0;
+        if (stopLoss > 0 && price <= stopLoss) return 1;
+        if (takeProfit > 0 && price >= takeProfit) return 2;
+        return 0;
+    }
+
     public void reset(double newStartCash) {
         startCash = newStartCash;
         cash = newStartCash;
         qty = 0;
         entryPrice = 0;
         realized = 0;
+        stopLoss = 0;
+        takeProfit = 0;
     }
 
     public String toJson() {
@@ -121,6 +144,8 @@ public class Portfolio {
             o.put("realized", realized);
             o.put("start", startCash);
             o.put("fee", feeRate);
+            o.put("sl", stopLoss);
+            o.put("tp", takeProfit);
         } catch (Exception ignored) {
         }
         return o.toString();
@@ -135,6 +160,8 @@ public class Portfolio {
             p.entryPrice = o.optDouble("entry", 0);
             p.realized = o.optDouble("realized", 0);
             p.feeRate = o.optDouble("fee", 0.001);
+            p.stopLoss = o.optDouble("sl", 0);
+            p.takeProfit = o.optDouble("tp", 0);
             return p;
         } catch (Exception e) {
             return new Portfolio(defaultStart);

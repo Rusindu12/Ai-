@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Light palette (default). Dark lives in values-night/colors.xml -->
 <resources>
-    <color name="bg">#0E1116</color>
-    <color name="surface">#161B22</color>
-    <color name="surface_alt">#232A34</color>
-    <color name="text_primary">#E6EDF3</color>
-    <color name="text_secondary">#8B949E</color>
-    <color name="accent">#58A6FF</color>
-    <color name="up">#26A69A</color>
-    <color name="down">#EF5350</color>
-    <color name="neutral">#9AA4B2</color>
-    <color name="ic_launcher_background">#0E1116</color>
+    <color name="bg">#F3F5F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#E7EBF2</color>
+    <color name="surface_raised">#FFFFFF</color>
+    <color name="text_primary">#0D1420</color>
+    <color name="text_secondary">#5D6879</color>
+    <color name="text_tertiary">#8C96A6</color>
+
+    <color name="accent">#2563EB</color>
+    <color name="accent_soft">#1A2563EB</color>
+    <color name="up">#0E9F6E</color>
+    <color name="up_soft">#1A0E9F6E</color>
+    <color name="down">#DC2626</color>
+    <color name="down_soft">#1ADC2626</color>
+    <color name="neutral">#8C96A6</color>
+    <color name="neutral_soft">#14808C9A</color>
+
+    <color name="ema_fast">#D97706</color>
+    <color name="ema_slow">#2563EB</color>
+    <color name="rsi_line">#7C3AED</color>
+    <color name="grid">#14000000</color>
+    <color name="hairline">#1F0D1420</color>
+
+    <color name="hero_grad_start">#1D4ED8</color>
+    <color name="hero_grad_end">#0EA5E9</color>
+    <color name="on_hero">#FFFFFF</color>
+    <color name="on_hero_dim">#B3FFFFFF</color>
+
+    <color name="ic_launcher_background">#0D1420</color>
 </resources>

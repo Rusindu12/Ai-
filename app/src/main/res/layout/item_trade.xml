@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/trSide"
@@ -32,7 +32,7 @@
             android:id="@+id/trTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/text_tertiary"
             android:textSize="11sp" />
     </LinearLayout>
 
@@ -53,13 +53,13 @@
             android:id="@+id/trMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/text_tertiary"
             android:textSize="10sp" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/trPnl"
-        android:layout_width="76dp"
+        android:layout_width="72dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:gravity="end"

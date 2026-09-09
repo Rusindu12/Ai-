@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark "trading terminal" palette -->
+<resources>
+    <color name="bg">#0A0D13</color>
+    <color name="surface">#12161F</color>
+    <color name="surface_alt">#1C2230</color>
+    <color name="surface_raised">#171C27</color>
+    <color name="text_primary">#E9EFF7</color>
+    <color name="text_secondary">#8D97A8</color>
+    <color name="text_tertiary">#646E80</color>
+
+    <color name="accent">#4C8DFF</color>
+    <color name="accent_soft">#1F4C8DFF</color>
+    <color name="up">#16C784</color>
+    <color name="up_soft">#1F16C784</color>
+    <color name="down">#F0455A</color>
+    <color name="down_soft">#1FF0455A</color>
+    <color name="neutral">#8D97A8</color>
+    <color name="neutral_soft">#1A8D97A8</color>
+
+    <color name="ema_fast">#F5A623</color>
+    <color name="ema_slow">#4C8DFF</color>
+    <color name="rsi_line">#A78BFA</color>
+    <color name="grid">#1FFFFFFF</color>
+    <color name="hairline">#1FFFFFFF</color>
+
+    <color name="hero_grad_start">#12294F</color>
+    <color name="hero_grad_end">#0E3A4A</color>
+    <color name="on_hero">#FFFFFF</color>
+    <color name="on_hero_dim">#A6FFFFFF</color>
+
+    <color name="ic_launcher_background">#0A0D13</color>
+</resources>

@@ -34,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
     private final ExecutorService io = Executors.newSingleThreadExecutor();
 
     private TextInputEditText etPoll, etHorizon, etThreshold, etMinConf, etAutoPct, etLr,
-            etApiKey, etApiSecret, etStartCash;
+            etApiKey, etApiSecret, etStartCash, etWatchlist;
     private TextView tvKeyStatus;
     private MaterialSwitch switchWatch, switchNotify, switchLive, switchTestnet;
 
@@ -66,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
         etApiKey = findViewById(R.id.etApiKey);
         etApiSecret = findViewById(R.id.etApiSecret);
         etStartCash = findViewById(R.id.etStartCash);
+        etWatchlist = findViewById(R.id.etWatchlist);
         tvKeyStatus = findViewById(R.id.tvKeyStatus);
         switchWatch = findViewById(R.id.switchWatch);
         switchNotify = findViewById(R.id.switchNotify);
@@ -74,6 +75,12 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void populate() {
+        String theme = Prefs.theme(this);
+        RadioGroup rgTheme = findViewById(R.id.rgTheme);
+        if ("light".equals(theme)) rgTheme.check(R.id.rbThemeLight);
+        else if ("dark".equals(theme)) rgTheme.check(R.id.rbThemeDark);
+        else rgTheme.check(R.id.rbThemeSystem);
+
         String lang = Prefs.lang(this);
         RadioGroup rg = findViewById(R.id.rgLang);
         if (LocaleHelper.SI.equals(lang)) rg.check(R.id.rbSi);
@@ -94,9 +101,26 @@ public class SettingsActivity extends AppCompatActivity {
         etApiKey.setText(Prefs.apiKey(this));
         etApiSecret.setText(Prefs.apiSecret(this));
         etStartCash.setText(String.valueOf(Prefs.startCash(this)));
+
+        StringBuilder wl = new StringBuilder();
+        for (String symbol : com.rusindu.aitrade.util.Watchlist.get(this)) {
+            if (wl.length() > 0) wl.append(", ");
+            wl.append(symbol);
+        }
+        etWatchlist.setText(wl.toString());
     }
 
     private void wireListeners() {
+        RadioGroup rgTheme = findViewById(R.id.rgTheme);
+        rgTheme.setOnCheckedChangeListener((group, checkedId) -> {
+            String next = checkedId == R.id.rbThemeLight ? "light"
+                    : (checkedId == R.id.rbThemeDark ? "dark" : "system");
+            if (next.equals(Prefs.theme(this))) return;
+            Prefs.putString(this, Prefs.K_THEME, next);
+            App.applyTheme(this);
+            recreate();
+        });
+
         RadioGroup rg = findViewById(R.id.rgLang);
         rg.setOnCheckedChangeListener((group, checkedId) -> {
             String lang = checkedId == R.id.rbSi ? LocaleHelper.SI
@@ -169,6 +193,13 @@ public class SettingsActivity extends AppCompatActivity {
         Prefs.putString(this, Prefs.K_API_KEY, text(etApiKey));
         Prefs.putString(this, Prefs.K_API_SECRET, text(etApiSecret));
         Prefs.putFloat(this, Prefs.K_START_CASH, floatOf(etStartCash, 10000f));
+
+        java.util.List<String> watch = new java.util.ArrayList<>();
+        for (String part : text(etWatchlist).split(",")) {
+            String t = part.trim().toUpperCase(java.util.Locale.US);
+            if (!t.isEmpty() && !watch.contains(t)) watch.add(t);
+        }
+        if (!watch.isEmpty()) com.rusindu.aitrade.util.Watchlist.set(this, watch);
         saveModelSettings();
         Journal.get(this).save(this);
     }

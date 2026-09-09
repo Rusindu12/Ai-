@@ -146,6 +146,25 @@ public class SignalService extends Service implements TradeEngine.Listener {
         // surfaced in the activity; the ongoing notification keeps the last good state
     }
 
+    @Override
+    public void onProtectionTriggered(int kind, double price) {
+        if (!App.canNotify(this)) return;
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (nm == null) return;
+        String title = getString(kind == 1 ? R.string.notif_sl_title : R.string.notif_tp_title,
+                Fmt.pair(Prefs.symbol(this)));
+        Notification n = new NotificationCompat.Builder(this, App.CHANNEL_SIGNALS)
+                .setSmallIcon(R.drawable.ic_signal)
+                .setContentTitle(title)
+                .setContentText(getString(R.string.notif_body, Fmt.price(price), 100))
+                .setColor(getColor(kind == 1 ? R.color.down : R.color.up))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(openApp())
+                .build();
+        nm.notify(SIGNAL_ID + 900 + kind, n);
+    }
+
     private int directionLabel(int direction) {
         if (direction == Direction.BUY) return R.string.signal_buy;
         if (direction == Direction.SELL) return R.string.signal_sell;

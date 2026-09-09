@@ -28,6 +28,44 @@
 
             <TextView
                 style="@style/SectionTitle"
+                android:text="@string/section_appearance" />
+
+            <RadioGroup
+                android:id="@+id/rgTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbThemeSystem"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/theme_system"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+
+                <RadioButton
+                    android:id="@+id/rbThemeLight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/theme_light"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+
+                <RadioButton
+                    android:id="@+id/rbThemeDark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/theme_dark"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+            </RadioGroup>
+
+            <TextView
+                style="@style/SectionTitle"
                 android:text="@string/section_language" />
 
             <RadioGroup
@@ -100,6 +138,20 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/watchlist_title">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etWatchlist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapCharacters"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
