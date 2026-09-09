@@ -32,17 +32,17 @@ Daemon will be stopped at the end of the build
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:processDebugManifestForPackage
-> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugJavaResource
 > Task :app:mergeDebugStartupProfile
+> Task :app:processDebugManifestForPackage
+> Task :app:checkDebugDuplicateClasses
 > Task :app:processDebugResources
 > Task :app:mergeExtDexDebug
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics
-> Task :app:mergeDebugJniLibFolders
 > Task :app:mergeLibDexDebug
+> Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
 > Task :app:mergeProjectDexDebug
@@ -53,10 +53,10 @@ Daemon will be stopped at the end of the build
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 26s
+BUILD SUCCESSFUL in 1m 14s
 33 actionable tasks: 33 executed
 ===== APK =====
--rw-r--r-- 1 runner runner 6042470 Sep  9 11:01 app/build/outputs/apk/debug/app-debug.apk
+-rw-r--r-- 1 runner runner 6046434 Sep  9 11:12 app/build/outputs/apk/debug/app-debug.apk
 ----- aapt2 badging -----
 package: name='com.rusindu.aitrade' versionCode='1' versionName='1.0.0-debug' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
 minSdkVersion:'26'
@@ -90,10 +90,10 @@ application-label-en-IN:'AI Trade Signals'
 application-label-en-XC:'AI Trade Signals'
 ----- apksigner verify -----
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: 237227c7f2e680f4d8aa76527a466f3f2cdea6516f0be60531f212501f592212
-V2 Signer: certificate SHA-1 digest: f03981602d99648d55df7b741d4ce1bbb97b8d9d
-V2 Signer: certificate MD5 digest: aa49e087c8bbbd97c4d08e02b0db67f7
+V2 Signer: certificate SHA-256 digest: ae1293184c163a1d3593c547c7cacfbf417eab774667974d3b3a28275a685c4c
+V2 Signer: certificate SHA-1 digest: 674ff76935f9a0af5f44ac104f5c9862ff540894
+V2 Signer: certificate MD5 digest: 272ada96465be1d3ca693f7c105d9b3d
 ----- zip -----
-  1151860  1981-01-01 01:01   resources.arsc
+  1153616  1981-01-01 01:01   resources.arsc
 ---------                     -------
- 12610396                     929 files
+ 12616296                     929 files
