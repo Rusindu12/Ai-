@@ -177,7 +177,7 @@ public class ModelFragment extends Fragment implements TradeEngine.Listener {
 
         final double threshold = Prefs.threshold(requireContext());
         final int horizon = Prefs.horizonCandles(requireContext());
-        final double minConf = Prefs.minConfidence(requireContext);
+        final double minConf = Prefs.minConfidence(requireContext());
         final AdaptiveModel model = Journal.get(requireContext()).model();
 
         TradeEngine.get().submit(() -> {

@@ -53,7 +53,8 @@ public class ScannerAdapter extends RecyclerView.Adapter<ScannerAdapter.VH> {
         int color = ContextCompat.getColor(h.itemView.getContext(),
                 buy ? R.color.up : (sell ? R.color.down : R.color.neutral));
 
-        h.badge.setText(buy ? R.string.signal_buy : (sell ? R.string.signal_sell : "—"));
+        h.badge.setText(buy ? h.itemView.getContext().getString(R.string.signal_buy)
+                : (sell ? h.itemView.getContext().getString(R.string.signal_sell) : "—"));
         h.badge.setBackgroundResource(buy ? R.drawable.bg_badge_buy
                 : (sell ? R.drawable.bg_badge_sell : R.drawable.bg_badge_neutral));
         h.symbol.setText(Fmt.pair(r.symbol));
