@@ -75,6 +75,12 @@
     <string name="model_threshold_eff">Threshold (auto)</string>
     <string name="model_expert_trend">Trend expert</string>
     <string name="model_expert_range">Range expert</string>
+    <string name="div_bull">Bullish RSI divergence — lower low in price, not in RSI (%1$s)</string>
+    <string name="div_bear">Bearish RSI divergence — higher high in price, not in RSI (%1$s)</string>
+    <string name="press_high">Buying pressure — volume sits with the bulls (%1$s)</string>
+    <string name="press_low">Selling pressure — volume sits with the bears (%1$s)</string>
+    <string name="cand_bull">Bullish candle pattern — engulfing or hammer (%1$s)</string>
+    <string name="cand_bear">Bearish candle pattern — engulfing or shooting star (%1$s)</string>
     <string name="ind_trend">Trend (EMA 50)</string>
 
     <!-- scanner -->

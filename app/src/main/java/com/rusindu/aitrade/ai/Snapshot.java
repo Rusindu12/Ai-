@@ -25,6 +25,8 @@ public class Snapshot {
     public double regime = 0.5;
     /** The score threshold actually applied to this evaluation. */
     public double threshold;
+    /** Calibration inputs {|score|, agreement, volFactor, adxFactor, htfAgree} for grading. */
+    public double[] calx = new double[0];
 
     public double price;
     public double atr;

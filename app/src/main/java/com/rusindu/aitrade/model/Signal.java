@@ -16,6 +16,7 @@ public class Signal {
     public double atrPct;
     public double[] features;
     public double regime = 0.5; // market regime at signal time; grades go to the right expert
+    public double[] calx = new double[0]; // confidence-calibration inputs at signal time
     public String reason;
 
     // Graded after the evaluation horizon has passed.
@@ -48,6 +49,9 @@ public class Signal {
             JSONArray arr = new JSONArray();
             for (double f : features) arr.put(f);
             o.put("f", arr);
+            JSONArray cx = new JSONArray();
+            for (double f : calx) cx.put(f);
+            o.put("cx", cx);
         } catch (JSONException ignored) {
         }
         return o;
@@ -69,6 +73,11 @@ public class Signal {
         s.correct = o.optInt("ok", 0) == 1;
         s.reason = o.optString("why", "");
         s.regime = o.optDouble("rg", 0.5);
+        JSONArray cx = o.optJSONArray("cx");
+        if (cx != null) {
+            s.calx = new double[cx.length()];
+            for (int i = 0; i < cx.length(); i++) s.calx[i] = cx.optDouble(i, 0);
+        }
         JSONArray arr = o.optJSONArray("f");
         if (arr != null) {
             s.features = new double[arr.length()];

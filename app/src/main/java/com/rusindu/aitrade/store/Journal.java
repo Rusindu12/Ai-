@@ -124,6 +124,7 @@ public class Journal {
 
             model.learn(s.features, s.score, outcome, s.regime);
             model.recordGrade(hit, s.direction * r, r, s.regime);
+            model.learnCalibration(s.calx, hit);
 
             s.graded = true;
             s.outcome = outcome;

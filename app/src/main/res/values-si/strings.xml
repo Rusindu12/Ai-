@@ -75,6 +75,12 @@
     <string name="model_threshold_eff">සීමාව (ස්වයං)</string>
     <string name="model_expert_trend">නැඹුරු විශේෂඥයා</string>
     <string name="model_expert_range">පරාස විශේෂඥයා</string>
+    <string name="div_bull">මිල අඩු වුවත් RSI ඉහළට — ගෝණික අපසරණය (%1$s)</string>
+    <string name="div_bear">මිල ඉහළ ගියත් RSI පහළට — වලහ අපසරණය (%1$s)</string>
+    <string name="press_high">ගැනුම් පීඩනය — පරිමාව ගැනුම්කරුවන් සමඟ (%1$s)</string>
+    <string name="press_low">විකුණුම් පීඩනය — පරිමාව විකුණුම්කරුවන් සමඟ (%1$s)</string>
+    <string name="cand_bull">ගෝණික ඉටිපන්දම් රටාව — engulfing හෝ hammer (%1$s)</string>
+    <string name="cand_bear">වලහ ඉටිපන්දම් රටාව — engulfing හෝ shooting star (%1$s)</string>
     <string name="ind_trend">ප්‍රවණතාව (EMA 50)</string>
 
     <!-- scanner -->

@@ -111,6 +111,30 @@ public final class Reasons {
                 id = R.string.htf_down;
                 value = Fmt.num(r.value, 2);
                 break;
+            case "div_bull":
+                id = R.string.div_bull;
+                value = Fmt.num(r.value, 2);
+                break;
+            case "div_bear":
+                id = R.string.div_bear;
+                value = Fmt.num(r.value, 2);
+                break;
+            case "press_high":
+                id = R.string.press_high;
+                value = Fmt.num(r.value, 2);
+                break;
+            case "press_low":
+                id = R.string.press_low;
+                value = Fmt.num(r.value, 2);
+                break;
+            case "cand_bull":
+                id = R.string.cand_bull;
+                value = Fmt.num(r.value, 2);
+                break;
+            case "cand_bear":
+                id = R.string.cand_bear;
+                value = Fmt.num(r.value, 2);
+                break;
             default:
                 return r.code;
         }

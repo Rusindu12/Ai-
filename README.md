@@ -48,19 +48,24 @@ wE_i      ← clip( wE_i + lr·respE / √(ε + Σgrad²) · (outcome − score)
 threshold_eff = threshold · clamp(1.35 − 0.7 · hitEWMA, 0.65, 1.35)
 ```
 
-**A regime-aware mixture of two experts.** Eight ATR-normalised features — RSI 14, EMA 9/21
-ribbon distance, MACD histogram, Bollinger %B, Stochastic %K with cross confirmation, 10-candle
-momentum, distance from EMA 50, and a higher-timeframe trend (EMA slope on 3-candle aggregates) —
+**A regime-aware mixture of two experts.** Eleven features — RSI 14, EMA 9/21 ribbon distance,
+MACD histogram, Bollinger %B, Stochastic %K with cross confirmation, 10-candle momentum, distance
+from EMA 50, a higher-timeframe trend (EMA slope on 3-candle aggregates), RSI divergence, volume
+buying/selling pressure and a candlestick-pattern score (engulfing / hammer / shooting star) —
 feed two weight vectors: a trend expert and a range expert. The market regime (Kaufman efficiency
 ratio blended with ADX) decides how much each expert votes and how much each one learns from the
 next grade, so mean-reversion features stop polluting trends and trend features stop whipsawing
 in ranges. Each feature also keeps an AdaGrad squared-gradient accumulator, so loud features get
-smaller steps. Confidence is a separate blend — 55% \|score\| + 25% feature agreement + 20%
-volume ratio, scaled by ADX, plus a bonus when the higher-timeframe trend agrees with the call.
+smaller steps, and a small decay keeps pulling weights back towards neutral.
 
-An exponentially weighted hit-rate nudges the effective threshold up to ×1.35 while the model has
-been wrong (trade less, wait for better setups) and down to ×0.7 on a hot streak. The Model tab
-shows the live regime, the auto threshold and each expert's hit rate.
+**Confidence is learned, not hand-tuned.** A tiny online logistic regression over (|score|,
+feature agreement, volume factor, ADX factor, HTF agreement) is trained on every graded signal,
+so the confidence you see is the model's own calibrated estimate that the call wins.
+
+Each expert keeps its own hit-rate EWMA; the effective threshold is the regime blend of the two
+per-expert factors — a cold expert tightens its own entries (up to ×1.35) without punishing the
+other one, and a hot streak relaxes them (down to ×0.7). The Model tab shows the live regime, the
+auto threshold and each expert's hit rate.
 
 After every signal the app waits for the grading horizon, measures what the market actually did
 and updates the responsible expert with the delta rule — features that keep being wrong lose

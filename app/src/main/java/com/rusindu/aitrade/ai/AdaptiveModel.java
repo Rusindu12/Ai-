@@ -6,43 +6,46 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 /**
- * The learning part of the app — v2.
+ * The learning part of the app — v3.
  *
- * <p>Three upgrades over the original single-weight delta rule:
+ * <p>On top of the v2 regime-aware mixture of experts with AdaGrad steps, this version adds:
  * <ol>
- *   <li><b>Regime-aware mixture of experts.</b> Two weight vectors — a trend expert and a
- *       range expert — vote on every score. The market regime (0 = ranging, 1 = trending,
- *       computed by {@link SignalEngine} from the Kaufman efficiency ratio and ADX) blends
- *       them, and after grading each expert is updated in proportion to how responsible it
- *       was for the call. Mean-reversion features stop polluting trending markets and
- *       trend features stop whipsawing in ranges.</li>
- *   <li><b>AdaGrad step sizes.</b> Each feature keeps a squared-gradient accumulator; the
- *       per-feature step is {@code lr / sqrt(eps + acc)}. Features that fire loud and often
- *       get smaller steps, quiet informative features keep their influence — no more one
- *       global learning rate for everything.</li>
- *   <li><b>Adaptive threshold.</b> An exponentially weighted hit-rate nudges the effective
- *       score threshold up when the model has been wrong lately (trade less, wait for better
- *       setups) and down when it has been right (trust itself more).</li>
+ *   <li><b>Three more features</b> — RSI divergence, volume buying/selling pressure and a
+ *       candlestick-pattern score (engulfing / hammer / shooting star) — bringing the
+ *       ensemble to eleven inputs.</li>
+ *   <li><b>Learned confidence.</b> Instead of a hand-tuned blend, a small online logistic
+ *       regression over (|score|, feature agreement, volume factor, ADX factor, HTF
+ *       agreement) is trained on every graded signal, so the confidence number becomes the
+ *       model's own calibrated estimate of "this call wins".</li>
+ *   <li><b>Per-expert adaptive thresholds.</b> Each expert keeps its own hit-rate EWMA; the
+ *       effective threshold is the regime blend of the two expert factors, so a trend expert
+ *       on a cold streak tightens trend entries without punishing range calls.</li>
+ *   <li><b>Weight decay</b> towards the neutral weight on every step, so no feature can lock
+ *       itself at the clip bounds forever.</li>
  * </ol>
  *
- * <p>Grading itself is unchanged and honest: after the horizon the volatility-normalised
- * realised move is the target, and the delta rule
- * <pre>w_i &lt;- w_i + lr_i * (outcome - prediction) * feature_i</pre>
- * pushes each responsible expert towards it. Everything runs on the device.</p>
+ * <p>Grading stays honest: after the horizon the volatility-normalised realised move is the
+ * target for the delta rule, and a 1/0 hit is the target for the calibration. Everything runs
+ * on the device.</p>
  */
 public class AdaptiveModel {
 
-    public static final String[] FEATURES = {"RSI", "EMA", "MACD", "BOLL", "STOCH", "MOM", "TREND", "HTF"};
+    public static final String[] FEATURES = {"RSI", "EMA", "MACD", "BOLL", "STOCH", "MOM",
+            "TREND", "HTF", "DIV", "PRESS", "CAND"};
 
     private static final double W_MIN = 0.05;
     private static final double W_MAX = 5.0;
     private static final double ADAGRAD_EPS = 1e-6;
     private static final double ACC_EW_DECAY = 0.8;
+    private static final double WEIGHT_DECAY = 0.002;
+    private static final double CALIB_LR = 0.05;
+    private static final double[] CALIB_INIT = {3.0, 1.5, 0.8, 0.8, 0.5, -2.6};
 
     private final double[] wT; // trend-regime expert weights
     private final double[] wR; // range-regime expert weights
     private final double[] gT; // per-feature squared-gradient accumulators (AdaGrad)
     private final double[] gR;
+    private final double[] calW; // logistic confidence calibration weights, bias last
 
     private double baseLr = 0.10;
     private double lastRegime = 0.5;
@@ -52,7 +55,9 @@ public class AdaptiveModel {
     private int correct;
     private double sumDirectionalReturn;
     private double sumAbsoluteReturn;
-    private double accEW = 0.5; // EWMA of directional hits, drives the adaptive threshold
+    private double accEW = 0.5;  // global hit EWMA (kept for the UI / recent accuracy)
+    private double accEWT = 0.5; // trend-expert hit EWMA
+    private double accEWR = 0.5; // range-expert hit EWMA
 
     // per-expert scoreboard; the expert with regime majority owns the grade
     private int gradedT;
@@ -65,6 +70,7 @@ public class AdaptiveModel {
         wR = new double[FEATURES.length];
         gT = new double[FEATURES.length];
         gR = new double[FEATURES.length];
+        calW = CALIB_INIT.clone();
         Arrays.fill(wT, 1.0);
         Arrays.fill(wR, 1.0);
     }
@@ -106,6 +112,29 @@ public class AdaptiveModel {
         return (f != null && i < f.length && !Double.isNaN(f[i])) ? f[i] : 0;
     }
 
+    // ------------------------------------------------------------------ calibrated confidence
+
+    /**
+     * Learned probability that the current call grades as a hit.
+     * {@code x} = {|score|, feature agreement, volume factor, ADX factor, HTF agreement}.
+     */
+    public double confidence(double[] x) {
+        double z = calW[calW.length - 1];
+        for (int i = 0; i < x.length && i < calW.length - 1; i++) z += calW[i] * x[i];
+        double p = 1.0 / (1.0 + Math.exp(-z));
+        return Indicators.clamp(p, 0.02, 0.98);
+    }
+
+    /** One logistic-gradient step on a graded signal: target 1 on a hit, 0 on a miss. */
+    public synchronized void learnCalibration(double[] x, boolean hit) {
+        if (x == null || x.length == 0) return;
+        double p = confidence(x);
+        double err = (hit ? 1.0 : 0.0) - p;
+        for (int i = 0; i < x.length && i < calW.length - 1; i++) calW[i] += CALIB_LR * err * x[i];
+        calW[calW.length - 1] += CALIB_LR * err;
+        for (int i = 0; i < calW.length; i++) calW[i] = Math.max(-10, Math.min(10, calW[i]));
+    }
+
     // ------------------------------------------------------------------ learning
 
     public synchronized void learn(double[] f, double predicted, double outcome) {
@@ -114,7 +143,8 @@ public class AdaptiveModel {
 
     /**
      * One online step per expert. Each expert's responsibility is the regime mixture at
-     * signal time; AdaGrad scales the per-feature step by the gradient history.
+     * signal time; AdaGrad scales the per-feature step by the gradient history and a small
+     * decay keeps pulling weights back towards neutral.
      */
     public synchronized void learn(double[] f, double predicted, double outcome, double regime) {
         double r = Indicators.clamp(regime, 0, 1);
@@ -126,22 +156,26 @@ public class AdaptiveModel {
             double gg = grad * grad;
 
             gT[i] += gg;
-            wT[i] = clip(wT[i] + baseLr * r / Math.sqrt(ADAGRAD_EPS + gT[i]) * grad);
+            double nT = wT[i] + baseLr * r / Math.sqrt(ADAGRAD_EPS + gT[i]) * grad;
+            wT[i] = clip(nT + WEIGHT_DECAY * (1 - nT));
 
             gR[i] += gg;
-            wR[i] = clip(wR[i] + baseLr * (1 - r) / Math.sqrt(ADAGRAD_EPS + gR[i]) * grad);
+            double nR = wR[i] + baseLr * (1 - r) / Math.sqrt(ADAGRAD_EPS + gR[i]) * grad;
+            wR[i] = clip(nR + WEIGHT_DECAY * (1 - nR));
         }
     }
 
     // ------------------------------------------------------------------ adaptive threshold
 
     /**
-     * The score threshold the engine should actually use. Recent misses push it up to
-     * ×1.35 (wait for stronger setups); a hot streak relaxes it to ×0.7.
+     * The score threshold the engine should actually use: the regime blend of the two
+     * per-expert factors. A cold expert pushes its factor towards ×1.35 (wait for stronger
+     * setups); a hot streak relaxes it towards ×0.7.
      */
     public double effectiveThreshold(double base) {
-        double factor = Indicators.clamp(1.35 - 0.7 * accEW, 0.65, 1.35);
-        return base * factor;
+        double fT = Indicators.clamp(1.35 - 0.7 * accEWT, 0.65, 1.35);
+        double fR = Indicators.clamp(1.35 - 0.7 * accEWR, 0.65, 1.35);
+        return base * (lastRegime * fT + (1 - lastRegime) * fR);
     }
 
     /** EWMA of the directional hit rate in [0, 1]. */
@@ -159,9 +193,11 @@ public class AdaptiveModel {
         sumAbsoluteReturn += Math.abs(absoluteReturn);
         accEW = ACC_EW_DECAY * accEW + (1 - ACC_EW_DECAY) * (hit ? 1 : 0);
         if (Indicators.clamp(regime, 0, 1) >= 0.5) {
+            accEWT = ACC_EW_DECAY * accEWT + (1 - ACC_EW_DECAY) * (hit ? 1 : 0);
             gradedT++;
             if (hit) correctT++;
         } else {
+            accEWR = ACC_EW_DECAY * accEWR + (1 - ACC_EW_DECAY) * (hit ? 1 : 0);
             gradedR++;
             if (hit) correctR++;
         }
@@ -260,6 +296,7 @@ public class AdaptiveModel {
         System.arraycopy(o.wR, 0, wR, 0, wR.length);
         System.arraycopy(o.gT, 0, gT, 0, gT.length);
         System.arraycopy(o.gR, 0, gR, 0, gR.length);
+        System.arraycopy(o.calW, 0, calW, 0, calW.length);
         baseLr = o.baseLr;
         lastRegime = o.lastRegime;
         graded = o.graded;
@@ -267,6 +304,8 @@ public class AdaptiveModel {
         sumDirectionalReturn = o.sumDirectionalReturn;
         sumAbsoluteReturn = o.sumAbsoluteReturn;
         accEW = o.accEW;
+        accEWT = o.accEWT;
+        accEWR = o.accEWR;
         gradedT = o.gradedT;
         correctT = o.correctT;
         gradedR = o.gradedR;
@@ -278,11 +317,14 @@ public class AdaptiveModel {
         Arrays.fill(wR, 1.0);
         Arrays.fill(gT, 0);
         Arrays.fill(gR, 0);
+        System.arraycopy(CALIB_INIT, 0, calW, 0, calW.length);
         graded = 0;
         correct = 0;
         sumDirectionalReturn = 0;
         sumAbsoluteReturn = 0;
         accEW = 0.5;
+        accEWT = 0.5;
+        accEWR = 0.5;
         gradedT = 0;
         correctT = 0;
         gradedR = 0;
@@ -303,6 +345,7 @@ public class AdaptiveModel {
             o.put("wR", arr(wR));
             o.put("gT", arr(gT));
             o.put("gR", arr(gR));
+            o.put("cw", arr(calW));
             o.put("lr", baseLr);
             o.put("rg", lastRegime);
             o.put("g", graded);
@@ -310,6 +353,8 @@ public class AdaptiveModel {
             o.put("sr", sumDirectionalReturn);
             o.put("sa", sumAbsoluteReturn);
             o.put("ae", accEW);
+            o.put("aet", accEWT);
+            o.put("aer", accEWR);
             o.put("gTn", gradedT);
             o.put("cTn", correctT);
             o.put("gRn", gradedR);
@@ -362,6 +407,7 @@ public class AdaptiveModel {
             }
             readArr(o.optJSONArray("gT"), m.gT);
             readArr(o.optJSONArray("gR"), m.gR);
+            readArr(o.optJSONArray("cw"), m.calW);
             m.baseLr = Math.max(0.001, Math.min(1.0, o.optDouble("lr", 0.10)));
             m.lastRegime = Indicators.clamp(o.optDouble("rg", 0.5), 0, 1);
             m.graded = o.optInt("g", 0);
@@ -369,6 +415,8 @@ public class AdaptiveModel {
             m.sumDirectionalReturn = o.optDouble("sr", 0);
             m.sumAbsoluteReturn = o.optDouble("sa", 0);
             m.accEW = Indicators.clamp(o.optDouble("ae", 0.5), 0, 1);
+            m.accEWT = Indicators.clamp(o.optDouble("aet", 0.5), 0, 1);
+            m.accEWR = Indicators.clamp(o.optDouble("aer", 0.5), 0, 1);
             m.gradedT = o.optInt("gTn", 0);
             m.correctT = o.optInt("cTn", 0);
             m.gradedR = o.optInt("gRn", 0);

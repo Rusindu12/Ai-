@@ -167,6 +167,63 @@ public final class SignalEngine {
             }
         }
 
+        // 8 RSI divergence: new price extreme without a matching RSI extreme
+        f[8] = 0;
+        int win = Math.min(30, n - 2);
+        if (win >= 10 && !Double.isNaN(s.rsi)) {
+            int iLo = n - 1 - win, iHi = n - 1 - win;
+            for (int i = n - 1 - win; i <= n - 2; i++) {
+                if (low[i] < low[iLo]) iLo = i;
+                if (high[i] > high[iHi]) iHi = i;
+            }
+            double rLo = rsi[iLo];
+            double rHi = rsi[iHi];
+            double div = 0;
+            if (!Double.isNaN(rLo) && low[n - 1] < low[iLo] && s.rsi > rLo) {
+                div += Indicators.clamp((s.rsi - rLo) / 15.0, 0, 1); // bullish: lower low, higher RSI
+            }
+            if (!Double.isNaN(rHi) && high[n - 1] > high[iHi] && s.rsi < rHi) {
+                div -= Indicators.clamp((rHi - s.rsi) / 15.0, 0, 1); // bearish: higher high, lower RSI
+            }
+            f[8] = Indicators.clamp(div, -1, 1);
+        }
+
+        // 9 Volume pressure: signed volume balance over the last 14 candles
+        f[9] = 0;
+        int pWin = Math.min(14, n - 1);
+        if (pWin >= 5) {
+            double num = 0, den = 0;
+            for (int i = n - pWin; i < n; i++) {
+                double d = close[i] - close[i - 1];
+                if (d == 0) d = close[i] - open[i];
+                num += (d > 0 ? 1 : (d < 0 ? -1 : 0)) * volume[i];
+                den += volume[i];
+            }
+            if (den > 0) f[9] = Indicators.clamp(num / den * 1.5, -1, 1);
+        }
+
+        // 10 Candlestick pattern score: engulfing + hammer / shooting star on the closed candle
+        f[10] = 0;
+        if (n >= 2) {
+            double oC = close[n - 1], oO = open[n - 1];
+            double pC = close[n - 2], pO = open[n - 2];
+            double body = oC - oO;
+            double bodyAbs = Math.abs(body);
+            double range = high[n - 1] - low[n - 1];
+            double pat = 0;
+            if (body > 0 && pC < pO && oC > pO && oO <= pC) pat += 0.7;      // bullish engulfing
+            if (body < 0 && pC > pO && oC < pO && oO >= pC) pat -= 0.7;      // bearish engulfing
+            if (range > 0 && bodyAbs > 0) {
+                double lo = Math.min(oO, oC);
+                double hi = Math.max(oO, oC);
+                double lowerW = lo - low[n - 1];
+                double upperW = high[n - 1] - hi;
+                if (lowerW > 2 * bodyAbs && upperW < bodyAbs) pat += 0.4;   // hammer
+                if (upperW > 2 * bodyAbs && lowerW < bodyAbs) pat -= 0.4;   // shooting star
+            }
+            f[10] = Indicators.clamp(pat, -1, 1);
+        }
+
         s.features = f;
         s.score = model.score(f, regime);
         s.direction = Direction.of(s.score, threshold);
@@ -181,11 +238,11 @@ public final class SignalEngine {
         double agreement = tot == 0 ? 0 : Math.max(pos, neg) / tot;
         double volFactor = Indicators.clamp(s.volRatio / 2.0, 0, 1);
         double adxFactor = Indicators.clamp(s.adx / 40.0, 0, 1);
-        double conf = 0.55 * Math.abs(s.score) + 0.25 * agreement + 0.20 * volFactor;
-        conf *= (0.75 + 0.25 * adxFactor);
-        // higher-timeframe confluence: a small bonus when the HTF trend agrees with the call
-        if (f[7] != 0 && s.score != 0 && (f[7] > 0) == (s.score > 0)) conf += 0.05;
-        s.confidence = Indicators.clamp(conf, 0, 0.98);
+        double mtfAgree = (f[7] != 0 && s.score != 0 && (f[7] > 0) == (s.score > 0)) ? 1 : 0;
+
+        // ---- confidence: the model's own calibrated win estimate ----------------
+        s.calx = new double[]{Math.abs(s.score), agreement, volFactor, adxFactor, mtfAgree};
+        s.confidence = model.confidence(s.calx);
 
         // ---- evidence --------------------------------------------------------
         addReason(s, s.rsi < 30 ? "rsi_oversold" : (s.rsi > 70 ? "rsi_overbought" : "rsi_mid"), s.rsi);
@@ -199,6 +256,12 @@ public final class SignalEngine {
         addReason(s, s.volRatio >= 1 ? "volume_high" : "volume_low", s.volRatio);
         addReason(s, regime >= 0.5 ? "regime_trend" : "regime_range", regime * 100);
         addReason(s, f[7] >= 0 ? "htf_up" : "htf_down", f[7]);
+        if (f[8] > 0.2) addReason(s, "div_bull", f[8]);
+        else if (f[8] < -0.2) addReason(s, "div_bear", f[8]);
+        if (f[9] > 0.25) addReason(s, "press_high", f[9]);
+        else if (f[9] < -0.25) addReason(s, "press_low", f[9]);
+        if (f[10] > 0.3) addReason(s, "cand_bull", f[10]);
+        else if (f[10] < -0.3) addReason(s, "cand_bear", f[10]);
 
         s.valid = true;
         return s;

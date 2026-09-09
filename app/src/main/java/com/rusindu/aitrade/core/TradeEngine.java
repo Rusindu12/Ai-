@@ -241,6 +241,7 @@ public class TradeEngine {
         s.atrPct = snap.atrPct;
         s.features = snap.features;
         s.regime = snap.regime;
+        s.calx = snap.calx;
         s.reason = topReason(snap);
         journal.addSignal(s);
         journal.save(c);
