@@ -321,7 +321,12 @@ public class AdaptiveModel {
 
     private static JSONArray arr(double[] v) {
         JSONArray a = new JSONArray();
-        for (double d : v) a.put(d);
+        for (double d : v) {
+            try {
+                a.put(d);
+            } catch (Exception ignored) {
+            }
+        }
         return a;
     }
 
