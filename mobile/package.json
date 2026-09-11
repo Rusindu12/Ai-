@@ -1,0 +1,20 @@
+{
+  "name": "ai-crypto-trading-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Capacitor Android wrapper for the AI Crypto Trading dashboard.",
+  "scripts": {
+    "build:web": "cd ../frontend && NEXT_STATIC_EXPORT=true npm run build",
+    "sync": "npx cap sync android",
+    "copy": "npx cap copy android",
+    "open": "npx cap open android",
+    "apk:debug": "cd android && ./gradlew assembleDebug",
+    "apk:release": "cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  },
+  "license": "MIT"
+}

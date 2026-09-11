@@ -1,0 +1,11 @@
+{
+  "appId": "com.rusindu.aicrypto",
+  "appName": "AI Crypto Trading",
+  "webDir": "../frontend/out",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

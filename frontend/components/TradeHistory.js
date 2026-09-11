@@ -1,11 +1,11 @@
 'use client';
 
 import { fmtPrice, fmtQty, fmtMoney, timeAgo, cls } from '../lib/format';
-import { getToken } from '../lib/api';
+import { getToken, getApiBase } from '../lib/api';
 
 async function downloadCsv() {
   const token = getToken();
-  const res = await fetch('/api/trading/trades.csv', {
+  const res = await fetch(`${getApiBase()}/api/trading/trades.csv`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (!res.ok) return;

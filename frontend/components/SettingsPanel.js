@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import api, { getToken, setToken } from '../lib/api';
+import api, { getToken, setToken, getApiBase, setBackendUrl } from '../lib/api';
+import { reconnectSocket } from '../lib/socket';
 
 export default function SettingsPanel({ open, onClose, onToggleTheme, theme }) {
   const [email, setEmail] = useState('');
@@ -14,9 +15,20 @@ export default function SettingsPanel({ open, onClose, onToggleTheme, theme }) {
   const [dcaSymbol, setDcaSymbol] = useState('BTCUSDT');
   const [dcaAmount, setDcaAmount] = useState('25');
   const [dcaInterval, setDcaInterval] = useState('3600000');
+  const [backendUrl, setBackendUrlState] = useState('');
   const [message, setMessage] = useState(null);
 
   const flash = (ok, text) => setMessage({ ok, text });
+
+  useEffect(() => {
+    setBackendUrlState(getApiBase());
+  }, [open]);
+
+  const saveBackendUrl = () => {
+    setBackendUrl(backendUrl.trim() || null);
+    reconnectSocket();
+    flash(true, 'Server URL saved — reconnecting…');
+  };
 
   const refresh = async () => {
     if (!getToken()) return;
@@ -93,6 +105,21 @@ export default function SettingsPanel({ open, onClose, onToggleTheme, theme }) {
             {message.text}
           </div>
         )}
+
+        <section className="space-y-2">
+          <h3 className="text-sm font-semibold">Server</h3>
+          <p className="text-xs text-gray-400">
+            Backend URL for this app. Leave empty to use the built-in default.
+            Required when running the APK against your own deployed backend.
+          </p>
+          <input
+            className="input"
+            placeholder="https://your-backend.example.com"
+            value={backendUrl}
+            onChange={(e) => setBackendUrlState(e.target.value)}
+          />
+          <button className="btn-ghost w-full" onClick={saveBackendUrl}>Save server URL</button>
+        </section>
 
         <section className="space-y-2">
           <h3 className="text-sm font-semibold">Account {me ? `— ${me.email}` : ''}</h3>

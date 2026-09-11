@@ -7,6 +7,27 @@
  */
 
 const TOKEN_KEY = 'trading_token';
+const BACKEND_KEY = 'backend_url';
+
+/**
+ * Resolve the backend base URL:
+ *   1. runtime override from localStorage (set in Settings → "Server URL"),
+ *   2. build-time NEXT_PUBLIC_API_URL (Capacitor APK / standalone PWA),
+ *   3. empty string => same-origin (proxied by Next.js in the web deploy).
+ */
+export function getApiBase() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem(BACKEND_KEY);
+    if (stored) return stored.replace(/\/+$/, '');
+  }
+  return (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+}
+
+export function setBackendUrl(url) {
+  if (typeof window === 'undefined') return;
+  if (url) localStorage.setItem(BACKEND_KEY, url);
+  else localStorage.removeItem(BACKEND_KEY);
+}
 
 export function getToken() {
   if (typeof window === 'undefined') return null;
@@ -24,7 +45,7 @@ export async function apiFetch(path, { method = 'GET', body, auth = true } = {})
   const token = getToken();
   if (auth && token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${getApiBase()}/api${path}`, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
