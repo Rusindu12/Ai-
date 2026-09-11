@@ -1,0 +1,27 @@
+{
+  "name": "ai-crypto-trading-backend",
+  "version": "1.0.0",
+  "description": "Node.js/Express backend for the AI-powered cryptocurrency trading platform (Binance REST + WebSocket, Socket.io, risk & trading engine).",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "socket.io": "^4.7.5",
+    "ws": "^8.18.0"
+  },
+  "license": "MIT"
+}

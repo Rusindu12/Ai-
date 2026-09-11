@@ -1,0 +1,4 @@
+# Optional deep-learning dependencies for the LSTM price-prediction model.
+# Install on top of requirements.txt when you want to train/serve the LSTM:
+#   pip install -r requirements-ml.txt
+torch>=2.2
