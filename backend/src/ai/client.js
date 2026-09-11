@@ -48,10 +48,16 @@ export class AiClient {
   }
 
   async health() {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
-      return await this._post('/health', {});
+      const res = await fetch(`${this.baseUrl}/health`, { signal: controller.signal });
+      if (!res.ok) return null;
+      return await res.json();
     } catch {
       return null;
+    } finally {
+      clearTimeout(timer);
     }
   }
 
