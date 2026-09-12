@@ -54,3 +54,7 @@ backend/ai/data/
 
 # OS
 Thumbs.db
+
+# Built Android packages (delivered via the apk-output branch, not committed here)
+*.apk
+*.aab
