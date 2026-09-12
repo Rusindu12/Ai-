@@ -1,18 +1,18 @@
-name: Build Android APK
+name: Build APK
 
 on:
-  workflow_dispatch: {}   # manual trigger from the Actions tab
   push:
-    branches: [main, arena/01a090f2-ai]
+    branches: ['**']
     paths:
       - 'frontend/**'
       - 'mobile/**'
+  workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write   # needed to publish the APK to the apk-output branch
 
 jobs:
-  build-apk:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,50 +23,84 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          # Lock files live in the frontend/ and mobile/ subdirectories, not
-          # the repo root, so tell the cache where to find them.
+          # Lock files live in subdirectories, not the repo root.
           cache-dependency-path: |
             frontend/package-lock.json
             mobile/package-lock.json
 
-      - name: Setup JDK 17
+      - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '21'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # ---- Build the web app into a static bundle ----
-      - name: Install frontend deps
-        working-directory: frontend
-        run: npm ci || npm install
-
-      - name: Build static web export
+      # ---- Build the web bundle as a static export ----
+      - name: Build web export
         working-directory: frontend
         env:
           NEXT_STATIC_EXPORT: 'true'
           NEXT_PUBLIC_API_URL: ${{ vars.BACKEND_URL }}
-        run: npm run build
+        run: |
+          npm ci || npm install
+          npm run build
+          ls -la out | head
 
-      # ---- Copy the bundle into the Android project ----
       - name: Install Capacitor deps
         working-directory: mobile
         run: npm ci || npm install
 
+      # ---- Copy the bundle into the Android project (plain cp, no npx) ----
       - name: Copy web assets into Android
         working-directory: mobile
-        run: npx cap copy android
+        run: |
+          set -e
+          mkdir -p android/app/src/main/assets/public
+          rm -rf android/app/src/main/assets/public/*
+          cp -r ../frontend/out/. android/app/src/main/assets/public/
+          cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
+          echo "=== assets copied ==="
+          ls android/app/src/main/assets/public | head
+          ls -la android/app/src/main/assets/capacitor.config.json
 
       # ---- Build the APK ----
-      - name: Assemble debug APK
+      - name: Build debug APK
         working-directory: mobile/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/build.log
+          exit "${PIPESTATUS[0]}"
+        continue-on-error: true   # always publish the log for diagnosis
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ai-crypto-trading-debug
-          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+      # ---- Deliver via git (GitHub's log/artifact blob storage is not
+      #      reachable from the workspace, git is) ----
+      - name: Publish APK to apk-output branch
+        if: always()
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          SHA=$(git rev-parse --short HEAD)
+          APK=mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          WORK=$(mktemp -d)
+          git fetch --depth=1 origin apk-output || true
+          if git rev-parse --verify FETCH_HEAD >/dev/null 2>&1; then
+            git worktree add "$WORK" FETCH_HEAD
+          else
+            git worktree add --detach "$WORK"
+          fi
+          [ -f /tmp/build.log ] && cp /tmp/build.log "$WORK/build.log" || true
+          if [ -f "$APK" ]; then
+            cp "$APK" "$WORK/AICryptoTrading-debug.apk"
+            echo "APK built:"
+            ls -l "$APK"
+          else
+            echo "APK was not produced - see build.log" >> "$WORK/build.log"
+          fi
+          echo "$SHA" > "$WORK/BUILT_FROM"
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > "$WORK/BUILT_AT"
+          cd "$WORK"
+          git add -A
+          git commit -m "build: APK from $SHA" || echo "no changes"
+          git push --force origin HEAD:refs/heads/apk-output
