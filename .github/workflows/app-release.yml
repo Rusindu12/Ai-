@@ -68,9 +68,16 @@ jobs:
   apk:
     name: Build signed APK + AAB
     needs: quality
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # NOTE: the `secrets` context cannot be used in a step `if:`, so the optional
+    # signing inputs are projected into job env and tested via `env.` below.
+    env:
+      KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      GOOGLE_SERVICES_JSON: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}
     defaults:
       run:
         working-directory: crypto_trader_app
@@ -100,21 +107,37 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Decode keystore (optional)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: env.KEYSTORE_BASE64 != ''
         shell: bash
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-          cat > android/key.properties <<EOF
-          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
-          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
-          storeFile=upload-keystore.jks
-          EOF
+          set -euo pipefail
+          mkdir -p android/app
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          {
+            printf 'storePassword=%s\n'  "$KEYSTORE_PASSWORD"
+            printf 'keyPassword=%s\n'    "$KEY_PASSWORD"
+            printf 'keyAlias=%s\n'       "$KEY_ALIAS"
+            printf 'storeFile=%s\n'      'upload-keystore.jks'
+          } > android/key.properties
+          keytool -list -keystore android/app/upload-keystore.jks \
+            -storepass "$KEYSTORE_PASSWORD" | head -5
 
       - name: Install Firebase config (optional)
-        if: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON != '' }}
+        if: env.GOOGLE_SERVICES_JSON != ''
         shell: bash
-        run: printf '%s' "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" > android/app/google-services.json
+        run: |
+          set -euo pipefail
+          mkdir -p android/app
+          printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
+      - name: Check signing setup
+        shell: bash
+        run: |
+          if [ -f android/key.properties ]; then
+            echo "Using the uploaded release keystore (Play Store signing key)." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No ANDROID_KEYSTORE_BASE64 secret -> APK is signed with the debug key. Fine for sideloading and QA; upload your own keystore secret for Play." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: pub get
         run: flutter pub get
@@ -174,7 +197,6 @@ jobs:
 
   docker:
     name: Backend image
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
