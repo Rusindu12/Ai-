@@ -6,6 +6,7 @@ export default function Header({
   theme,
   toggleTheme,
   connected,
+  mode,
   autoTrading,
   onToggleAuto,
   onKill,
@@ -40,11 +41,20 @@ export default function Header({
           <span
             className={cls(
               'hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium sm:flex',
-              connected ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/15 text-red-600 dark:text-red-400'
+              mode === 'demo'
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                : connected
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-red-500/15 text-red-600 dark:text-red-400'
             )}
           >
-            <span className={cls('h-1.5 w-1.5 rounded-full', connected ? 'bg-emerald-500' : 'bg-red-500')} />
-            {connected ? 'Live' : 'Offline'}
+            <span
+              className={cls(
+                'h-1.5 w-1.5 rounded-full',
+                mode === 'demo' ? 'bg-amber-500' : connected ? 'bg-emerald-500' : 'bg-red-500'
+              )}
+            />
+            {mode === 'demo' ? 'Demo' : connected ? 'Live' : 'Offline'}
           </span>
 
           <button

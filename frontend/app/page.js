@@ -10,13 +10,15 @@ import PositionsTable from '../components/PositionsTable';
 import TradeHistory from '../components/TradeHistory';
 import TradeForm from '../components/TradeForm';
 import SettingsPanel from '../components/SettingsPanel';
-import api, { ensureSession } from '../lib/api';
+import api, { ensureSession, detectMode, onModeChange } from '../lib/api';
 import { getSocket } from '../lib/socket';
+import { startDemo, stopDemo } from '../lib/demo';
 
 const SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT'];
 
 export default function Dashboard() {
   const [theme, setTheme] = useState('dark');
+  const [mode, setMode] = useState('demo'); // 'demo' | 'live' (upgraded when a backend is found)
   const [connected, setConnected] = useState(false);
   const [symbol, setSymbol] = useState('BTCUSDT');
   const [interval, setInterval] = useState('1m');
@@ -64,6 +66,29 @@ export default function Dashboard() {
     []
   );
 
+  // ---- mode detection (demo vs live backend) ----
+  useEffect(() => {
+    let alive = true;
+    const unsub = onModeChange((m) => {
+      if (alive) setMode(m);
+    });
+    detectMode().then((m) => {
+      if (alive) setMode(m);
+    });
+    return () => {
+      alive = false;
+      unsub();
+    };
+  }, []);
+
+  // ---- demo engine lifecycle ----
+  useEffect(() => {
+    if (mode === 'demo') {
+      startDemo();
+      return () => stopDemo();
+    }
+  }, [mode]);
+
   // ---- websocket ----
   useEffect(() => {
     const socket = getSocket();
@@ -96,7 +121,7 @@ export default function Dashboard() {
       socket.off('bracket');
       socket.off('orderRejected');
     };
-  }, [notify]);
+  }, [notify, mode]);
 
   // ---- REST data ----
   const refreshPortfolio = useCallback(() => {
@@ -109,7 +134,7 @@ export default function Dashboard() {
     ensureSession().then(refreshPortfolio).catch(() => {});
     const t = setInterval(refreshPortfolio, 5000);
     return () => clearInterval(t);
-  }, [refreshPortfolio]);
+  }, [mode, refreshPortfolio]);
 
   useEffect(() => {
     if (tradeEvent) refreshPortfolio();
@@ -141,6 +166,7 @@ export default function Dashboard() {
         theme={theme}
         toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         connected={connected}
+        mode={mode}
         autoTrading={autoTrading}
         onToggleAuto={toggleAuto}
         onKill={kill}
@@ -150,6 +176,14 @@ export default function Dashboard() {
       />
 
       <main className="mx-auto max-w-7xl space-y-4 px-4 py-4">
+        {mode === 'demo' && (
+          <div className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2.5 text-sm text-amber-700 dark:text-amber-300">
+            <strong>Demo mode</strong> — simulated market data with paper trading. To use live
+            data, connect your backend in <button className="font-semibold underline" onClick={() => setSettingsOpen(true)}>Settings → Server</button>.
+          </div>
+        )}
+
+
         {/* symbol selector */}
         <div className="flex flex-wrap gap-2">
           {SYMBOLS.map((s) => (
@@ -181,6 +215,7 @@ export default function Dashboard() {
               onChangeInterval={setInterval}
               theme={theme}
               klineEvent={klineEvent}
+              mode={mode}
             />
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <PositionsTable positions={portfolio?.positions || []} />
@@ -189,9 +224,9 @@ export default function Dashboard() {
           </div>
 
           <div className="space-y-4">
-            <SignalPanel symbol={symbol} signalEvent={signalEvent} />
+            <SignalPanel symbol={symbol} signalEvent={signalEvent} mode={mode} />
             <TradeForm symbol={symbol} latestPrice={latestPrices[symbol]} />
-            <OrderBook symbol={symbol} depthEvent={depthEvent} />
+            <OrderBook symbol={symbol} depthEvent={depthEvent} mode={mode} />
           </div>
         </div>
       </main>

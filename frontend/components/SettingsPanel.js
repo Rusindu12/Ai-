@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import api, { getToken, setToken, getApiBase, setBackendUrl } from '../lib/api';
+import api, { getToken, setToken, getApiBase, setBackendUrl, detectMode } from '../lib/api';
 import { reconnectSocket } from '../lib/socket';
 
 export default function SettingsPanel({ open, onClose, onToggleTheme, theme }) {
@@ -24,9 +24,10 @@ export default function SettingsPanel({ open, onClose, onToggleTheme, theme }) {
     setBackendUrlState(getApiBase());
   }, [open]);
 
-  const saveBackendUrl = () => {
+  const saveBackendUrl = async () => {
     setBackendUrl(backendUrl.trim() || null);
     reconnectSocket();
+    await detectMode();
     flash(true, 'Server URL saved — reconnecting…');
   };
 

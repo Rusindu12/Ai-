@@ -88,7 +88,7 @@ export default function PriceChart({ symbol, interval, onChangeInterval, theme, 
     return () => {
       cancelled = true;
     };
-  }, [symbol, interval]);
+  }, [symbol, interval, mode]);
 
   // live-update the last candle from the websocket
   useEffect(() => {

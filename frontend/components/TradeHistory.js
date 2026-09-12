@@ -1,15 +1,21 @@
 'use client';
 
 import { fmtPrice, fmtQty, fmtMoney, timeAgo, cls } from '../lib/format';
-import { getToken, getApiBase } from '../lib/api';
+import { getToken, getApiBase, isDemoMode } from '../lib/api';
+import { demoCsv } from '../lib/demo';
 
 async function downloadCsv() {
-  const token = getToken();
-  const res = await fetch(`${getApiBase()}/api/trading/trades.csv`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  if (!res.ok) return;
-  const blob = await res.blob();
+  let blob;
+  if (isDemoMode()) {
+    blob = new Blob([demoCsv()], { type: 'text/csv' });
+  } else {
+    const token = getToken();
+    const res = await fetch(`${getApiBase()}/api/trading/trades.csv`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) return;
+    blob = await res.blob();
+  }
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import api from '../lib/api';
 import { fmtPrice, fmtQty, cls } from '../lib/format';
 
-export default function OrderBook({ symbol, depthEvent }) {
+export default function OrderBook({ symbol, depthEvent, mode }) {
   const [book, setBook] = useState({ bids: [], asks: [] });
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function OrderBook({ symbol, depthEvent }) {
     return () => {
       cancelled = true;
     };
-  }, [symbol]);
+  }, [symbol, mode]);
 
   useEffect(() => {
     if (!depthEvent || depthEvent.symbol !== symbol) return;

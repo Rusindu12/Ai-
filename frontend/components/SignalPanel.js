@@ -10,7 +10,7 @@ const SIGNAL_STYLES = {
   HOLD: 'bg-gray-500/15 text-gray-600 dark:text-gray-400 border-gray-500/30',
 };
 
-export default function SignalPanel({ symbol, signalEvent }) {
+export default function SignalPanel({ symbol, signalEvent, mode }) {
   const [signal, setSignal] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +36,7 @@ export default function SignalPanel({ symbol, signalEvent }) {
     load();
     const t = setInterval(load, 15_000);
     return () => clearInterval(t);
-  }, [symbol]);
+  }, [symbol, mode]);
 
   useEffect(() => {
     if (signalEvent && signalEvent.symbol === symbol) {

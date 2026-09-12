@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
-import { getApiBase } from './api';
+import { getApiBase, isDemoMode } from './api';
+import { demoSocket } from './demo';
 
 /**
  * Socket.io singleton. Connects to the backend websocket server and subscribes
@@ -17,6 +18,10 @@ function resolveUrl() {
 
 export function getSocket() {
   if (typeof window === 'undefined') return null;
+  // In demo mode the built-in engine drives a local EventEmitter that speaks
+  // the same Socket.io event protocol the UI already listens to.
+  if (isDemoMode()) return demoSocket;
+
   const url = resolveUrl();
 
   if (socket && socket.io?.uri !== url) {
