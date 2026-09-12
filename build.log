@@ -1,99 +1,150 @@
+Downloading https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%..............100%
 
-Welcome to Gradle 8.9!
+Welcome to Gradle 8.14.3!
 
 Here are the highlights of this release:
- - Enhanced Error and Warning Messages
- - IDE Integration Improvements
- - Daemon JVM Information
+ - Java 24 support
+ - GraalVM Native Image toolchain selection
+ - Enhancements to test reporting
+ - Build Authoring improvements
 
-For more details see https://docs.gradle.org/8.9/release-notes.html
+For more details see https://docs.gradle.org/8.14.3/release-notes.html
 
-To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:writeDebugAarMetadata
+> Task :capacitor-android:processDebugNavigationResources
 > Task :app:javaPreCompileDebug
-> Task :app:generateDebugResValues
+> Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
 > Task :app:checkDebugAarMetadata
+> Task :capacitor-cordova-android-plugins:processDebugNavigationResources
+> Task :app:processDebugNavigationResources
+> Task :app:generateDebugResValues
+> Task :capacitor-android:generateDebugResValues
+> Task :app:compileDebugNavigationResources
+> Task :capacitor-android:generateDebugResources
+> Task :capacitor-android:packageDebugResources
+> Task :capacitor-cordova-android-plugins:generateDebugResValues
+> Task :capacitor-cordova-android-plugins:generateDebugResources
+> Task :capacitor-cordova-android-plugins:packageDebugResources
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
 > Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
+> Task :capacitor-android:extractDeepLinksDebug
+> Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+> Task :capacitor-android:compileDebugLibraryResources
 > Task :app:parseDebugLocalResources
+> Task :capacitor-android:processDebugManifest
+> Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+> Task :capacitor-cordova-android-plugins:processDebugManifest
+> Task :capacitor-android:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :capacitor-android:javaPreCompileDebug
+> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+> Task :capacitor-android:generateDebugRFile
 > Task :app:mergeDebugShaders
+> Task :capacitor-cordova-android-plugins:generateDebugRFile
+
+> Task :capacitor-android:compileDebugJavaWithJavac
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:bundleLibCompileToJarDebug
+> Task :capacitor-android:mergeDebugShaders
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugAssets
+> Task :capacitor-cordova-android-plugins:mergeDebugShaders
+> Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+> Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugAssets
 > Task :app:mergeDebugAssets
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:mergeDebugJavaResource
-> Task :app:mergeDebugStartupProfile
-> Task :app:mergeDebugJniLibFolders
-> Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugNativeLibs NO-SOURCE
-> Task :app:processDebugManifestForPackage
-> Task :app:stripDebugDebugSymbols NO-SOURCE
-> Task :app:mergeLibDexDebug
+> Task :capacitor-android:bundleLibRuntimeToJarDebug
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
 > Task :app:processDebugResources
-> Task :app:validateSigningDebug
-> Task :app:mergeExtDexDebug
 > Task :app:compileDebugJavaWithJavac
+> Task :app:mergeDebugJavaResource
 > Task :app:dexBuilderDebug
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToDirDebug
+> Task :app:checkDebugDuplicateClasses
+> Task :capacitor-android:bundleLibRuntimeToDirDebug
 > Task :app:mergeDebugGlobalSynthetics
+> Task :app:mergeDebugJniLibFolders
+> Task :app:mergeLibDexDebug
+> Task :capacitor-android:mergeDebugJniLibFolders
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectOnly
+> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+> Task :app:mergeProjectDexDebug
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+> Task :app:mergeExtDexDebug
+> Task :app:validateSigningDebug
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
-> Task :app:mergeProjectDexDebug
+> Task :capacitor-android:checkDebugAarMetadata
+> Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars
+> Task :capacitor-android:extractDebugAnnotations
+> Task :capacitor-android:extractDeepLinksForAarDebug
+> Task :capacitor-android:mergeDebugGeneratedProguardFiles
+> Task :capacitor-android:mergeDebugConsumerProguardFiles
+> Task :capacitor-android:prepareDebugArtProfile
+> Task :capacitor-android:prepareLintJarForPublish
+> Task :capacitor-android:mergeDebugJavaResource
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
+> Task :capacitor-android:syncDebugLibJars
+> Task :capacitor-android:bundleDebugAar
+> Task :capacitor-android:assembleDebug
+> Task :capacitor-cordova-android-plugins:checkDebugAarMetadata
+> Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
+> Task :capacitor-cordova-android-plugins:extractDebugAnnotations
+> Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug
+> Task :capacitor-cordova-android-plugins:mergeDebugGeneratedProguardFiles
+> Task :capacitor-cordova-android-plugins:mergeDebugConsumerProguardFiles
+> Task :capacitor-cordova-android-plugins:prepareDebugArtProfile
+> Task :capacitor-cordova-android-plugins:prepareLintJarForPublish
+> Task :capacitor-cordova-android-plugins:mergeDebugJavaResource
+> Task :capacitor-cordova-android-plugins:syncDebugLibJars
+> Task :capacitor-cordova-android-plugins:bundleDebugAar
+> Task :capacitor-cordova-android-plugins:assembleDebug
 
-BUILD SUCCESSFUL in 1m 11s
-33 actionable tasks: 33 executed
-===== APK =====
--rw-r--r-- 1 runner runner 6054246 Sep  9 12:45 app/build/outputs/apk/debug/app-debug.apk
------ aapt2 badging -----
-package: name='com.rusindu.aitrade' versionCode='1' versionName='1.0.0-debug' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
-minSdkVersion:'26'
-targetSdkVersion:'34'
-uses-permission: name='android.permission.INTERNET'
-uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
-uses-permission: name='android.permission.VIBRATE'
-uses-permission: name='android.permission.POST_NOTIFICATIONS'
-uses-permission: name='android.permission.FOREGROUND_SERVICE'
-uses-permission: name='android.permission.FOREGROUND_SERVICE_DATA_SYNC'
-uses-permission: name='com.rusindu.aitrade.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
-application-label:'AI Trade Signals'
-application-label-af:'AI Trade Signals'
-application-label-am:'AI Trade Signals'
-application-label-ar:'AI Trade Signals'
-application-label-as:'AI Trade Signals'
-application-label-az:'AI Trade Signals'
-application-label-be:'AI Trade Signals'
-application-label-bg:'AI Trade Signals'
-application-label-bn:'AI Trade Signals'
-application-label-bs:'AI Trade Signals'
-application-label-ca:'AI Trade Signals'
-application-label-cs:'AI Trade Signals'
-application-label-da:'AI Trade Signals'
-application-label-de:'AI Trade Signals'
-application-label-el:'AI Trade Signals'
-application-label-en-AU:'AI Trade Signals'
-application-label-en-CA:'AI Trade Signals'
-application-label-en-GB:'AI Trade Signals'
-application-label-en-IN:'AI Trade Signals'
-application-label-en-XC:'AI Trade Signals'
------ apksigner verify -----
-V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: a44dc6cef6305f1690700c480d2e9d3298ae6bf166b4b5ff5cd8f2e05a74e5f3
-V2 Signer: certificate SHA-1 digest: 3fc9d1c9dcd58ae6ee8b0860f3a18e747bea16d6
-V2 Signer: certificate MD5 digest: 4a9ce0858018007cb1dea5fcf6d76e4c
------ zip -----
-  1159676  1981-01-01 01:01   resources.arsc
----------                     -------
- 12628936                     929 files
+[Incubating] Problems report is available at: file:///home/runner/work/Ai-/Ai-/mobile/android/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 33s
+93 actionable tasks: 93 executed
