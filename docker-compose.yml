@@ -1,0 +1,121 @@
+# ============================================================================
+# One command to run the whole product:
+#
+#   docker compose up --build
+#   open http://localhost:8000/docs
+#
+# Services
+#   backend   FastAPI app (REST + /ws), talks to Binance with your keys
+#   db        Postgres 16 (swap DEMO_MODE/DB_URL in .env to use it)
+#   redis     optional cache/pubsub for multi-worker WS fan-out
+#   vault     HashiCorp Vault dev mode: transit engine encrypts API secrets
+#
+# The Flutter app points at http://10.0.2.2:8000 in the Android emulator, or at
+# your server's https URL in production (behind the nginx of your choice).
+# ============================================================================
+name: cryptotrader
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cryptotrader
+      POSTGRES_PASSWORD: cryptotrader
+      POSTGRES_DB: cryptotrader
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cryptotrader"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  vault:
+    image: hashicorp/vault:1.17
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: dev-only-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "8200:8200"
+    command: ["vault", "server", "-dev"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8200/v1/sys/health?standbyok=true"]
+      interval: 10s
+      timeout: 4s
+      retries: 6
+
+  backend:
+    build: ./crypto_trader_backend
+    env_file:
+      - path: crypto_trader_backend/.env
+        required: false
+    environment:
+      ENV: production
+      DEMO_MODE: "true"                # flip to false once real keys are added
+      DB_URL: postgresql+asyncpg://cryptotrader:cryptotrader@db:5432/cryptotrader
+      REDIS_URL: redis://redis:6379/0
+      KEY_VAULT_PROVIDER: vault
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: dev-only-token
+      VAULT_TRANSIT_KEY: cryptotrader
+      JWT_SECRET: ${JWT_SECRET:-dev-only-change-me-0123456789abcdef0123456789abcdef}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@localhost}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin-1234-CHANGE}
+      CORS_ORIGINS: '["*"]'
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      vault:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - api-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+
+  # Applies the Vault transit key + policy the backend expects. Harmless in dev.
+  vault-init:
+    image: hashicorp/vault:1.17
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: dev-only-token
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        sleep 3
+        vault secrets enable -path=transit transit || true
+        vault write -f transit/keys/cryptotrader type=aes256-gcm96 || true
+        vault policy write cryptotrader - <<'POLICY'
+        path "transit/encrypt/cryptotrader" { capabilities = ["update"] }
+        path "transit/decrypt/cryptotrader" { capabilities = ["update"] }
+        POLICY
+        echo "vault ready"
+
+volumes:
+  pgdata:
+  redisdata:
+  api-data:

@@ -1,0 +1,57 @@
+name: crypto_trader_app
+description: "AI-powered crypto trading for Android: live Binance data via your own backend, AI signals, auto-trading, portfolio and alerts."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management (Riverpod: less boilerplate than Bloc for a stream-heavy
+  # app, first-class async notifiers, trivially testable with overrides).
+  flutter_riverpod: ^2.5.1
+
+  # Networking - REST + WS to YOUR backend (the app never calls Binance).
+  http: ^1.2.2
+  web_socket_channel: ^3.0.1
+
+  # Charts. Pinned below 1.0: 0.68.x is the API used in lib/widgets/charts.
+  fl_chart: ^0.68.0
+
+  # Local persistence: settings, watchlist, offline price cache.
+  shared_preferences: ^2.3.2
+
+  # Encrypted at rest on the device (Android Keystore backed).
+  flutter_secure_storage: ^9.2.2
+
+  # Fingerprint / face unlock for login and trade confirmation.
+  local_auth: ^2.3.0
+
+  # Firebase: Auth (Google sign-in), Firestore mirror, Cloud Messaging pushes.
+  firebase_core: ^3.8.0
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.5.0
+  firebase_messaging: ^15.1.5
+  google_sign_in: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  # Fonts are declared in lib/core/theme.dart with the platform default family.
+  # Drop TTFs into assets/fonts/ and uncomment below to brand the app with Inter.
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #       - asset: assets/fonts/Inter-SemiBold.ttf
+  #         weight: 600
+  assets:
+    - assets/images/logo.png

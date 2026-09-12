@@ -116,7 +116,11 @@ async def history(
         b["pnl"] += float(t.realized_pnl or 0.0)
         b["trades"] += 1
         b["volume"] += float(t.quote_qty or 0.0)
-    start_equity = float(getattr(user, "paper_balances", {}) or {}).get("USDT", 10_000.0)
+    balances = getattr(user, "paper_balances", None) or {}
+    cash = balances.get("USDT") if isinstance(balances, dict) else None
+    if isinstance(cash, dict):  # tolerate a nested cash book
+        cash = cash.get("free", cash.get("available", 0.0))
+    start_equity = float(cash) if cash not in (None, "") else 10_000.0
     equity = start_equity
     points = []
     for day in sorted(buckets):

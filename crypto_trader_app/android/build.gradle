@@ -1,0 +1,20 @@
+// Top-level build file. With the Flutter plugin loader (see settings.gradle) the
+// Android Gradle Plugin and Kotlin plugin versions are declared there, so this
+// file only configures repositories and the clean task.
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = project.layout.buildDirectory.asFile.get()
+
+subprojects {
+    project.buildDir = new File(rootProject.buildDir, project.name)
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
