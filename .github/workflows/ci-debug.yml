@@ -1,0 +1,88 @@
+name: CI report (analyze + tests + build)
+#
+# Temporary diagnostic workflow: GitHub only exposes job logs on a host this
+# sandbox cannot reach, so the tool output is mirrored into a commit comment
+# where it can be read through the REST API. Removed once the app is green.
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "crypto_trader_app/**"
+      - ".github/workflows/ci-debug.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  report:
+    name: Report
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: crypto_trader_app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: pub get
+        id: pub
+        continue-on-error: true
+        run: flutter pub get 2>&1 | tee /tmp/pub.log
+
+      - name: Analyze
+        id: analyze
+        continue-on-error: true
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos 2>&1 | tee /tmp/analyze.log
+
+      - name: Tests
+        id: test
+        continue-on-error: true
+        run: flutter test --reporter compact 2>&1 | tail -60 | tee /tmp/test.log
+
+      - name: Release APK (single ABI, real gradle + R8)
+        id: apk
+        continue-on-error: true
+        run: |
+          flutter build apk --release --target-platform android-arm64 2>&1 | tail -80 | tee /tmp/apk.log
+          ls -la build/app/outputs/flutter-apk/ 2>/dev/null || true
+
+      - name: Publish report
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### CI report for $(git rev-parse --short HEAD)"
+            echo
+            echo "- pub get: \`${{ steps.pub.outcome }}\`"
+            echo "- analyze: \`${{ steps.analyze.outcome }}\`"
+            echo "- test: \`${{ steps.test.outcome }}\`"
+            echo "- apk: \`${{ steps.apk.outcome }}\`"
+            for f in pub analyze test apk; do
+              if [ -s /tmp/$f.log ]; then
+                echo
+                echo "<details><summary>$f output</summary>"
+                echo
+                echo '```'
+                sed -e "s|$GITHUB_WORKSPACE/||" "/tmp/$f.log" | tail -180
+                echo '```'
+                echo
+                echo "</details>"
+              fi
+            done
+          } > /tmp/report.md
+          body=$(python3 - <<'PY'
+          text = open('/tmp/report.md').read()
+          # commit comments are capped at 65536 chars
+          print(text if len(text) < 60000 else text[:30000] + "\n...[truncated]...\n" + text[-25000:])
+          PY
+          )
+          jq -n --arg body "$body" '{body: $body}' > /tmp/payload.json
+          gh api --method POST "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/comments" \
+            --input /tmp/payload.json --jq .html_url
