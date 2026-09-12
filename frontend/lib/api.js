@@ -101,7 +101,12 @@ export async function apiFetch(path, { method = 'GET', body, auth = true } = {})
   return data;
 }
 
-/** Probe the backend health endpoint with a short timeout. */
+/**
+ * Probe the backend health endpoint with a short timeout. A backend counts as
+ * "live" only if it answers with a JSON body whose `ok` field is true — so a
+ * static host (or Capacitor's local server) serving index.html for unknown
+ * paths can never be mistaken for a live backend.
+ */
 async function probeBackend() {
   const base = getApiBase();
   const url = base ? `${base}/api/health` : '/api/health';
@@ -110,7 +115,11 @@ async function probeBackend() {
     const t = setTimeout(() => ctrl.abort(), 1500);
     const res = await fetch(url, { signal: ctrl.signal });
     clearTimeout(t);
-    return res.ok;
+    if (!res.ok) return false;
+    const ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) return false;
+    const data = await res.json().catch(() => null);
+    return Boolean(data && typeof data === 'object' && data.ok === true);
   } catch {
     return false;
   }
