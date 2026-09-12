@@ -31,12 +31,23 @@ in this order:
 
 The repo includes a workflow at `.github/workflows/build-apk.yml`.
 
-1. Push the code to GitHub (any branch).
+1. Push a change to `frontend/**` or `mobile/**` (the workflow auto-runs on
+   push to `main` or `arena/01a090f2-ai`).
 2. *(Optional)* Add a repository **variable** named `BACKEND_URL` with your
    backend URL (repo → Settings → Secrets and variables → Actions → Variables).
-3. Open the **Actions** tab → *Build Android APK* → **Run workflow**.
+   If it is left empty the app starts with no default server — set the backend
+   in the app afterwards: ⚙ Settings → Server → enter URL → Save.
+3. To build manually, open the **Actions** tab → *Build Android APK* →
+   **Run workflow**.
 4. When it finishes, download the artifact **ai-crypto-trading-debug**
-   (`app-debug.apk`) from the run summary.
+   (`app-debug.apk`) from the run summary, or run:
+
+   ```bash
+   gh run download <run-id> -n ai-crypto-trading-debug -D apk
+   ```
+
+> First build after a fresh clone downloads Gradle + the Android SDK, so it can
+> take several minutes.
 
 ## Option B — Build locally
 
