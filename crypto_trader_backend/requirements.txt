@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# AI Crypto Trading Backend - runtime dependencies
+# Python 3.11+
+# ---------------------------------------------------------------------------
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+pydantic==2.10.4
+pydantic-settings==2.7.0
+email-validator==2.2.0
+
+# HTTP client for Binance REST (HTTP/2 off, connection-pooled)
+httpx==0.28.1
+websockets==14.1
+
+# Auth / security
+PyJWT==2.10.1
+cryptography==44.0.0
+argon2-cffi==23.1.0
+
+# Database
+SQLAlchemy[asyncio]==2.0.36
+aiosqlite==0.20.0          # dev / sqlite fallback
+greenlet==3.1.1
+asyncpg==0.30.0            # postgres driver (production)
+alembic==1.14.0
+
+# Data science / AI
+numpy==2.1.3
+pandas==2.2.3
+
+# Optional heavier ML stack (LSTM / RL). Backend degrades gracefully to the
+# built-in NumPy models when these are absent - see app/ai/models/__init__.py.
+# tensorflow-lite-models are shipped as .tflite/.npz artifacts.
+# torch==2.5.1            # uncomment for PyTorch training path
+# tensorflow==2.18.0      # uncomment to train/serve real TF-LSTM
+# tflite-runtime==2.14.0  # uncomment for on-device-style TFLite inference
+
+# Firebase (Firestore mirror + FCM push). Optional at runtime.
+firebase-admin==6.6.0
+
+# Utilities
+python-dotenv==1.0.1
+orjson==3.10.12
+tenacity==9.0.0
+psutil==6.1.0

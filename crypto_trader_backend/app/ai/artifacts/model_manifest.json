@@ -1,0 +1,61 @@
+{
+  "updated_at": 1789153421,
+  "active": {
+    "version": "ai-20260911-190341",
+    "trained_at": 1789153421,
+    "n_features": 23,
+    "hidden": 24,
+    "look_back": 60,
+    "return_scale": 0.04139024953802757,
+    "metrics": {
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT"
+      ],
+      "interval": "1h",
+      "bars_fetched": 24000,
+      "train_sequences": 19008,
+      "val_sequences": 4752,
+      "lstm_val_mse": 1.692247,
+      "lstm_direction_accuracy": 0.4952,
+      "classifier_val_accuracy": 0.3351,
+      "classifier_temperature": 2.6,
+      "train_seconds": 146.98
+    },
+    "source": "trained"
+  },
+  "artifacts": {
+    "lstm": "lstm.npz",
+    "classifier": "classifier.npz"
+  },
+  "history": [
+    {
+      "version": "ai-20260911-190341",
+      "trained_at": 1789153421,
+      "n_features": 23,
+      "hidden": 24,
+      "look_back": 60,
+      "return_scale": 0.04139024953802757,
+      "metrics": {
+        "symbols": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "BNBUSDT",
+          "SOLUSDT"
+        ],
+        "interval": "1h",
+        "bars_fetched": 24000,
+        "train_sequences": 19008,
+        "val_sequences": 4752,
+        "lstm_val_mse": 1.692247,
+        "lstm_direction_accuracy": 0.4952,
+        "classifier_val_accuracy": 0.3351,
+        "classifier_temperature": 2.6,
+        "train_seconds": 146.98
+      },
+      "source": "trained"
+    }
+  ]
+}

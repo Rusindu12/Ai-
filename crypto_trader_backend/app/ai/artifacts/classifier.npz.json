@@ -1,0 +1,1 @@
+{"n_features": 23, "hidden": 24, "n_classes": 3, "classes": ["HOLD", "BUY", "SELL"], "calibration": {"temperature": 2.6, "nll": 1.10357}}

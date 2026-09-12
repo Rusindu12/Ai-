@@ -1,0 +1,23 @@
+line-length = 120
+target-version = "py311"
+src = ["app", "tests", "scripts"]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "C4", "SIM", "RET", "RUF"]
+ignore = [
+    "E501",    # line length handled by the formatter / readable long payloads
+    "B008",    # FastAPI Depends() in defaults is the documented idiom
+    "RUF012",  # class-level constants in dataclasses/settings
+    "SIM108",  # ternary preference hurts readability here
+    "RET504",  # assignment before return is clearer for payloads
+    "SIM102",  # nested ifs document the guard order
+    "RUF009",  # dataclass defaults computed from config (settings/feature list)
+    "E741",    # l/h/o candle shorthands mirror the exchange field names
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["S101", "ARG001", "B011"]
+"app/errors.py" = ["A003"]
+
+[format]
+quote-style = "double"

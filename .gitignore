@@ -1,0 +1,45 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# ---- local data / secrets ----
+*.db
+*.db-wal
+*.db-shm
+data/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+android/app/upload-keystore.jks
+crypto_trader_app/android/key.properties
+
+# ---- Flutter / Android / Build ----
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+.packages
+pubspec.lock.bak
+.idea/
+*.iml
+.gradle/
+local.properties
+captures/
+.cxx/
+*.aab.local
+
+# ---- Node / misc ----
+node_modules/
+.DS_Store
+Thumbs.db
