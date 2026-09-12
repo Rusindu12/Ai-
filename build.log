@@ -27,16 +27,16 @@ WARNING: Using flatDir should be avoided because it doesn't support any meta-dat
 > Task :capacitor-android:preDebugBuild UP-TO-DATE
 > Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
 > Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
-> Task :capacitor-android:writeDebugAarMetadata
 > Task :app:javaPreCompileDebug
 > Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
+> Task :capacitor-android:writeDebugAarMetadata
 > Task :capacitor-android:processDebugNavigationResources
 > Task :capacitor-cordova-android-plugins:processDebugNavigationResources
 > Task :app:checkDebugAarMetadata
 > Task :app:processDebugNavigationResources
 > Task :app:generateDebugResValues
-> Task :capacitor-android:generateDebugResValues
 > Task :app:compileDebugNavigationResources
+> Task :capacitor-android:generateDebugResValues
 > Task :capacitor-android:generateDebugResources
 > Task :capacitor-android:packageDebugResources
 > Task :capacitor-cordova-android-plugins:generateDebugResValues
@@ -54,28 +54,26 @@ WARNING: Using flatDir should be avoided because it doesn't support any meta-dat
 > Task :capacitor-android:compileDebugLibraryResources
 > Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
 > Task :capacitor-android:parseDebugLocalResources
-> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
-> Task :capacitor-android:processDebugManifest
 > Task :capacitor-cordova-android-plugins:processDebugManifest
+> Task :capacitor-android:processDebugManifest
+> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
 > Task :capacitor-android:generateDebugRFile
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :capacitor-android:javaPreCompileDebug
+> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
 > Task :app:processDebugManifestForPackage
 > Task :capacitor-cordova-android-plugins:generateDebugRFile
-> Task :app:processDebugResources
 
 > Task :capacitor-android:compileDebugJavaWithJavac
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 
-> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
-> Task :capacitor-android:bundleLibCompileToJarDebug
-> Task :app:mergeDebugShaders
 > Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
 > Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+> Task :capacitor-android:bundleLibCompileToJarDebug
+> Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
-> Task :app:compileDebugJavaWithJavac
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :capacitor-android:mergeDebugShaders
 > Task :capacitor-android:compileDebugShaders NO-SOURCE
@@ -87,14 +85,16 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :capacitor-cordova-android-plugins:mergeDebugAssets
 > Task :app:mergeDebugAssets
 > Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
-> Task :app:desugarDebugFileDependencies
 > Task :app:compressDebugAssets
 > Task :capacitor-android:bundleLibRuntimeToJarDebug
-> Task :app:dexBuilderDebug
+> Task :app:desugarDebugFileDependencies
 > Task :app:processDebugJavaRes NO-SOURCE
 > Task :capacitor-android:processDebugJavaRes NO-SOURCE
 > Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+> Task :app:processDebugResources
+> Task :app:compileDebugJavaWithJavac
 > Task :app:mergeDebugJavaResource
+> Task :app:dexBuilderDebug
 > Task :capacitor-cordova-android-plugins:bundleLibRuntimeToDirDebug
 > Task :app:checkDebugDuplicateClasses
 > Task :capacitor-android:bundleLibRuntimeToDirDebug
@@ -103,19 +103,19 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :app:mergeProjectDexDebug
 > Task :capacitor-android:mergeDebugJniLibFolders
 > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
 > Task :capacitor-android:copyDebugJniLibsProjectOnly
+> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
 > Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
 > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
 > Task :app:mergeLibDexDebug
 > Task :app:validateSigningDebug
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:mergeExtDexDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
-> Task :app:mergeExtDexDebug
-> Task :capacitor-android:checkDebugAarMetadata
 > Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:checkDebugAarMetadata
 > Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars
 > Task :capacitor-android:extractDebugAnnotations
 > Task :capacitor-android:extractDeepLinksForAarDebug
@@ -123,15 +123,15 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :capacitor-android:mergeDebugConsumerProguardFiles
 > Task :capacitor-android:prepareDebugArtProfile
 > Task :capacitor-android:prepareLintJarForPublish
-> Task :capacitor-android:mergeDebugJavaResource
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
+> Task :capacitor-android:mergeDebugJavaResource
+> Task :capacitor-cordova-android-plugins:checkDebugAarMetadata
 > Task :capacitor-android:syncDebugLibJars
 > Task :capacitor-android:bundleDebugAar
 > Task :capacitor-android:assembleDebug
 > Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
-> Task :capacitor-cordova-android-plugins:checkDebugAarMetadata
 > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
 > Task :capacitor-cordova-android-plugins:extractDebugAnnotations
 > Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug
@@ -146,5 +146,5 @@ Note: Recompile with -Xlint:unchecked for details.
 
 [Incubating] Problems report is available at: file:///home/runner/work/Ai-/Ai-/mobile/android/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 1m 15s
+BUILD SUCCESSFUL in 1m 28s
 93 actionable tasks: 93 executed
