@@ -19,32 +19,33 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
     - name: Copy latest Web App assets
       run: |
         mkdir -p android-project/app/src/main/assets
         cp -r src/public/* android-project/app/src/main/assets/
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-
-    - name: Build Debug APK
+    - name: Init Gradle Wrapper and Build APK
       run: |
         cd android-project
-        gradle assembleDebug || ./gradlew assembleDebug
+        gradle wrapper --gradle-version 8.5
+        ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AuraOS-Launcher-v2.4.apk
+        name: AuraOS-Launcher-v2.4
         path: android-project/app/build/outputs/apk/debug/*.apk
 
-    - name: Publish GitHub Release
-      uses: softprops/action-gh-release@v1
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/heads/arena') || github.ref == 'refs/heads/main'
       with:
-        tag_name: aura-os-v2.4
-        name: "AuraOS Ultra v2.4 (Android + iOS + macOS Fusion)"
-        body: "AuraOS Ultra standalone Android launcher APK build. Install directly on any Android phone (8.0+)."
+        tag_name: v2.4-aura-apk
+        name: "AuraOS Ultra v2.4 (Android + iOS + macOS Fusion APK)"
+        body: "Download and install AuraOS directly on your Android device (Android 7.0+)."
         files: android-project/app/build/outputs/apk/debug/*.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
