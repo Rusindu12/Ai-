@@ -19,19 +19,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-
     - name: Copy latest Web App assets
       run: |
         mkdir -p android-project/app/src/main/assets
         cp -r src/public/* android-project/app/src/main/assets/
 
-    - name: Init Gradle Wrapper and Build APK
+    - name: Build Debug APK with Gradle
       run: |
+        echo "ANDROID_HOME is $ANDROID_HOME"
         cd android-project
-        gradle wrapper --gradle-version 8.5
-        ./gradlew assembleDebug --stacktrace
+        gradle assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
