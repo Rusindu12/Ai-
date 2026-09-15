@@ -1,0 +1,45 @@
+name: Build AuraOS Android APK
+
+on:
+  push:
+    branches: [ "main", "arena/*" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Copy latest Web App assets
+      run: |
+        mkdir -p android-project/app/src/main/assets
+        cp -r src/public/* android-project/app/src/main/assets/
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x android-project/gradlew || true
+
+    - name: Build Debug APK
+      run: |
+        cd android-project
+        if [ -f gradlew ]; then
+          ./gradlew assembleDebug
+        else
+          gradle assembleDebug
+        fi
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AuraOS-Launcher-Debug-APK
+        path: android-project/app/build/outputs/apk/debug/*.apk

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AuraOS Ultra - Android + iOS + macOS Fusion</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 15% 15%, #1e1b4b 0%, #0f172a 45%, #020617 100%);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.45);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.14);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #000;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 8px;
+    }
+
+    /* Device Mockup Shell */
+    .device-frame {
+      width: 100%;
+      max-width: 420px;
+      height: 885px;
+      max-height: 97vh;
+      background: var(--bg-gradient);
+      border-radius: 48px;
+      box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #1e293b, 0 0 0 13px #334155;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* macOS Top Menu Bar */
+    .mac-top-bar {
+      height: 28px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      font-weight: 600;
+      z-index: 100;
+    }
+    .mac-menu-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mac-apple-logo {
+      font-size: 14px;
+      cursor: pointer;
+      opacity: 0.9;
+    }
+    .mac-apple-logo:hover { opacity: 1; }
+    .mac-menu-item {
+      cursor: pointer;
+      color: #cbd5e1;
+      transition: color 0.15s;
+    }
+    .mac-menu-item:hover { color: #fff; }
+    .mac-menu-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #cbd5e1;
+    }
+
+    /* iOS Dynamic Island */
+    .island-container {
+      position: absolute;
+      top: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 105;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .dynamic-island {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 22px;
+      height: 32px;
+      min-width: 125px;
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+    .dynamic-island.expanded {
+      min-width: 310px;
+      height: 70px;
+      border-radius: 28px;
+      padding: 12px 18px;
+    }
+    .island-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Main Desktop / Screen Viewport */
+    .desktop-area {
+      flex: 1;
+      position: relative;
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding: 40px 18px 80px 18px;
+    }
+    .desktop-area::-webkit-scrollbar { display: none; }
+
+    /* iOS Style Lock/Home Widgets Grid */
+    .widget-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .ios-widget {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 22px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .ios-widget:active { transform: scale(0.97); }
+    .widget-clock-large {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .widget-battery-ring {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* Spotlight Search (macOS / iOS hybrid) */
+    .spotlight-bar {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .spotlight-bar:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #6366f1;
+    }
+    .spotlight-text {
+      font-size: 13px;
+      color: #cbd5e1;
+      flex: 1;
+    }
+
+    /* App Icons Grid */
+    .app-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #64748b;
+      margin: 14px 4px 10px 4px;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px 10px;
+    }
+    .app-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .app-item:active { transform: scale(0.88); }
+    .app-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 17px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 26px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .app-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: #e2e8f0;
+      text-align: center;
+    }
+
+    /* macOS Floating Dock */
+    .mac-dock {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      border-radius: 24px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 95;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+    .dock-app {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+    .dock-app:hover {
+      transform: translateY(-8px) scale(1.15);
+    }
+    .dock-dot {
+      position: absolute;
+      bottom: -3px;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    /* macOS Style Floating Window */
+    .app-window {
+      position: absolute;
+      inset: 28px 0 0 0;
+      background: #090d16;
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .app-window.open { transform: translateY(0); }
+    .mac-titlebar {
+      height: 42px;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    /* macOS Traffic Light Window Controls (Red, Yellow, Green) */
+    .traffic-lights {
+      display: flex;
+      gap: 7px;
+    }
+    .traffic-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 900;
+      color: transparent;
+    }
+    .traffic-btn:hover { color: rgba(0, 0, 0, 0.6); }
+    .traffic-red { background: #ff5f56; border: 1px solid #e0443e; }
+    .traffic-yellow { background: #ffbd2e; border: 1px solid #dea123; }
+    .traffic-green { background: #27c93f; border: 1px solid #1aab29; }
+
+    .window-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .app-window-body {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      color: #e2e8f0;
+    }
+
+    /* iOS Control Center Slide-Over */
+    .control-center-panel {
+      position: absolute;
+      top: 28px;
+      right: 0;
+      width: 88%;
+      height: calc(100% - 28px);
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-left: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 120;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .control-center-panel.open { transform: translateX(0); }
+
+    .cc-tile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .cc-tile {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    .cc-tile.active {
+      background: #4f46e5;
+      border-color: #6366f1;
+    }
+
+    /* Sliders for Brightness & Volume */
+    .slider-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slider-bar {
+      width: 100%;
+      accent-color: #6366f1;
+      cursor: pointer;
+    }
+
+    /* macOS Finder & File Explorer */
+    .finder-sidebar {
+      width: 120px;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .finder-item {
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .finder-item:hover, .finder-item.active {
+      background: rgba(99, 102, 241, 0.2);
+      color: #fff;
+    }
+
+    /* Terminal Console */
+    .term-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #38bdf8;
+      height: 320px;
+      overflow-y: auto;
+    }
+    .term-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #334155;
+      color: #f1f5f9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      width: 100%;
+      padding: 8px 0;
+      margin-top: 10px;
+      outline: none;
+    }
+
+    /* Toast Notification */
+    .toast-note {
+      position: absolute;
+      top: 65px;
+      left: 20px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #6366f1;
+      border-radius: 16px;
+      padding: 12px 16px;
+      z-index: 130;
+      display: none;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+      animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="device-frame">
+
+    <!-- 1. macOS Top Menu Bar -->
+    <div class="mac-top-bar">
+      <div class="mac-menu-left">
+        <span class="mac-apple-logo" onclick="toggleApp('win-about')"></span>
+        <span style="font-weight: 700; color: #fff;">AuraOS</span>
+        <span class="mac-menu-item" onclick="toggleApp('win-finder')">Finder</span>
+        <span class="mac-menu-item" onclick="toggleApp('win-terminal')">Terminal</span>
+      </div>
+      <div class="mac-menu-right">
+        <span>🔋 96%</span>
+        <span>📶</span>
+        <span style="cursor: pointer;" onclick="toggleControlCenter()">🎛️</span>
+        <span id="mac-time">09:41 AM</span>
+      </div>
+    </div>
+
+    <!-- 2. iOS Dynamic Island (Interactive) -->
+    <div class="island-container">
+      <div class="dynamic-island" id="dynamic-island" onclick="toggleIsland()">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <div class="island-dot"></div>
+          <span id="island-label" style="font-size: 11px; font-weight: 600; color: #38bdf8;">🎵 Aura Beats</span>
+        </div>
+        <div style="font-size: 11px; color: #94a3b8;" id="island-extra">Playing • Cyberwave</div>
+      </div>
+    </div>
+
+    <!-- Toast Banner -->
+    <div class="toast-note" id="toast">
+      <strong id="toast-title">AuraOS System</strong>
+      <p id="toast-msg" style="font-size: 12px; color: #cbd5e1; margin-top: 4px;"></p>
+    </div>
+
+    <!-- Main Desktop / Home Screen -->
+    <div class="desktop-area">
+
+      <!-- iOS Style Widgets -->
+      <div class="widget-grid">
+        <div class="ios-widget" onclick="toggleApp('win-clock')">
+          <div class="widget-clock-large" id="widget-clock">09:41</div>
+          <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;" id="widget-date">Tuesday, Sep 15</div>
+          <div style="margin-top: 10px; font-size: 11px; color: #38bdf8;">Colombo, LK • 29°C ⛅</div>
+        </div>
+
+        <div class="ios-widget" onclick="toggleControlCenter()">
+          <div style="font-size: 12px; font-weight: 700; color: #cbd5e1;">AURA BATTERY</div>
+          <div class="widget-battery-ring">
+            <span style="font-size: 26px;">⚡</span>
+            <div>
+              <div style="font-size: 18px; font-weight: 800; color: #10b981;">96%</div>
+              <div style="font-size: 11px; color: #94a3b8;">SuperCharge Active</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spotlight Search (macOS style Cmd+Space) -->
+      <div class="spotlight-bar" onclick="toggleApp('win-ai')">
+        <span style="font-size: 16px;">🔍</span>
+        <span class="spotlight-text">Spotlight & Aura AI Search...</span>
+        <span style="font-size: 11px; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 6px;">⌘ Space</span>
+      </div>
+
+      <!-- Core Applications Grid (Android Launcher style) -->
+      <div class="app-section-title">Applications</div>
+      <div class="app-grid">
+        <div class="app-item" onclick="toggleApp('win-finder')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #0284c7, #38bdf8);">📁</div>
+          <span class="app-name">Finder</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-terminal')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #0f172a, #334155);">⚡</div>
+          <span class="app-name">Terminal</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-ai')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #7c3aed, #c084fc);">🧠</div>
+          <span class="app-name">Siri / AI</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-settings')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #475569, #64748b);">⚙️</div>
+          <span class="app-name">Settings</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-install')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #10b981, #059669);">📲</div>
+          <span class="app-name">APK Install</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-music')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">🎧</div>
+          <span class="app-name">Music</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-notes')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">📝</div>
+          <span class="app-name">Notes</span>
+        </div>
+        <div class="app-item" onclick="toggleApp('win-store')">
+          <div class="app-icon" style="background: linear-gradient(135deg, #2563eb, #60a5fa);">🛍️</div>
+          <span class="app-name">App Store</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3. macOS Floating Dock -->
+    <div class="mac-dock">
+      <div class="dock-app" style="background: linear-gradient(135deg, #0284c7, #38bdf8);" onclick="toggleApp('win-finder')" title="Finder">
+        📁
+        <div class="dock-dot"></div>
+      </div>
+      <div class="dock-app" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="showToast('Phone', 'Connecting via Aura VoLTE HD...')" title="Phone">
+        📞
+      </div>
+      <div class="dock-app" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="showToast('Safari', 'Private Relay Web Protection Active')" title="Safari Browser">
+        🧭
+        <div class="dock-dot"></div>
+      </div>
+      <div class="dock-app" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="toggleApp('win-ai')" title="Aura AI">
+        ✨
+        <div class="dock-dot"></div>
+      </div>
+      <div class="dock-app" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="toggleApp('win-install')" title="Phone APK Installer">
+        📲
+      </div>
+    </div>
+
+    <!-- 4. iOS Control Center (Swipe/Tap toggle) -->
+    <div class="control-center-panel" id="control-center">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 700; font-size: 16px;">Control Center</span>
+        <span style="cursor: pointer; font-size: 18px;" onclick="toggleControlCenter()">✕</span>
+      </div>
+
+      <div class="cc-tile-grid">
+        <div class="cc-tile active" onclick="toggleSwitch(this, 'Wi-Fi')">
+          <span style="font-size: 20px;">📶</span>
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">Wi-Fi</div>
+            <div style="font-size: 10px; opacity: 0.8;">AuraMesh 6E</div>
+          </div>
+        </div>
+        <div class="cc-tile active" onclick="toggleSwitch(this, 'Bluetooth')">
+          <span style="font-size: 20px;">🎧</span>
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">Bluetooth</div>
+            <div style="font-size: 10px; opacity: 0.8;">AirPods Pro</div>
+          </div>
+        </div>
+        <div class="cc-tile active" onclick="toggleSwitch(this, 'AirDrop')">
+          <span style="font-size: 20px;">📡</span>
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">AirDrop</div>
+            <div style="font-size: 10px; opacity: 0.8;">Everyone</div>
+          </div>
+        </div>
+        <div class="cc-tile" onclick="toggleSwitch(this, 'Focus Mode')">
+          <span style="font-size: 20px;">🌙</span>
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">Focus</div>
+            <div style="font-size: 10px; opacity: 0.8;">Off</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-box">
+        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+          <span>☀️ Display Brightness</span>
+          <span id="bright-val">85%</span>
+        </div>
+        <input type="range" min="10" max="100" value="85" class="slider-bar" oninput="document.getElementById('bright-val').innerText = this.value + '%'">
+      </div>
+
+      <div class="slider-box">
+        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+          <span>🔊 Volume</span>
+          <span id="vol-val">70%</span>
+        </div>
+        <input type="range" min="0" max="100" value="70" class="slider-bar" oninput="document.getElementById('vol-val').innerText = this.value + '%'">
+      </div>
+    </div>
+
+    <!-- macOS Windows: Traffic light buttons (Red = Close, Yellow = Minimize, Green = Maximize) -->
+
+    <!-- Window: APK & Phone Installer -->
+    <div class="app-window" id="win-install">
+      <div class="mac-titlebar">
+        <div class="traffic-lights">
+          <div class="traffic-btn traffic-red" onclick="toggleApp('win-install')">×</div>
+          <div class="traffic-btn traffic-yellow" onclick="toggleApp('win-install')">−</div>
+          <div class="traffic-btn traffic-green">+</div>
+        </div>
+        <div class="window-title">📲 AuraOS Android APK & Installation</div>
+        <div style="width: 40px;"></div>
+      </div>
+      <div class="app-window-body">
+        <h3 style="font-size: 16px; color: #38bdf8; margin-bottom: 8px;">මෙම නව OS එක ඔබගේ Phone එකට දමාගන්නේ කෙසේද?</h3>
+        <p style="font-size: 12px; color: #94a3b8; line-height: 1.6; margin-bottom: 14px;">
+          Android, iOS සහ macOS හි හොඳම අංග (Dynamic Island, Control Center, Mac Menu & Dock, Multi-tasking) එකතු කළ මෙම OS එක install කරගැනීමට ක්‍රම 2ක් සකස් කර ඇත:
+        </p>
+
+        <!-- Method 1 -->
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 14px; margin-bottom: 14px;">
+          <strong style="color: #10b981; font-size: 14px;">ක්‍රමය 1: PWA Native App (තත්පර 10න් Phone එකට Install කරගන්න)</strong>
+          <p style="font-size: 12px; color: #cbd5e1; margin-top: 6px; line-height: 1.5;">
+            ඔබේ ජංගම දුරකථනයේ <strong>Google Chrome</strong> හරහා මෙම සබැඳිය විවෘත කරන්න:
+            <br>1. Chrome මෙනුව (⋮) විවෘත කරන්න.
+            <br>2. <strong>"Install app"</strong> හෝ <strong>"Add to Home screen"</strong> තෝරන්න.
+            <br>3. කිසිදු Root කිරීමකින් තොරව Phone එකට Standalone OS App එකක් ලෙස ස්ථාපනය වේ!
+          </p>
+        </div>
+
+        <!-- Method 2 -->
+        <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 14px;">
+          <strong style="color: #818cf8; font-size: 14px;">ක්‍රමය 2: Standalone APK (.apk) Build කරගැනීම</strong>
+          <p style="font-size: 12px; color: #cbd5e1; margin-top: 6px; line-height: 1.5;">
+            මෙම Repository එකේ Android Studio සඳහා සම්පූර්ණ Native Launcher Project එක (`android-project`) ඇතුළත් කර ඇත.
+            <br>• Android Studio වෙතින් <code>android-project</code> ෆෝල්ඩරය Open කරන්න.
+            <br>• <strong>Build > Build APK(s)</strong> ඔබන්න.
+            <br>• කෙළින්ම ඔබේ Phone එකට දමා Install කරගත හැකි <code>.apk</code> ගොනුවක් සෑදේ!
+          </p>
+        </div>
+
+        <button onclick="showToast('Installer', 'Downloading AuraOS Launcher bundle...')" style="margin-top: 16px; width: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; padding: 12px; border-radius: 12px; color: white; font-weight: 700; cursor: pointer;">
+          📥 Download AuraOS Source & Installer Pack
+        </button>
+      </div>
+    </div>
+
+    <!-- Window: macOS Finder -->
+    <div class="app-window" id="win-finder">
+      <div class="mac-titlebar">
+        <div class="traffic-lights">
+          <div class="traffic-btn traffic-red" onclick="toggleApp('win-finder')">×</div>
+          <div class="traffic-btn traffic-yellow" onclick="toggleApp('win-finder')">−</div>
+          <div class="traffic-btn traffic-green">+</div>
+        </div>
+        <div class="window-title">📁 Finder — Macintosh HD</div>
+        <div style="width: 40px;"></div>
+      </div>
+      <div class="app-window-body" style="padding: 0; display: flex;">
+        <div class="finder-sidebar">
+          <div class="finder-item active">🏠 Home</div>
+          <div class="finder-item">📥 Downloads</div>
+          <div class="finder-item">📲 Applications</div>
+          <div class="finder-item">☁️ iCloud Drive</div>
+        </div>
+        <div style="flex: 1; padding: 14px; font-size: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-content: start;">
+          <div style="text-align: center; cursor: pointer;" onclick="showToast('Finder', 'Aura-Launcher.apk Ready')">
+            <div style="font-size: 32px;">📦</div>
+            <div>Aura-Launcher.apk</div>
+          </div>
+          <div style="text-align: center; cursor: pointer;" onclick="showToast('Finder', 'Kernel Config Loaded')">
+            <div style="font-size: 32px;">📄</div>
+            <div>kernel.sys</div>
+          </div>
+          <div style="text-align: center; cursor: pointer;" onclick="showToast('Finder', 'iOS DynamicIsland Framework')">
+            <div style="font-size: 32px;">⚙️</div>
+            <div>DynamicIsland.framework</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Window: macOS Terminal -->
+    <div class="app-window" id="win-terminal">
+      <div class="mac-titlebar">
+        <div class="traffic-lights">
+          <div class="traffic-btn traffic-red" onclick="toggleApp('win-terminal')">×</div>
+          <div class="traffic-btn traffic-yellow" onclick="toggleApp('win-terminal')">−</div>
+          <div class="traffic-btn traffic-green">+</div>
+        </div>
+        <div class="window-title">⚡ zsh — aura@macos-arm64</div>
+        <div style="width: 40px;"></div>
+      </div>
+      <div class="app-window-body">
+        <div class="term-box" id="term-output">
+Last login: Tue Sep 15 09:41:00 on ttys001
+AuraOS Hybrid Darwin/Linux Kernel 6.1.45 (arm64)
+Android Runtime + iOS Dynamic Subsystem Active.
+
+Type 'help' for commands.
+aura@device ~ % uname -a
+Darwin aura-mac 24.0.0 Darwin Kernel Version 24: arm64
+aura@device ~ %
+        </div>
+        <input type="text" class="term-input" id="term-cmd" placeholder="Type a command (try 'help', 'status', 'fastfetch', 'clear')..." onkeydown="handleTerminal(event)">
+      </div>
+    </div>
+
+    <!-- Window: AI Assistant (Siri / Aura AI) -->
+    <div class="app-window" id="win-ai">
+      <div class="mac-titlebar">
+        <div class="traffic-lights">
+          <div class="traffic-btn traffic-red" onclick="toggleApp('win-ai')">×</div>
+          <div class="traffic-btn traffic-yellow" onclick="toggleApp('win-ai')">−</div>
+          <div class="traffic-btn traffic-green">+</div>
+        </div>
+        <div class="window-title">🧠 Aura Neural Intelligence (Apple Intelligence + Android AI)</div>
+        <div style="width: 40px;"></div>
+      </div>
+      <div class="app-window-body" style="display: flex; flex-direction: column;">
+        <div id="ai-chat" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
+          <div style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 14px; padding: 12px; font-size: 13px;">
+            👋 <strong>Aura Neural Engine Active.</strong><br>
+            Android හි නිදහස, iOS හි Dynamic Island සහ Fluid අලංකාරය, macOS හි Finder සහ Multi-tasking දැන් එකම OS එකක් තුළ! මට ඔබට කුමකින් සහාය විය හැකිද?
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="ai-input" placeholder="Ask Aura AI or run system script..." style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 10px 14px; color: #fff; outline: none; font-size: 13px;" onkeydown="if(event.key === 'Enter') sendAiMessage()">
+          <button onclick="sendAiMessage()" style="background: #6366f1; border: none; color: white; border-radius: 12px; padding: 0 16px; font-weight: 600; cursor: pointer;">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Window: Settings -->
+    <div class="app-window" id="win-settings">
+      <div class="mac-titlebar">
+        <div class="traffic-lights">
+          <div class="traffic-btn traffic-red" onclick="toggleApp('win-settings')">×</div>
+          <div class="traffic-btn traffic-yellow" onclick="toggleApp('win-settings')">−</div>
+          <div class="traffic-btn traffic-green">+</div>
+        </div>
+        <div class="window-title">⚙️ System Settings</div>
+        <div style="width: 40px;"></div>
+      </div>
+      <div class="app-window-body">
+        <div style="background: rgba(255,255,255,0.05); border-radius: 14px; padding: 14px; font-size: 13px; line-height: 2;">
+          <div><strong>Model:</strong> Aura Vision Ultra (Fusion Edition)</div>
+          <div><strong>Architecture:</strong> Android 14 + iOS Core + macOS UI Stack</div>
+          <div><strong>Dynamic Island:</strong> Version 2.2 Pro</div>
+          <div><strong>Control Center:</strong> Enabled</div>
+          <div><strong>Window Management:</strong> macOS Traffic Light Protocol</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Live Clock
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hours12 = hours % 12 || 12;
+      const hours24 = String(hours).padStart(2, '0');
+
+      document.getElementById('mac-time').innerText = `${hours12}:${mins} ${ampm}`;
+      document.getElementById('widget-clock').innerText = `${hours24}:${mins}`;
+
+      const options = { weekday: 'long', month: 'short', day: 'numeric' };
+      document.getElementById('widget-date').innerText = now.toLocaleDateString('en-US', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Toggle Window (Open / Close)
+    function toggleApp(id) {
+      const win = document.getElementById(id);
+      if (!win) return;
+      win.classList.toggle('open');
+    }
+
+    // Toggle iOS Control Center
+    function toggleControlCenter() {
+      const cc = document.getElementById('control-center');
+      cc.classList.toggle('open');
+    }
+
+    // Dynamic Island Expand / Collapse
+    let islandTimer;
+    function toggleIsland() {
+      const island = document.getElementById('dynamic-island');
+      island.classList.toggle('expanded');
+      if (island.classList.contains('expanded')) {
+        document.getElementById('island-label').innerText = '🎵 Cyberwave Spatial Audio';
+        document.getElementById('island-extra').innerText = '02:45 / 03:50 • Spatial Audio Active 🎧';
+      } else {
+        document.getElementById('island-label').innerText = '🎵 Aura Beats';
+        document.getElementById('island-extra').innerText = 'Playing • Cyberwave';
+      }
+    }
+
+    // Toast Notifications
+    let toastTimer;
+    function showToast(title, msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-title').innerText = title;
+      document.getElementById('toast-msg').innerText = msg;
+      toast.style.display = 'block';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    function toggleSwitch(elem, name) {
+      elem.classList.toggle('active');
+      const state = elem.classList.contains('active') ? 'ON' : 'OFF';
+      showToast('Quick Setting', `${name} turned ${state}`);
+    }
+
+    // Terminal Emulator
+    function handleTerminal(e) {
+      if (e.key === 'Enter') {
+        const input = document.getElementById('term-cmd');
+        const out = document.getElementById('term-output');
+        const cmd = input.value.trim().toLowerCase();
+        input.value = '';
+
+        out.innerText += `\naura@device ~ % ${cmd}`;
+
+        if (cmd === 'help') {
+          out.innerText += `\nCommands:
+  • help       : Show list of commands
+  • fastfetch  : Display Mac + Android system info
+  • status     : Show battery, kernel & memory usage
+  • apps       : List active apps
+  • clear      : Clear shell output`;
+        } else if (cmd === 'fastfetch') {
+          out.innerText += `
+        .:'        OS: AuraOS Ultra (Android + iOS + macOS Fusion)
+     __ :'__       Host: Flagship Matrix
+  .'\`__\`-'__\`\`.     Kernel: Darwin/Linux 6.1.45-arm64
+ :__________.-'    WM: macOS Aqua + iOS SpringBoard
+ :_________ :      Memory: 12GB Unified RAM
+  :_________\`-.__  Battery: 96%
+   \`.       \`.\`
+     \`'---'        `;
+        } else if (cmd === 'status') {
+          out.innerText += `\n[OK] Dynamic Island: Running
+[OK] Control Center: Ready
+[OK] macOS Aqua Compositor: Active
+[OK] Android 14 Base Sandbox: Secure`;
+        } else if (cmd === 'clear') {
+          out.innerText = 'AuraOS zsh ready.';
+        } else if (cmd !== '') {
+          out.innerText += `\nzsh: command not found: ${cmd}. Type 'help'.`;
+        }
+        out.scrollTop = out.scrollHeight;
+      }
+    }
+
+    // AI Assistant
+    function sendAiMessage() {
+      const input = document.getElementById('ai-input');
+      const chat = document.getElementById('ai-chat');
+      const text = input.value.trim();
+      if (!text) return;
+
+      chat.innerHTML += `
+        <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; align-self: flex-end; max-width: 80%; font-size: 13px;">
+          ${text}
+        </div>
+      `;
+      input.value = '';
+
+      setTimeout(() => {
+        let reply = "මම Aura Intelligence. ඔබේ ඉල්ලීම ක්‍රියාත්මක කෙරෙමින් පවතී...";
+        const lower = text.toLowerCase();
+        if (lower.includes('apk') || lower.includes('phone') || lower.includes('install')) {
+          reply = "ඔබගේ Phone එකට මෙය ස්ථාපනය කරගැනීමට 'APK Install' ඇප් එක ක්ලික් කරන්න, නැතහොත් Chrome Menu එකෙන් 'Install App' / 'Add to Home screen' ඔබන්න!";
+        } else if (lower.includes('ios') || lower.includes('mac')) {
+          reply = "මෙම OS එකෙහි iOS Dynamic Island, Control Center සහ macOS Finder, Top Menu Bar, Traffic Light Controls සියල්ල එකට එක්කර ඇත!";
+        } else {
+          reply = `Aura Fusion Engine: "${text}" සඳහා අවශ්‍ය සියලුම සැකසුම් සාර්ථකව සිදුකරන ලදී! 🚀`;
+        }
+
+        chat.innerHTML += `
+          <div style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 12px; padding: 10px; align-self: flex-start; max-width: 85%; font-size: 13px;">
+            🤖 <strong>Aura AI:</strong> ${reply}
+          </div>
+        `;
+        chat.scrollTop = chat.scrollHeight;
+      }, 500);
+    }
+  </script>
+</body>
+</html>
