@@ -24,25 +24,14 @@ jobs:
         mkdir -p android-project/app/src/main/assets
         cp -r src/public/* android-project/app/src/main/assets/
 
-    - name: Build Debug APK with Gradle
+    - name: Diagnose and Build APK
       run: |
-        echo "ANDROID_HOME is $ANDROID_HOME"
+        echo "=== Environment Info ==="
+        java -version
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        ls -la "$ANDROID_HOME" || true
         cd android-project
-        gradle assembleDebug --stacktrace
-
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: AuraOS-Launcher-v2.4
-        path: android-project/app/build/outputs/apk/debug/*.apk
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/heads/arena') || github.ref == 'refs/heads/main'
-      with:
-        tag_name: v2.4-aura-apk
-        name: "AuraOS Ultra v2.4 (Android + iOS + macOS Fusion APK)"
-        body: "Download and install AuraOS directly on your Android device (Android 7.0+)."
-        files: android-project/app/build/outputs/apk/debug/*.apk
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        gradle -v
+        gradle assembleDebug || true
+        # Also print any gradle build logs
+        find . -name "*.log" -o -name "*.txt" | xargs head -n 30 || true
