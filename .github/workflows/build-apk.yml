@@ -2,7 +2,7 @@ name: Build AuraOS Android APK
 
 on:
   push:
-    branches: [ "main", "arena/*" ]
+    branches: [ "arena/01a0a43f-ai", "main" ]
   workflow_dispatch:
 
 jobs:
@@ -10,36 +10,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
 
     - name: Copy latest Web App assets
       run: |
         mkdir -p android-project/app/src/main/assets
         cp -r src/public/* android-project/app/src/main/assets/
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x android-project/gradlew || true
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
 
     - name: Build Debug APK
       run: |
         cd android-project
-        if [ -f gradlew ]; then
-          ./gradlew assembleDebug
-        else
-          gradle assembleDebug
-        fi
+        gradle assembleDebug || ./gradlew assembleDebug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AuraOS-Launcher-Debug-APK
+        name: AuraOS-Launcher-v2.4.apk
         path: android-project/app/build/outputs/apk/debug/*.apk
+
+    - name: Publish GitHub Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/heads/arena') || github.ref == 'refs/heads/main'
+      with:
+        tag_name: aura-os-v2.4
+        name: "AuraOS Ultra v2.4 (Android + iOS + macOS Fusion)"
+        body: "AuraOS Ultra standalone Android launcher APK build. Install directly on any Android phone (8.0+)."
+        files: android-project/app/build/outputs/apk/debug/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
