@@ -174,7 +174,7 @@ async function exerciseOne(entry, { click = true } = {}) {
     if (bad.length) {
       const where = bad.map(([, v]) => {
         const line = (v.at || '').split('\n').find((l) => l.includes('/os/js/')) || '';
-        return `${v.kind}${v.kind === 'interval' ? ' ' + v.ms + 'ms' : ''} @ ${line.trim().replace(/^at /, '').replace('file:///home/user/Ai-/os/js/', '')}`;
+        return `${v.kind}${v.kind === 'interval' ? ' ' + v.ms + 'ms' : ''} @ ${line.trim().replace(/^at /, '').replace(/^file:\/\/.*\/os\/js\//, '')}`;
       });
       problems.push(`leaked ${bad.length} loop(s) after destroy: ${[...new Set(where)].slice(0, 4).join('; ')}`);
     }

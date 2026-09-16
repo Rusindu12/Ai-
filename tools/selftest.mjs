@@ -304,7 +304,7 @@ await ok('alarm: setAlarm reports the arming path honestly', async () => {
   autoApprove();
   const r = await bus.call('app.setAlarm', { id: '06:30', hour: 6, minute: 30, label: 'wake', repeat: true }, { appId: 'clock', pid: 'kernel:1' });
   if (r.via !== 'in-app') throw new Error(`expected in-app without a host bridge, got ${r.via}`);
-  const f = await import('/home/user/Ai-/os/js/kernel/syscalls.js');
+  const f = await import(new URL('../os/js/kernel/syscalls.js', import.meta.url).href);
   if (!f.alarmTable().some((a) => a.key === 'clock:06:30')) throw new Error('alarm table empty');
   if (!f.fireAlarm('clock:06:30')) throw new Error('fireAlarm refused to fire');
   if (f.fireAlarm('nope')) throw new Error('an unknown key must not fire');
@@ -314,7 +314,7 @@ await ok('alarm: setAlarm reports the arming path honestly', async () => {
 });
 
 await ok('alarm: a foreign app cannot cancel or fire another app\'s alarm', async () => {
-  const f = await import('/home/user/Ai-/os/js/kernel/syscalls.js');
+  const f = await import(new URL('../os/js/kernel/syscalls.js', import.meta.url).href);
   await bus.call('app.setAlarm', { id: 'x', hour: 1, minute: 2 }, { appId: 'clock', pid: 'kernel:1' });
   const r = await bus.call('app.cancelAlarm', { id: 'x' }, { appId: 'snake', pid: 'kernel:2' });
   if (r.ok !== true) throw new Error('cancel should answer');
