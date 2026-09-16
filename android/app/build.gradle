@@ -13,11 +13,26 @@ if (!osSourceDir.exists()) throw new GradleException("Dahat OS sources not found
 def osAssetDir = new File(projectDir, 'src/main/assets/os')
 
 // CI passes these; locally the debug key is used so `assembleRelease` still produces
-// an installable file (Android refuses to install an unsigned APK).
-def keystoreFile = System.getenv('DAHAT_KEYSTORE') ?: project.findProperty('dahat.keystore')
-def keystorePass = System.getenv('DAHAT_KEYSTORE_PASSWORD') ?: project.findProperty('dahat.keystorePassword') ?: 'android'
-def keyAlias = System.getenv('DAHAT_KEY_ALIAS') ?: project.findProperty('dahat.keyAlias') ?: 'dahat'
-def keyPass = System.getenv('DAHAT_KEY_PASSWORD') ?: project.findProperty('dahat.keyPassword') ?: 'android'
+// an installable file (Android refuses an unsigned APK).
+// NOTE: these must not be called `keyAlias`/`storePassword` — inside signingConfigs
+// a local variable with the same name as the DSL method shadows it and Groovy fails
+// to resolve the call ("No signature of method"). Different names, no shadowing.
+def ksFile = System.getenv('DAHAT_KEYSTORE') ?: project.findProperty('dahat.keystore')
+def ksStorePass = System.getenv('DAHAT_KEYSTORE_PASSWORD') ?: project.findProperty('dahat.keystorePassword') ?: 'android'
+def ksAlias = System.getenv('DAHAT_KEY_ALIAS') ?: project.findProperty('dahat.keyAlias') ?: 'dahat'
+def ksKeyPass = System.getenv('DAHAT_KEY_PASSWORD') ?: project.findProperty('dahat.keyPassword') ?: 'android'
+
+// Which key signs a release build, in order of preference: CI's keystore (env or
+// -Pdahat.keystore) → the machine's Android debug keystore (so a local
+// `assembleRelease` still produces an *installable* file) → no key at all, which
+// builds an unsigned APK instead of failing the whole run with
+// "Keystore file not set for signing config release".
+def ciKey = ksFile ? new File(ksFile.toString()) : null
+def debugKey = new File("${System.properties['user.home']}/.android/debug.keystore")
+def useCiKey = ciKey != null && ciKey.exists()
+def useDebugKey = !useCiKey && debugKey.exists()
+def hasSigningKey = useCiKey || useDebugKey
+logger.lifecycle("Dahat OS release signing: " + (useCiKey ? "CI keystore (${ksFile})" : useDebugKey ? "local debug keystore (install over it once with a real key)" : "NONE — APK will be unsigned"))
 
 android {
     namespace 'com.dahatos.launcher'
@@ -34,23 +49,19 @@ android {
     }
 
     signingConfigs {
-        release {
-            // Order of preference: CI's real key (env/property) → the local debug
-            // key (so `assembleRelease` still produces an *installable* file;
-            // Android refuses unsigned APKs) → left unsigned, which only happens
-            // on a machine with neither key.
-            def provided = keystoreFile && new File(keystoreFile.toString()).exists()
-            def debugKey = new File("${System.properties['user.home']}/.android/debug.keystore")
-            if (provided) {
-                storeFile file(keystoreFile.toString())
-                storePassword keystorePass
-                keyAlias keyAlias
-                keyPassword keyPass
-            } else if (debugKey.exists()) {
-                storeFile debugKey
-                storePassword 'android'
-                keyAlias 'androiddebugkey'
-                keyPassword 'android'
+        if (hasSigningKey) {
+            release {
+                if (useCiKey) {
+                    storeFile ciKey
+                    storePassword ksStorePass
+                    keyAlias ksAlias
+                    keyPassword ksKeyPass
+                } else {
+                    storeFile debugKey
+                    storePassword 'android'
+                    keyAlias 'androiddebugkey'
+                    keyPassword 'android'
+                }
             }
         }
     }
@@ -62,16 +73,11 @@ android {
             minifyEnabled false
         }
         release {
-            minifyEnabled false   // no reflection in the Java side, and a WebView shell
+            minifyEnabled false   // no reflection on the Java side, and a WebView shell
             shrinkResources false
-            signingConfig signingConfigs.release
+            if (hasSigningKey) { signingConfig signingConfigs.release }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -85,10 +91,16 @@ android {
         checkReleaseBuilds false
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
     packaging {
         resources.excludes += ['META-INF/*.version', 'DebugProbesKt.bin']
     }
 }
+
 
 tasks.register('syncOsAssets', Copy) {
     group 'dahat'

@@ -25,7 +25,12 @@ process.stdout.write(out.endsWith('\n') || out === '' ? out : `${out}\n`);
 
 if (r.status === 0 && !r.error) process.exit(0);
 
-const lines = out.split('\n').filter((l) => l.trim()).slice(-26);
+// gradle/jest-style reports hide the reason above the stack: prefer the block that
+// starts at "What went wrong" / the first error line, then fall back to the tail.
+const all = out.split('\n').filter((l) => l.trim());
+const start = all.findIndex((l) => /What went wrong|^FAILURE:\s|^e: |\berror:\s|Exception:|Unresolved reference|Cannot invoke|No signature of method|Caused by:/i.test(l));
+const from = start >= 0 ? all.slice(start, start + 18) : [];
+const lines = from.length ? [...from, '…', ...all.slice(-6)] : all.slice(-26);
 const tail = r.error ? `${r.error.message}\n${lines.join('\n')}` : lines.join('\n');
 // workflow commands are single-line and reserve a few characters
 const esc = tail
