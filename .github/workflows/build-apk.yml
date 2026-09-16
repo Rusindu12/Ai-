@@ -10,6 +10,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  checks: write
 
 concurrency:
   group: dahat-${{ github.ref }}
@@ -26,11 +27,13 @@ jobs:
         with:
           node-version: '22'
       - name: parse + import graph
-        run: node tools/check.mjs
+        run: node tools/ci-run.mjs check node tools/check.mjs
       - name: kernel self-test (36 cases, 57 syscalls)
-        run: node tools/selftest.mjs
+        run: node tools/ci-run.mjs selftest node tools/selftest.mjs
       - name: headless app smoke (every app mounted, clicked, unmounted)
-        run: node tools/appsmoke.mjs
+        run: node tools/ci-run.mjs appsmoke node tools/appsmoke.mjs
+      - name: headless shell smoke (26 scenarios driving the real UI)
+        run: node tools/ci-run.mjs shellsmoke node tools/shellsmoke.mjs
       - name: assets referenced by the shell must exist
         run: |
           set -e
@@ -100,7 +103,9 @@ jobs:
         run: |
           set -e
           cd android
-          gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:bundleRelease
+          # ci-run keeps the failure text in the run itself: the raw-log endpoint
+          # redirects to a blob host that is not always reachable.
+          node ../tools/ci-run.mjs gradle gradle --no-daemon --stacktrace :app:assembleDebug :app:assembleRelease :app:bundleRelease
           ls -la app/build/outputs/apk/debug app/build/outputs/apk/release
 
       - name: verify signatures
