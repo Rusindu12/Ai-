@@ -1,0 +1,17 @@
+{
+  "name": "dahat-os",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dahat OS — a mobile OS environment (userspace kernel + shell + 19 apps) in plain ES modules, shipped as an Android launcher APK.",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8130 --bind 0.0.0.0 --directory os",
+    "test": "node tools/check.mjs && node tools/selftest.mjs && node tools/appsmoke.mjs",
+    "test:kernel": "node tools/selftest.mjs",
+    "test:apps": "node tools/appsmoke.mjs",
+    "docs:api": "node tools/syscall-doc.mjs",
+    "icons": "sh tools/make-icons.sh",
+    "apk": "cd android && gradle :app:assembleDebug"
+  },
+  "license": "MIT"
+}

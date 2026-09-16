@@ -80,7 +80,7 @@ public final class MainActivity extends Activity {
     s.setJavaScriptCanOpenWindowsAutomatically(false);
     s.setSupportZoom(false);
     s.setBuiltInZoomControls(false);
-    ssetDisplayModeDesktop(s);
+    configureViewport(s);
     s.setTextZoom(100);
     s.setCacheMode(WebSettings.LOAD_DEFAULT);
     if (isDebuggable()) WebView.setWebContentsDebuggingEnabled(true);
@@ -160,9 +160,9 @@ public final class MainActivity extends Activity {
     forwardIntent(getIntent());
   }
 
-  /** Chromium on Android needs the desktop width to be *not* forced; this only
-   *  disables the "auto-zoom text" heuristic so 1 CSS px == 1 device-independent px. */
-  private void ssetDisplayModeDesktop(WebSettings s) {
+  /** Keep 1 CSS px == 1 device-independent px: the OS sizes itself with viewport-fit
+   *  and safe-area insets, so no desktop-mode or text-autoscaling heuristics. */
+  private void configureViewport(WebSettings s) {
     s.setUseWideViewPort(true);
     s.setLoadWithOverviewMode(false);
   }

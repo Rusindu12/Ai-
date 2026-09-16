@@ -129,6 +129,7 @@ export async function boot() {
 }
 
 function registerSW() {
+  if (self.DahatBridge) { log.debug('net', 'inside the launcher APK — assets are already local, no service worker needed'); return; }
   if (!('serviceWorker' in navigator) || !window.isSecureContext) { log.debug('net', 'service worker unavailable (insecure context) — relying on host cache'); return; }
   navigator.serviceWorker.register('sw.js').then((reg) => {
     log.info('net', `service worker registered (scope ${reg.scope})`);
