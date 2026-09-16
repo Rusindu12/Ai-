@@ -1,0 +1,9 @@
+name: probe
+on:
+  push:
+    branches: [arena/01a0a442-ai]
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hello
