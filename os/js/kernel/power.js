@@ -106,6 +106,6 @@ export const power = {
   setPowerSave(on) { state.powerSave = !!on; bus.emit('power.save', { on: !!on }); emit(); },
 };
 
-bus.register('power.status', () => status());
+bus.register('power.status', () => status(), { desc: 'battery + screen state' });
 bus.register('power.wake', ({ on }) => { power.wakeLock(!!on); return { wakelock: !!on }; }, { cap: 'wakelock', desc: 'keep the screen awake' });
-bus.register('power.info', () => ({ ...status(), api: state.batteryApi ? 'Battery Status' : 'simulated' }));
+bus.register('power.info', () => ({ ...status(), api: state.batteryApi ? 'Battery Status' : 'simulated' }), { desc: 'battery source of truth' });

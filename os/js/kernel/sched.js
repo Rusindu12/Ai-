@@ -125,7 +125,7 @@ export const sched = {
 };
 
 bus.register('sys.procs', () => sched.table(), { cap: 'process', desc: 'list running processes' });
-bus.register('sys.perf', () => ({ frameMs: +sched.frameMs.toFixed(2), budgetMs: sched.budget, jank: sched.jank, procs: sched.list.length }));
+bus.register('sys.perf', () => ({ frameMs: +sched.frameMs.toFixed(2), budgetMs: sched.budget, jank: sched.jank, procs: sched.list.length }), { desc: 'frame clock + jank counter' });
 bus.register('sys.kill', ({ pid }, { pid: me }) => {
   const target = sched.info(pid);
   if (!target) throw new Error(`ESRCH: no such process ${pid}`);

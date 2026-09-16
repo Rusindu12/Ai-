@@ -82,9 +82,9 @@ export const notif = new NotifMgr();
 bus.register('notif.post', ({ title, body, importance, actions, sticky, silent, tapTo }, { appId }) =>
   notif.post({ appId, title, body, importance, actions, sticky, silent, tapTo }),
 { cap: 'notifications', desc: 'Show you a notification' });
-bus.register('notif.list', ({ appId } = {}) => (appId ? notif.for(appId) : notif.all()));
+bus.register('notif.list', ({ appId } = {}) => (appId ? notif.for(appId) : notif.all()), { desc: 'this app’s notification log' });
 bus.register('notif.clear', ({ appId }, { appId: me, trust }) => {
   if (appId && appId !== me && !trust) throw new Error('EPERM: cannot clear another app\'s notifications');
   return { cleared: notif.clear(appId) };
-});
-bus.register('notif.badge', ({ appId }) => notif.badge(appId));
+}, { desc: 'dismiss notifications' });
+bus.register('notif.badge', ({ appId }) => notif.badge(appId), { desc: 'unread count for one app' });

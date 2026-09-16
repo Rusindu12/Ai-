@@ -68,7 +68,7 @@ export function registerSyscalls() {
   bus.register('fs.ls', async ({ path = '/' }, ctx) => {
     const p = await gate(ctx.appId, path);
     return { path: p, entries: vfs.ls(p, cwdOf(ctx)) };
-  });
+  }, { desc: 'list a directory' });
   bus.register('fs.mkdir', async ({ path }, ctx) => ({ path: vfs.mkdir(await gate(ctx.appId, path, { write: true }), cwdOf(ctx)) }), { desc: 'create a folder' });
   bus.register('fs.rm', async ({ path, recursive = false }, ctx) => vfs.rm(await gate(ctx.appId, path, { write: true }), cwdOf(ctx), { recursive }), { desc: 'delete a file' });
   bus.register('fs.move', async ({ from, to }, ctx) => {
@@ -76,26 +76,26 @@ export function registerSyscalls() {
     const b = await gate(ctx.appId, to, { write: true });
     return { path: vfs.move(a, b) };
   }, { desc: 'move or rename' });
-  bus.register('fs.stat', async ({ path }, ctx) => vfs.stat(await gate(ctx.appId, path), cwdOf(ctx)));
-  bus.register('fs.df', () => ({ ...vfs.df(), percent: Math.round((vfs.totalUsed() / vfs.df().total) * 100) }));
-  bus.register('fs.tree', async ({ path = '/', depth = 2 }, ctx) => vfs.tree(await gate(ctx.appId, path), cwdOf(ctx), depth));
+  bus.register('fs.stat', async ({ path }, ctx) => vfs.stat(await gate(ctx.appId, path), cwdOf(ctx)), { desc: 'stat one path' });
+  bus.register('fs.df', () => ({ ...vfs.df(), percent: Math.round((vfs.totalUsed() / vfs.df().total) * 100) }), { desc: 'quota and usage' });
+  bus.register('fs.tree', async ({ path = '/', depth = 2 }, ctx) => vfs.tree(await gate(ctx.appId, path), cwdOf(ctx), depth), { desc: 'recursive listing' });
 
   // ---- private per-app key-value store ---------------------------------
-  bus.register('store.get', ({ key }, { appId }) => storage.get(`app:${appId}:${key}`, null));
-  bus.register('store.set', ({ key, value }, { appId }) => storage.set(`app:${appId}:${key}`, value));
-  bus.register('store.del', ({ key }, { appId }) => storage.del(`app:${appId}:${key}`));
+  bus.register('store.get', ({ key }, { appId }) => storage.get(`app:${appId}:${key}`, null), { desc: 'read app-private key/value' });
+  bus.register('store.set', ({ key, value }, { appId }) => storage.set(`app:${appId}:${key}`, value), { desc: 'write app-private key/value' });
+  bus.register('store.del', ({ key }, { appId }) => storage.del(`app:${appId}:${key}`), { desc: 'drop one app-private key' });
 
   // ---- settings ---------------------------------------------------------
   bus.register('settings.get', ({ key }, { appId }) => {
     if (!config.isPublic(key) && !isTrusted(appId)) throw new Error(`EPERM: setting "${key}" is not readable by ${appId}`);
     return { key, value: config.get(key) };
-  });
+  }, { desc: 'read a setting (private keys need OS trust)' });
   bus.register('settings.list', ({ appId } = {}, ctx) => {
     const id = appId || ctx.appId;
     const all = config.all();
     if (isTrusted(id)) return all;
     return Object.fromEntries(Object.entries(all).filter(([k]) => config.isPublic(k)));
-  });
+  }, { desc: 'public settings, or all of them for the shell' });
   bus.register('settings.set', async ({ key, value }, { appId }) => {
     if (!isTrusted(appId) && appId !== 'system') {
       const ok = await caps.check(appId, 'settings', { why: 'Change system settings' });
@@ -107,17 +107,17 @@ export function registerSyscalls() {
   }, { desc: 'change system settings' });
 
   // ---- capabilities -----------------------------------------------------
-  bus.register('caps.list', () => Object.entries(CAPS).map(([id, c]) => ({ id, ...c })));
-  bus.register('caps.status', ({ appId }, ctx) => ({ app: appId, grants: caps.for(appId || ctx.appId) }));
+  bus.register('caps.list', () => Object.entries(CAPS).map(([id, c]) => ({ id, ...c })), { desc: 'every capability the OS knows' });
+  bus.register('caps.status', ({ appId }, ctx) => ({ app: appId, grants: caps.for(appId || ctx.appId) }), { desc: 'this app’s granted / denied capabilities' });
   bus.register('caps.request', async ({ cap, why = '' }, { appId }) => {
     const ok = await caps.check(appId, cap, { why });
     return { cap, granted: ok };
-  });
+  }, { desc: 'ask the user for one capability' });
   bus.register('caps.reset', ({ appId }, { trust }) => {
     if (!trust) throw new Error('EPERM: only the shell may reset permissions');
     caps.reset(appId);
     return { ok: true };
-  });
+  }, { desc: 'forget an app’s grants (shell only)' });
 
   // ---- process / window -------------------------------------------------
   bus.register('app.open', ({ id, params }, { pid }) => {
@@ -125,25 +125,25 @@ export function registerSyscalls() {
     if (!p) throw new Error(`ENOENT: no such app ${id}`);
     return bus.request('wm.launch', { appId: id, params, from: pid });
   }, { cap: 'process', desc: 'open another app' });
-  bus.register('app.closeSelf', ({ pid }) => bus.request('wm.close', { pid }));
-  bus.register('app.info', ({ pid }) => ({ pid, cwd: cwdOf({ pid }) }), { trust: true });
+  bus.register('app.closeSelf', ({ pid }) => bus.request('wm.close', { pid }), { desc: 'ask the shell to close this window' });
+  bus.register('app.info', ({ pid }) => ({ pid, cwd: cwdOf({ pid }) }), { trust: true, desc: 'what the window manager knows about this pid' });
 
   // ---- device / connectivity -------------------------------------------
-  bus.register('sys.uname', () => uname());
-  bus.register('sys.info', () => ({ ...uname(), ...power.status, procs: sched.table().length, caps: bus.stats() }));
-  bus.register('sys.uptime', () => ({ ms: Date.now() - BOOT, kernelMs: log.uptime }));
-  bus.register('sys.time', () => ({ epoch: Date.now(), iso: new Date().toISOString(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone, locale: navigator.language }));
+  bus.register('sys.uname', () => uname(), { desc: 'name, version, build of this OS' });
+  bus.register('sys.info', () => ({ ...uname(), ...power.status, procs: sched.table().length, caps: bus.stats() }), { desc: 'one-shot system summary' });
+  bus.register('sys.uptime', () => ({ ms: Date.now() - BOOT, kernelMs: log.uptime }), { desc: 'time since boot' });
+  bus.register('sys.time', () => ({ epoch: Date.now(), iso: new Date().toISOString(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone, locale: navigator.language }), { desc: 'clock, zone and locale' });
   bus.register('sys.log', ({ n = 50, level, domain } = {}, { appId }) => {
     if (isTrusted(appId)) return log.dump({ level, domain });
     return log.tail(n, { level, domain }).filter((e) => e.domain === appId || e.msg.includes(appId)).map((e) => `${e.level} ${e.domain}: ${e.msg}`).join('\n');
   }, { desc: 'read the kernel log' });
   bus.register('sys.dmesg', ({ n = 200 } = {}) => log.dump({ n }), { cap: 'settings', desc: 'read the whole kernel log' });
-  bus.register('sys.stats', () => ({ ...bus.stats(), storageMode: storage.mode }));
+  bus.register('sys.stats', () => ({ ...bus.stats(), storageMode: storage.mode }), { desc: 'bus + storage counters' });
 
   // ---- media / feedback -------------------------------------------------
-  bus.register('ui.haptic', ({ pattern = 'tap' }) => { actuate(pattern); return { ok: true }; }, { cap: 'vibrate' });
-  bus.register('ui.sfx', ({ name = 'tap' }) => { play(name); return { ok: true }; });
-  bus.register('ui.toast', ({ message, ms = 1800 }) => { bus.emit('ui.toast', { message, ms }); return { ok: true }; });
+  bus.register('ui.haptic', ({ pattern = 'tap' }) => { actuate(pattern); return { ok: true }; }, { cap: 'vibrate', desc: 'short haptic pulse' });
+  bus.register('ui.sfx', ({ name = 'tap' }) => { play(name); return { ok: true }; }, { desc: 'play a synthesised UI sound' });
+  bus.register('ui.toast', ({ message, ms = 1800 }) => { bus.emit('ui.toast', { message, ms }); return { ok: true }; }, { desc: 'transient message in the shell' });
 
   // ---- clipboard / share / external ------------------------------------
   bus.register('clip.set', async ({ text }) => {
@@ -177,13 +177,13 @@ export function registerSyscalls() {
      * Returning 'in-app' instead of failing keeps the UI honest about what it promised. */
     alarms.set(key, { appId, hour: Number(hour) | 0, minute: Number(minute) | 0, label: String(label || 'Dahat alarm'), repeat: !!repeat, armedAt: Date.now() });
     return { via: 'in-app', key };
-  }, { desc: 'arm an alarm (host bridge when available)' });
+  }, { desc: 'arm an alarm (host bridge when available)', cap: null });
   bus.register('app.cancelAlarm', ({ id }, ctx) => {
     const key = `${ctx.appId}:${id}`;
     try { self.DahatBridge?.cancelAlarm?.(key); } catch { /* host may already be gone */ }
     alarms.delete(key);
     return { ok: true };
-  }, { desc: 'cancel an alarm this app armed' });
+  }, { desc: 'cancel an alarm this app armed', cap: null });
 
   bus.register('app.openUrl', async ({ url }) => {
     const u = String(url);
@@ -213,7 +213,7 @@ export function registerSyscalls() {
     if (navigator.share) { try { await navigator.share({ title, text, url }); return { ok: true, via: 'web-share' }; } catch (e) { if (e.name === 'AbortError') return { ok: false, cancelled: true }; } }
     await bus.call('clip.set', { text: payload });
     return { ok: true, via: 'clipboard' };
-  }, { desc: 'share text out of the OS' });
+  }, { desc: 'share text out of the OS', cap: null });
 
   log.info('kernel', `syscall table built (${bus.stats().services} entries)`);
 }

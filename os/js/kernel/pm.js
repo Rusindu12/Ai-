@@ -143,13 +143,13 @@ export const pm = {
 };
 
 // ---- syscalls -------------------------------------------------------------
-bus.register('pm.list', () => PKGS.filter((p) => state.installed.has(p.id)).map((p) => pm.manifest(p.id)));
-bus.register('pm.available', () => pm.bazaar());
-bus.register('pm.info', ({ id }) => pm.manifest(id));
+bus.register('pm.list', () => PKGS.filter((p) => state.installed.has(p.id)).map((p) => pm.manifest(p.id)), { desc: 'installed packages' });
+bus.register('pm.available', () => pm.bazaar(), { desc: 'what the Bazaar index offers' });
+bus.register('pm.info', ({ id }) => pm.manifest(id), { desc: 'one manifest' });
 bus.register('pm.install', ({ id }, { appId }) => pm.install(id, { from: `app:${appId}` }), { cap: 'process', desc: 'install a new package' });
 bus.register('pm.uninstall', ({ id }) => pm.uninstall(id), { cap: 'process', desc: 'remove a package' });
-bus.register('pm.clearData', ({ id }) => pm.clearData(id), { cap: 'process' });
-bus.register('pm.setLayout', ({ pages, dock }) => pm.setLayout({ pages, dock }), { cap: 'settings', trust: false });
+bus.register('pm.clearData', ({ id }) => pm.clearData(id), { cap: 'process', desc: 'wipe an app’s sandbox' });
+bus.register('pm.setLayout', ({ pages, dock }) => pm.setLayout({ pages, dock }), { cap: 'settings', trust: false, desc: 'rewrite the home layout' });
 bus.register('pm.pin', ({ id, page = 0, index = 0 }) => {
   const pages_ = pm.pages();
   pages_[page] = pages_[page] || [];
@@ -157,4 +157,4 @@ bus.register('pm.pin', ({ id, page = 0, index = 0 }) => {
   pm.setLayout({ pages: pages_ });
   state.pinned = [...new Set([id, ...state.pinned])];
   save();
-}, { cap: 'process' });
+}, { cap: 'process', desc: 'pin an app to a home page' });
