@@ -21,19 +21,29 @@ function close() {
   if (r) clear(r);
 }
 
-/** low-level: mount a scrim with a node, resolve on dismiss */
+/** low-level: mount a scrim with a node, resolve on dismiss.
+ * Each dialog owns its scrim: dismissing one must never strand another (and must
+ * never leave its caller awaiting a promise that can no longer resolve). */
 export function modal(node, { dismissible = true, onDismiss } = {}) {
   return new Promise((resolve) => {
     const r = ensureRoot();
-    const done = (v) => {
-      if (!scrim.isConnected) return;
-      scrim.classList.add('out');
-      setTimeout(() => clear(r), 160);
+    let settled = false;
+    const finish = (v) => {
+      if (settled) return;
+      settled = true;
+      scrim.remove();
       onDismiss?.(v);
-      resolve(v);
+      resolve(v);            // even if a newer dialog already replaced us
+    };
+    const done = (v) => {
+      if (settled) return;
+      if (!scrim.isConnected) return finish(v);
+      scrim.classList.add('out');
+      setTimeout(() => finish(v), 160);
     };
     const scrim = h('div.scrim', { onclick: (e) => { if (e.target === scrim && dismissible) done(null); } }, node);
     node.__done = done;
+    scrim.__done = done;      // callers elsewhere use document.querySelector('.scrim')?.__done?.()
     r.appendChild(scrim);
   });
 }

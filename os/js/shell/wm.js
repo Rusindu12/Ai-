@@ -60,7 +60,7 @@ export const wm = {
       proc.instance = inst;
       sched.beat(proc.pid);
       inst.onCreate?.();
-      log.info('wm', `pid ${proc.pid} mounted ${appId} (${(performance.now() - proc.startedAt).toFixed(0)}ms)`);
+      log.info('wm', `pid ${proc.pid} mounted ${appId} (${(Date.now() - proc.startedAt).toFixed(0)}ms)`);
     } catch (err) {
       log.error('wm', `launch ${appId} failed: ${err.message}`);
       clear(win.body);

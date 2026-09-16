@@ -30,6 +30,7 @@ class Node0 {
     return this.parentNode.childNodes[i + 1] || null;
   }
   get parentElement() { return this.parentNode && this.parentNode.nodeType === 1 ? this.parentNode : null; }
+  get isConnected() { let n = this; while (n.parentNode) n = n.parentNode; return n.nodeType === 9; }
   appendChild(n) {
     if (!n) return n;
     if (n.nodeType === 11) { [...n.childNodes].forEach((c) => this.appendChild(c)); return n; }
@@ -76,10 +77,14 @@ class Node0 {
   _fire(type, ev = {}) { this.dispatchEvent({ type, bubbles: true, preventDefault() { this.defaultPrevented = true; }, stopPropagation() { this._stop = true; }, ...ev }); }
   get textContent() { return this.childNodes.map((c) => (c.nodeType === 3 ? c.data : c.textContent)).join(''); }
   set textContent(v) { this.childNodes = []; if (v !== '' && v != null) this.appendChild(textNode(String(v))); }
-  set innerHTML(v) { this.childNodes = []; this._html = String(v); }
+  set innerHTML(v) {
+    this.childNodes = []; this._html = String(v);
+    const frag = parseFragment(String(v));
+    frag.childNodes.slice().forEach((c) => this.appendChild(c));
+  }
   get innerHTML() { return this._html || ''; }
   closest(sel) { let n = this; while (n && n.matches && !n.matches(sel)) n = n.parentNode; return n && n.matches?.(sel) ? n : null; }
-  matches(sel) { return matchAll(this, sel) }
+  matches(sel) { return matchChain(this, sel) }
   querySelector(sel) { for (const el of descendants(this)) if (el.matches?.(sel)) return el; return null; }
   querySelectorAll(sel) { return descendants(this).filter((el) => el.matches?.(sel)); }
   getBoundingClientRect() { return { x: 0, y: 0, top: 0, left: 0, right: 400, bottom: 800, width: 400, height: 800, toJSON: noop }; }
@@ -90,10 +95,31 @@ class Node0 {
   getRootNode() { return document; }
   cloneNode(deep) { const c = this.nodeType === 3 ? textNode(this.data) : createElement(this.tagName.toLowerCase()); if (deep) [...this.childNodes].forEach((n) => c.appendChild(n.cloneNode(true))); return c; }
   insertAdjacentElement(_pos, n) { return this.appendChild(n); }
+  /** minimal HTML sink: enough for the badges/icons the shell injects as strings */
+  insertAdjacentHTML(pos, html) {
+    const frag = parseFragment(String(html));
+    if (pos === 'afterbegin') this.childNodes.unshift(...frag.childNodes.map((c) => (c.parentNode = this, c)));
+    else frag.childNodes.slice().forEach((c) => this.appendChild(c));
+  }
 }
 
 function* walkDesc(n) { for (const c of [...n.childNodes]) { if (c.nodeType === 1) { yield c; yield* walkDesc(c); } } }
 const descendants = (n) => [...walkDesc(n)];
+/** supports "a b c" descendant combinators, which the shell's CSS uses constantly */
+function matchChain(el, sel) {
+  const groups = String(sel).split(',').map((g) => g.trim()).filter(Boolean);
+  if (groups.length > 1) return groups.some((g) => matchChain(el, g));
+  const parts = String(sel).trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return matchAll(el, sel);
+  let cur = el;
+  for (let i = parts.length - 1; i >= 0; i--) {
+    if (i === parts.length - 1) { if (!matchAll(cur, parts[i])) return false; continue; }
+    let found = false;
+    while (cur.parentNode && !found) { cur = cur.parentNode; if (cur.nodeType === 1 && matchAll(cur, parts[i])) found = true; }
+    if (!found) return false;
+  }
+  return true;
+}
 function matchAll(el, sel) { return sel.split(',').some((s) => matchesOne(el, s.trim())); }
 function matchesOne(el, sel) {
   if (!el || el.nodeType !== 1) return false;
@@ -109,6 +135,33 @@ function matchesOne(el, sel) {
   if (ids.some((i) => el.id !== i.slice(1))) return false;
   return Boolean(tag || classes.length || ids.length || attr);
 }
+/** a deliberately small tag parser (no entities, no self-closing maths) */
+function parseFragment(html) {
+  const root = new Node0(11);
+  const stack = [root];
+  const re = /<\/?([a-zA-Z][\w-]*)((?:\s+[\w-]+=(?:"[^"]*"|'[^']*'|[^\s>]+))*)\s*(\/?)>|([^<]+)/g;
+  let m;
+  while ((m = re.exec(html))) {
+    const top = stack[stack.length - 1];
+    if (m[4] !== undefined) {
+      const txt = m[4];
+      if (txt.trim()) top.appendChild(textNode(txt.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')));
+      continue;
+    }
+    const closing = m[0][1] === '/';
+    if (closing) { if (stack.length > 1) stack.pop(); continue; }
+    const el = new Element(m[1]);
+    if (m[2]) for (const a of m[2].trim().split(/\s+(?=[\w-]+=)/)) {
+      const eq = a.indexOf('=');
+      if (eq < 0) el.setAttribute(a, '');
+      else el.setAttribute(a.slice(0, eq).trim(), a.slice(eq + 1).trim().replace(/^["']|["']$/g, ''));
+    }
+    top.appendChild(el);
+    if (!m[3] && !['br', 'img', 'input', 'path', 'use', 'hr', 'meta', 'source'].includes(m[1].toLowerCase())) stack.push(el);
+  }
+  return root;
+}
+/** innerHTML as a getter that reports the tree, and as a setter that parses */
 const textNode = (data) => {
   const n = new Node0(3);
   n.data = String(data);
@@ -122,7 +175,10 @@ const STYLE_PROPS = ['width', 'height', 'top', 'right', 'bottom', 'left', 'trans
 function makeStyle() {
   const store = {};
   return new Proxy(store, {
-    get: (t, k) => (k === 'setProperty' ? (p, v) => { t[p] = v; } : k === 'removeProperty' ? (p) => { delete t[p]; } : k === 'cssText' ? '' : t[k] === undefined ? '' : t[k]),
+    get: (t, k) => (k === 'setProperty' ? (p, v) => { t[p] = v; }
+      : k === 'removeProperty' ? (p) => { delete t[p]; }
+      : k === 'getPropertyValue' ? (p) => (t[p] === undefined ? '' : String(t[p]))
+      : k === 'cssText' ? '' : t[k] === undefined ? '' : t[k]),
     set: (t, k, v) => { t[k] = v; return true; },
     has: () => true,
     ownKeys: () => STYLE_PROPS,

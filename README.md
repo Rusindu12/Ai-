@@ -43,6 +43,7 @@ Full details, the bridge table and signing notes: [`docs/android-launcher.md`](d
 node tools/check.mjs       # every module parses, every relative import resolves
 node tools/selftest.mjs    # 36 kernel cases + a sweep of all 57 syscalls
 node tools/appsmoke.mjs    # every app mounted, every control clicked, unmounted
+node tools/shellsmoke.mjs  # 26 scenarios that boot the shell and click through it
 node tools/syscall-doc.mjs # regenerate docs/kernel-api.md's syscall table
 ```
 
@@ -52,6 +53,16 @@ find, fires keyboard, pointer and touch events, walks the lifecycle
 (`onCreate → onResume → onParams → onResize → onPause → onBack → destroy`) and
 fails an app that leaks an interval or an animation frame. Both languages are
 exercised (en + si). No browser is needed and no test mocks the kernel.
+
+`tools/shellsmoke.mjs` goes one level up: it boots the actual `boot()` sequence —
+first-run onboarding, home pages and dock, the app drawer, the omnibox, window
+manager modes (PIP, split, overview, back), the status bar, Quick Settings, the
+power menu, the lock screen and its PIN, dialogs, the permission prompt, toasts,
+theme + language repaint, notifications, an alarm firing, a `dahat://` deep link,
+the Android host hooks (`dahatOnBack` / `dahatGoHome` / `dahatOnIntent`) and
+teardown — and fails on any console error or any surface that does not render.
+It caught two real shell bugs (a dead `document.querySelector('.scrim').__done`
+call path, and mount timings logged against mixed clocks).
 
 ## Layout
 

@@ -120,9 +120,13 @@ jobs:
       - name: collect artifacts
         run: |
           set -e
-          cp android/app/build/outputs/apk/debug/app-debug.apk DahatOS-debug.apk
-          cp android/app/build/outputs/apk/release/app-release.apk DahatOS.apk
-          cp android/app/build/outputs/bundle/release/app-release.aab DahatOS.aab || true
+          cp "$(ls android/app/build/outputs/apk/debug/*.apk | head -1)" DahatOS-debug.apk
+          cp "$(ls android/app/build/outputs/apk/release/*.apk | head -1)" DahatOS.apk
+          cp "$(ls android/app/build/outputs/bundle/release/*.aab 2>/dev/null | head -1)" DahatOS.aab 2>/dev/null || true
+          # an unsigned release means no signing key reached CI — say so loudly
+          if ! unzip -l DahatOS.apk | grep -q "META-INF/MANIFEST.MF"; then
+            echo "::warning::DahatOS.apk is NOT signed (no keystore available in CI). Add the DAHAT_KEYSTORE_* secrets to get an upgradable release build."
+          fi
           for f in DahatOS-debug.apk DahatOS.apk DahatOS.aab; do
             [ -e "$f" ] && printf "%s  %s\n" "$(sha256sum "$f" | cut -c1-16)" "$f" >> CHECKSUMS.txt
           done

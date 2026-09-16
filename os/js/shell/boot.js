@@ -24,7 +24,7 @@ import { launcher } from './launcher.js';
 import { lockscreen } from './lock.js';
 import { onboarding } from './onboarding.js';
 import { initHeadsUp } from './heads-up.js';
-import { permPrompt, toast } from './dialogs.js';
+import { permPrompt, toast, initToasts } from './dialogs.js';
 
 const T0 = performance.now();
 const STAGES = [
@@ -97,6 +97,7 @@ export async function boot() {
   statusbar.init(shade);
   wm.init();
   initHeadsUp();
+  initToasts();
   launcher.init();
   lockscreen.init();
   wm.on('home', () => { launcher.paintHome(); });

@@ -54,7 +54,7 @@ await vfs.mount();
 await pm.load();
 await notif.load();
 power.init();
-i18n.setLang?.('en');
+i18n.lang = 'en';
 
 const toasts = [];
 const opened = [];
@@ -191,9 +191,9 @@ try {
 for (const entry of TARGETS) {
   const problems = await exerciseOne(entry, { click: true });
   // second pass: Sinhala strings, no clicking
-  i18n.setLang?.('si');
+  i18n.lang = 'si';
   const siProblems = await exerciseOne(entry, { click: false });
-  i18n.setLang?.('en');
+  i18n.lang = 'en';
   results.push({ entry, problems: [...problems, ...siProblems.map((p) => `[si] ${p}`)] });
 }
 } catch (e) {

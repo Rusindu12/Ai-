@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8130 --bind 0.0.0.0 --directory os",
-    "test": "node tools/check.mjs && node tools/selftest.mjs && node tools/appsmoke.mjs",
+    "test": "node tools/check.mjs && node tools/selftest.mjs && node tools/appsmoke.mjs && node tools/shellsmoke.mjs",
     "test:kernel": "node tools/selftest.mjs",
     "test:apps": "node tools/appsmoke.mjs",
+    "test:shell": "node tools/shellsmoke.mjs",
     "docs:api": "node tools/syscall-doc.mjs",
     "icons": "sh tools/make-icons.sh",
     "apk": "cd android && gradle :app:assembleDebug"
