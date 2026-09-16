@@ -144,26 +144,45 @@ jobs:
           set -e
           TAG=dahat-ci-latest
           sha=$(git rev-parse --short HEAD)
-          notes="CI build of Dahat OS at \`${sha}\`.
+          # Quoted heredoc on purpose: backticks and $ inside a double-quoted shell
+          # string would be expanded/executed, which is what broke the first version.
+          cat > notes.md <<'NOTES'
+          ## Dahat OS — CI build
 
-          **Install:** \`adb install -r DahatOS.apk\`, then long-press the home screen and pick
-          **Dahat OS** → Always.
+          Install: `adb install -r DahatOS.apk`, then long-press the home screen and pick
+          **Dahat OS** → Always. Nothing else is needed: the whole OS (boot, lock, launcher,
+          window manager, kernel, 19 apps) is inside this APK, it works offline, and it does not
+          replace Android — "Reboot to Android" in Quick Settings hands the home button back.
 
-          **Upgrading:** if the four \`DAHAT_KEYSTORE_*\` repository secrets are set, every build is
-          signed with the same key and installs over the old one. Without them CI generates a
-          throwaway key, so a new build needs the old one uninstalled first — Android refuses a
-          different signature, and uninstalling wipes the OS's data. To keep upgrades painless,
-          download the `DahatOS-release-keystore` artifact from *this* run (Actions → the build
-          → Artifacts) and set these four secrets once:
+          Upgrading: if the four `DAHAT_KEYSTORE_*` repository secrets are set, every build is
+          signed with the same key and installs straight over the old one, keeping your notes,
+          settings and alarms. Without them CI generates a throwaway key, so a new build needs
+          the old one uninstalled first — Android refuses a different signature, and uninstalling
+          wipes the OS's data. To fix that once, download the `DahatOS-release-keystore` artifact
+          from the Actions run that produced this build (Actions → the build → Artifacts) and set:
 
-              keytool -genkeypair -keystore dahat-release.keystore -alias dahat \
-                -keyalg RSA -keysize 2048 -validity 10950
-              base64 -w0 dahat-release.keystore        # → DAHAT_KEYSTORE_B64
+          - `DAHAT_KEYSTORE_B64` — `base64 -w0 dahat-release.keystore`
+          - `DAHAT_KEYSTORE_PASSWORD`, `DAHAT_KEY_ALIAS`, `DAHAT_KEY_PASSWORD`
 
-          Checksums and the debug build are attached to this release."
+          Or make your own key:
+
+          ```
+          keytool -genkeypair -keystore dahat-release.keystore -alias dahat \
+            -keyalg RSA -keysize 2048 -validity 10950
+          ```
+
+          The demo is also a PWA: open the `gh-pages` deployment (or serve `os/` yourself) and
+          "install" it from the browser menu — same OS, no ADB.
+          NOTES
+          printf '\n_commit: `%s` · branch: `%s`_\n' "$sha" "${GITHUB_REF_NAME}" >> notes.md
           gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
-          gh release create "$TAG" DahatOS.apk DahatOS-debug.apk CHECKSUMS.txt \
-            --title "Dahat OS — CI build ${sha}" --notes "$notes" --target "$GITHUB_SHA" >/dev/null
+          if ! gh release create "$TAG" DahatOS.apk DahatOS-debug.apk CHECKSUMS.txt \
+               --title "Dahat OS — CI build ${sha}" --notes-file notes.md --prerelease \
+               --target "$GITHUB_SHA" 2>/tmp/gherr; then
+            reason=$(tr '\n' ' ' < /tmp/gherr | sed -e 's/%/%25/g' -e 's/:/%3A/g' -e 's/#/%23/g' | cut -c1-500)
+            echo "::error::could not publish the release: ${reason}"
+            exit 1
+          fi
           url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/DahatOS.apk"
           {
             echo "## Release"
@@ -171,9 +190,9 @@ jobs:
             echo "- **APK:** [DahatOS.apk]($url) — install with \`adb install -r DahatOS.apk\`"
             echo "- **Release page:** https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
             echo
-            echo '```'
+            echo '\`\`\`'
             cat CHECKSUMS.txt
-            echo '```'
+            echo '\`\`\`'
           } >> "$GITHUB_STEP_SUMMARY"
           # an annotation, because the raw log is not always reachable from outside
           echo "::notice::DahatOS.apk published → $url ($(stat -c%s DahatOS.apk) bytes, sha256 $(sha256sum DahatOS.apk | cut -c1-16))"
