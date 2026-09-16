@@ -111,16 +111,30 @@ jobs:
       - name: verify signatures
         run: |
           set -e
+          SIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
+          rel=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
+          if [ ! -x "$SIGNER" ]; then
+            echo "::warning::apksigner not found at $SIGNER — cannot confirm the signature"
+            exit 0
+          fi
+          out=$("$SIGNER" verify --print-certs "$rel" 2>&1) || true
           {
             echo "### Signatures"
             echo '```'
-            SIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
             for a in android/app/build/outputs/apk/*/*.apk; do
               echo "-- $a"
-              if [ -x "$SIGNER" ]; then "$SIGNER" verify --print-certs "$a" 2>/dev/null | head -8; else echo "(apksigner not on PATH, skipped)"; fi
+              "$SIGNER" verify --print-certs "$a" 2>&1 | head -8
             done
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          # the same facts as an annotation: an APK Android refuses to install is
+          # the one thing this job must not get wrong, and logs are not always readable
+          flat=$(printf '%s' "$out" | tr '\n' ' ' | sed -e 's/%/%25/g' -e 's/:/%3A/g' -e 's/#/%23/g' | cut -c1-220)
+          if printf '%s' "$out" | grep -q "DOES NOT VERIFY"; then
+            echo "::error::$rel is NOT signed — Android will refuse it: $flat"
+            exit 1
+          fi
+          echo "::notice::$rel verifies: $flat"
 
       - name: collect artifacts
         run: |
@@ -128,10 +142,9 @@ jobs:
           cp "$(ls android/app/build/outputs/apk/debug/*.apk | head -1)" DahatOS-debug.apk
           cp "$(ls android/app/build/outputs/apk/release/*.apk | head -1)" DahatOS.apk
           cp "$(ls android/app/build/outputs/bundle/release/*.aab 2>/dev/null | head -1)" DahatOS.aab 2>/dev/null || true
-          # an unsigned release means no signing key reached CI — say so loudly
-          if ! unzip -l DahatOS.apk | grep -q "META-INF/MANIFEST.MF"; then
-            echo "::warning::DahatOS.apk is NOT signed (no keystore available in CI). Add the DAHAT_KEYSTORE_* secrets to get an upgradable release build."
-          fi
+          # v1 (JAR) signing is optional on minSdk 24+, so "no META-INF/MANIFEST.MF"
+          # does NOT mean unsigned — ask apksigner instead of guessing from the zip
+          if [ ! -e DahatOS.apk ]; then echo "::error::DahatOS.apk missing after assemble"; exit 1; fi
           for f in DahatOS-debug.apk DahatOS.apk DahatOS.aab; do
             [ -e "$f" ] && printf "%s  %s\n" "$(sha256sum "$f" | cut -c1-16)" "$f" >> CHECKSUMS.txt
           done
