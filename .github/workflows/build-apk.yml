@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
+  contents: write      # publish the APK as a release asset (artifacts need a login + a
+  pages: write         # blob host that not every network can reach; a release is one link)
   id-token: write
   checks: write
 
@@ -136,6 +136,45 @@ jobs:
             [ -e "$f" ] && printf "%s  %s\n" "$(sha256sum "$f" | cut -c1-16)" "$f" >> CHECKSUMS.txt
           done
           cat CHECKSUMS.txt
+
+      - name: publish the APK where a phone can reach it
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TAG=dahat-ci-latest
+          sha=$(git rev-parse --short HEAD)
+          notes="CI build of Dahat OS at \`${sha}\`.
+
+          **Install:** \`adb install -r DahatOS.apk\`, then long-press the home screen and pick
+          **Dahat OS** → Always.
+
+          **Upgrading:** if the four \`DAHAT_KEYSTORE_*\` repository secrets are set, every build is
+          signed with the same key and installs over the old one. Without them CI generates a
+          throwaway key, so uninstall the previous build first — Android refuses a different
+          signature. Set them once:
+
+              keytool -genkeypair -keystore dahat-release.keystore -alias dahat \
+                -keyalg RSA -keysize 2048 -validity 10950
+              base64 -w0 dahat-release.keystore        # → DAHAT_KEYSTORE_B64
+
+          Checksums and the debug build are attached to this release."
+          gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
+          gh release create "$TAG" DahatOS.apk DahatOS-debug.apk CHECKSUMS.txt \
+            --title "Dahat OS — CI build ${sha}" --notes "$notes" --target "$GITHUB_SHA" >/dev/null
+          url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/DahatOS.apk"
+          {
+            echo "## Release"
+            echo
+            echo "- **APK:** [DahatOS.apk]($url) — install with \`adb install -r DahatOS.apk\`"
+            echo "- **Release page:** https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+            echo
+            echo '```'
+            cat CHECKSUMS.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          # an annotation, because the raw log is not always reachable from outside
+          echo "::notice::DahatOS.apk published → $url ($(stat -c%s DahatOS.apk) bytes, sha256 $(sha256sum DahatOS.apk | cut -c1-16))"
 
       - uses: actions/upload-artifact@v4
         with:
