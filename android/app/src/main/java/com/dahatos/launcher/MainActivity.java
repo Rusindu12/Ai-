@@ -61,8 +61,10 @@ public final class MainActivity extends Activity {
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     applyEdgeToEdge();
 
+    // AssetsPathHandler(Context) is the constructor androidx.webkit 1.11 actually
+    // exposes; the (Context, boolean) form only exists in newer releases.
     WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
-        .addPathHandler("/os/", new WebViewAssetLoader.AssetsPathHandler(this, true))
+        .addPathHandler("/os/", new WebViewAssetLoader.AssetsPathHandler(this))
         .build();
 
     web = new WebView(this);
