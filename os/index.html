@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#07090c" />
+<meta name="description" content="Dahat OS — a clean, capability-first mobile operating environment." />
+<title>Dahat OS</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/img/favicon.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="assets/img/icon-192.png" />
+<link rel="stylesheet" href="styles/fonts.css" />
+<link rel="stylesheet" href="styles/app.css" />
+</head>
+<body>
+<div id="device">
+  <div id="screen">
+    <div id="wallpaper" aria-hidden="true"></div>
+    <div id="layers">
+      <section id="home-layer" class="layer"></section>
+      <section id="apps-layer" class="layer"></section>
+      <div id="window-root"></div>
+      <div id="shade-root" class="overlay-layer"></div>
+      <div id="lock-root" class="overlay-layer"></div>
+      <div id="boot-root" class="overlay-layer"></div>
+      <div id="dialog-root" class="overlay-layer"></div>
+      <div id="toast-root" class="overlay-layer"></div>
+      <div id="status-root"></div>
+      <div id="nav-root"></div>
+    </div>
+  </div>
+</div>
+<noscript>Dahat OS needs JavaScript. Enable it and reload.</noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+name: build Dahat OS
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: dahat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------- kernel tests
+  verify:
+    name: OS self-test + headless app smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: parse + import graph
+        run: node tools/check.mjs
+      - name: kernel self-test (36 cases, 57 syscalls)
+        run: node tools/selftest.mjs
+      - name: headless app smoke (every app mounted, clicked, unmounted)
+        run: node tools/appsmoke.mjs
+      - name: assets referenced by the shell must exist
+        run: |
+          set -e
+          for f in $(grep -oE "assets/[A-Za-z0-9._/-]+" os/index.html os/manifest.webmanifest os/styles/fonts.css | cut -d: -f2- | sort -u); do
+            [ -e "os/$f" ] || { echo "missing os/$f"; exit 1; }
+          done
+          echo "all referenced assets present"
+
+  # ---------------------------------------------------------------- the APK
+  apk:
+    name: Android launcher APK
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-34 build-tools;34.0.0'
+
+      - name: Gradle 8.7
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: signing key
+        id: key
+        env:
+          B64: ${{ secrets.DAHAT_KEYSTORE_B64 }}
+        run: |
+          set -e
+          mkdir -p "$RUNNER_TEMP/keystore"
+          if [ -n "$B64" ]; then
+            echo "$B64" | base64 -d > "$RUNNER_TEMP/keystore/dahat-release.keystore"
+            echo "store=$RUNNER_TEMP/keystore/dahat-release.keystore" >> "$GITHUB_OUTPUT"
+            echo "pass=${{ secrets.DAHAT_KEYSTORE_PASSWORD }}" >> "$GITHUB_OUTPUT"
+            echo "alias=${{ secrets.DAHAT_KEY_ALIAS }}" >> "$GITHUB_OUTPUT"
+            echo "keypass=${{ secrets.DAHAT_KEY_PASSWORD }}" >> "$GITHUB_OUTPUT"
+            echo "source=secret" >> "$GITHUB_OUTPUT"
+          else
+            PASS=$(openssl rand -hex 12)
+            keytool -genkeypair -v \
+              -keystore "$RUNNER_TEMP/keystore/dahat-release.keystore" \
+              -storepass "$PASS" -keypass "$PASS" \
+              -alias dahat -keyalg RSA -keysize 2048 -validity 10950 \
+              -dname "CN=Dahat OS, OU=launcher, O=Dahat, L=Negombo, C=LK"
+            echo "store=$RUNNER_TEMP/keystore/dahat-release.keystore" >> "$GITHUB_OUTPUT"
+            echo "pass=$PASS" >> "$GITHUB_OUTPUT"
+            echo "alias=dahat" >> "$GITHUB_OUTPUT"
+            echo "keypass=$PASS" >> "$GITHUB_OUTPUT"
+            echo "source=generated" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: assemble
+        env:
+          DAHAT_KEYSTORE: ${{ steps.key.outputs.store }}
+          DAHAT_KEYSTORE_PASSWORD: ${{ steps.key.outputs.pass }}
+          DAHAT_KEY_ALIAS: ${{ steps.key.outputs.alias }}
+          DAHAT_KEY_PASSWORD: ${{ steps.key.outputs.keypass }}
+        run: |
+          set -e
+          cd android
+          gradle --no-daemon :app:assembleDebug :app:assembleRelease :app:bundleRelease
+          ls -la app/build/outputs/apk/debug app/build/outputs/apk/release
+
+      - name: verify signatures
+        run: |
+          set -e
+          {
+            echo "### Signatures"
+            echo '```'
+            SIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
+            for a in android/app/build/outputs/apk/*/*.apk; do
+              echo "-- $a"
+              if [ -x "$SIGNER" ]; then "$SIGNER" verify --print-certs "$a" 2>/dev/null | head -8; else echo "(apksigner not on PATH, skipped)"; fi
+            done
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: collect artifacts
+        run: |
+          set -e
+          cp android/app/build/outputs/apk/debug/app-debug.apk DahatOS-debug.apk
+          cp android/app/build/outputs/apk/release/app-release.apk DahatOS.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab DahatOS.aab || true
+          for f in DahatOS-debug.apk DahatOS.apk DahatOS.aab; do
+            [ -e "$f" ] && printf "%s  %s\n" "$(sha256sum "$f" | cut -c1-16)" "$f" >> CHECKSUMS.txt
+          done
+          cat CHECKSUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DahatOS-apk
+          path: |
+            DahatOS.apk
+            DahatOS-debug.apk
+            DahatOS.aab
+            CHECKSUMS.txt
+          if-no-files-found: error
+
+      - name: publish the keystore when it was generated here
+        if: steps.key.outputs.source == 'generated'
+        env:
+          DAHAT_KEYSTORE: ${{ steps.key.outputs.store }}
+        run: |
+          set -e
+          mkdir -p "$RUNNER_TEMP/out"
+          cp "$DAHAT_KEYSTORE" "$RUNNER_TEMP/out/dahat-release.keystore"
+          cat > "$RUNNER_TEMP/out/README-keystore.txt" <<EOF
+          This keystore was generated during this run and is NOT stored anywhere else.
+          Save it as the four repository secrets DAHAT_KEYSTORE_B64 (base64 of the file),
+          DAHAT_KEYSTORE_PASSWORD, DAHAT_KEY_ALIAS and DAHAT_KEY_PASSWORD to make future
+          builds installable as an *upgrade* over this APK. Losing it means uninstall + reinstall.
+
+          key alias : ${{ steps.key.outputs.alias }}
+          password  : ${{ steps.key.outputs.pass }}
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: steps.key.outputs.source == 'generated'
+        with:
+          name: DahatOS-release-keystore
+          path: ${{ runner.temp }}/out
+
+      - name: job summary
+        run: |
+          {
+            echo "## Dahat OS build"
+            echo
+            echo "| artifact | contents |"
+            echo "| --- | --- |"
+            echo "| \`DahatOS-apk\` | \`DahatOS.apk\` (release, signed), \`DahatOS-debug.apk\`, \`DahatOS.aab\` for the Play Store, \`CHECKSUMS.txt\` |"
+            if [ "${{ steps.key.outputs.source }}" = generated ]; then
+              echo "| \`DahatOS-release-keystore\` | the signing key generated by *this* run — download it if you want upgrades to keep working |"
+            fi
+            echo
+            echo "- signing key source: \`${{ steps.key.outputs.source }}\`"
+            echo "- install: \`adb install -r DahatOS.apk\`, then long-press the home screen and pick **Dahat OS** (or open it from the app drawer)."
+            echo "- the OS itself is served from the APK's assets — no network, no account."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------- web demo (PWA)
+  pages:
+    name: web demo
+    needs: verify
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.out.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+        with:
+          allow-detached: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: os
+      - id: out
+        uses: actions/deploy-pages@v4

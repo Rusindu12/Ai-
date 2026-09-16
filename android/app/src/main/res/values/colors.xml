@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- the OS's own surface colour; keeps the WebView from flashing white on cold start -->
+  <color name="dahat_surface">#07090C</color>
+  <color name="dahat_accent">#12B7A2</color>
+</resources>

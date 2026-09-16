@@ -1,0 +1,12 @@
+# the OS is mirrored into the APK by the syncOsAssets task, never committed
+app/src/main/assets/os/
+.gradle/
+build/
+local.properties
+*.keystore
+*.jks
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/

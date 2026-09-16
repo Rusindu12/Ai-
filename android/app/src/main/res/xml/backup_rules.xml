@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dahat keeps everything in the WebView's own storage; only the user's OS state is worth restoring. -->
+<full-backup-content>
+  <include domain="app_webview" path="." />
+  <include domain="sharedpref" path="." />
+  <exclude domain="database" path="." />
+</full-backup-content>

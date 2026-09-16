@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Dahat OS</string>
+  <string name="app_name_si">දහත් OS</string>
+  <string name="dahat_home_label">Dahat OS</string>
+  <string name="notif_channel_os">Dahat OS notifications</string>
+  <string name="notif_channel_os_desc">Notifications posted by apps running inside Dahat OS</string>
+  <string name="notif_channel_alarm">Dahat alarms</string>
+  <string name="notif_channel_alarm_desc">Alarm clock and timer alerts from the Dahat Clock app</string>
+  <string name="perm_camera">Camera</string>
+  <string name="perm_mic">Microphone</string>
+  <string name="loading">Starting Dahat OS…</string>
+  <string name="alarm_body">Tap to open Dahat OS</string>
+</resources>

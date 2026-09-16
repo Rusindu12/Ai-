@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- notification status-bar icon: monochrome mark, 24dp -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="108" android:viewportHeight="108">
+  <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd"
+      android:pathData="M26,22 L46,22 C60,22 67,32 67,54 C67,76 60,86 46,86 L26,86 Z M37,33 L45,33 C53,33 57,41 57,54 C57,67 53,75 45,75 L37,75 Z" />
+</vector>

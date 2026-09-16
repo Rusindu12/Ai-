@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dahat OS — adaptive-icon foreground: the "D" mark + spark, from os/assets/img/dahat-mark.svg.
+     The 512-unit artwork already sits inside the 108dp safe zone, so no scaling is needed;
+     translateX only recentres it (the mark is drawn a touch right of optical centre). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+  <group android:translateX="-22" android:translateY="4">
+    <path
+        android:fillColor="#26E8C8"
+        android:fillType="evenOdd"
+        android:pathData="M140,118 L256,118 C372,118 418,194 418,256 C418,318 372,394 256,394 L140,394 Z M208,190 L252,190 C318,190 350,216 350,256 C350,296 318,322 252,322 L208,322 Z" />
+    <path
+        android:fillColor="#EAFDF9"
+        android:pathData="M404,94 m-22,0 a22,22 0 1,0 44,0 a22,22 0 1,0 -44,0" />
+  </group>
+</vector>

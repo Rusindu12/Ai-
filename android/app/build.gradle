@@ -1,0 +1,112 @@
+/* Dahat OS — launcher module.
+ *
+ * The OS itself is not copied into this repo twice: `syncOsAssets` mirrors
+ * ../../os into app/src/main/assets/os right before every build, so the APK can
+ * never ship a stale OS and git never stores a duplicate.
+ */
+plugins {
+    id 'com.android.application'
+}
+
+def osSourceDir = rootProject.file('../os')
+def osAssetDir = new File(projectDir, 'src/main/assets/os')
+
+// CI passes these; locally the debug key is used so `assembleRelease` still produces
+// an installable file (Android refuses to install an unsigned APK).
+def keystoreFile = System.getenv('DAHAT_KEYSTORE') ?: project.findProperty('dahat.keystore')
+def keystorePass = System.getenv('DAHAT_KEYSTORE_PASSWORD') ?: project.findProperty('dahat.keystorePassword') ?: 'android'
+def keyAlias = System.getenv('DAHAT_KEY_ALIAS') ?: project.findProperty('dahat.keyAlias') ?: 'dahat'
+def keyPass = System.getenv('DAHAT_KEY_PASSWORD') ?: project.findProperty('dahat.keyPassword') ?: 'android'
+
+android {
+    namespace 'com.dahatos.launcher'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.dahatos.launcher'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+        // the OS build that is baked in, stamped into BuildConfig for the About screen
+        buildConfigField 'long', 'OS_BUILD_TIME', "${System.currentTimeMillis()}L"
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreFile && new File(keystoreFile.toString()).exists()) {
+                storeFile file(keystoreFile.toString())
+                storePassword keystorePass
+                keyAlias keyAlias
+                keyPassword keyPass
+            } else {
+                // honest fallback: signed with the debug key, still installable
+                storeFile file("${System.properties['user.home']}/.android/debug.keystore")
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false   // no reflection in the Java side, and a WebView shell
+            shrinkResources false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    lint {
+        // a shell app trips a handful of advisory checks (back-button deprecation,
+        // exported activity with no custom lint baseline); never fail a release on them
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    androidResources {
+        // keep the ES modules exactly as authored: no compression games, no re-encoding
+        noCompress 'js', 'css', 'html', 'json', 'woff2', 'webmanifest', 'svg', 'png', 'jpg', 'jpeg'
+    }
+
+    packaging {
+        resources.excludes += ['META-INF/*.version', 'DebugProbesKt.bin']
+    }
+}
+
+tasks.register('syncOsAssets', Copy) {
+    group 'dahat'
+    description 'Mirrors ../../os into the APK assets so the launcher always carries the checked-out OS.'
+    from(osSourceDir) {
+        // the service worker is pointless inside a WebView (and its registration
+        // would only log a rejection); the dev-only sources stay out too
+        exclude 'sw.js'
+        exclude 'assets/img/dahat-mark.svg'
+    }
+    into osAssetDir
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    inputs.dir osSourceDir
+    outputs.dir osAssetDir
+}
+
+tasks.named('preBuild') { dependsOn 'syncOsAssets' }
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.11.0'   // WebViewAssetLoader + feature checks
+    implementation 'androidx.core:core:1.13.1'       // NotificationCompat on API 24
+}

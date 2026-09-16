@@ -1,0 +1,21 @@
+/* Dahat OS — Gradle settings.
+ * Deliberately no wrapper jar in git: CI pins Gradle with gradle/actions, and a
+ * local build works with any Gradle >= 8.7 (`cd android && gradle assembleDebug`).
+ */
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'DahatOS'
+include ':app'

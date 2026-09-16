@@ -1,0 +1,10 @@
+/* Dahat OS — bundled typefaces so Sinhala renders on every device, offline.
+ * Noto Sans Sinhala (SIL Open Font License 1.1), subsets from @fontsource. */
+@font-face{font-family:'Noto Sans Sinhala';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-sinhala-400-normal.woff2') format('woff2');unicode-range:U+0D80-0DFF,U+200C-200D,U+201C-201D;}
+@font-face{font-family:'Noto Sans Sinhala';font-style:normal;font-weight:500;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-sinhala-500-normal.woff2') format('woff2');unicode-range:U+0D80-0DFF,U+200C-200D,U+201C-201D;}
+@font-face{font-family:'Noto Sans Sinhala';font-style:normal;font-weight:600;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-sinhala-600-normal.woff2') format('woff2');unicode-range:U+0D80-0DFF,U+200C-200D,U+201C-201D;}
+@font-face{font-family:'Noto Sans Sinhala';font-style:normal;font-weight:700;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-sinhala-700-normal.woff2') format('woff2');unicode-range:U+0D80-0DFF,U+200C-200D,U+201C-200D;}
+@font-face{font-family:'Dahat Sans';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F;}
+@font-face{font-family:'Dahat Sans';font-style:normal;font-weight:500;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-latin-500-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F;}
+@font-face{font-family:'Dahat Sans';font-style:normal;font-weight:600;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F;}
+@font-face{font-family:'Dahat Sans';font-style:normal;font-weight:700;font-display:swap;src:url('../assets/fonts/noto-sans-sinhala-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F;}

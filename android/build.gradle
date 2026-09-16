@@ -1,0 +1,12 @@
+/* Dahat OS — root build file.
+ * No Gradle wrapper jar is committed (it is a 60 KB binary that changes on every
+ * upgrade); CI pins Gradle 8.7 via gradle/actions/setup-gradle, and locally you can
+ * run `gradle assembleDebug` with any Gradle >= 8.7.
+ */
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}
