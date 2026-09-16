@@ -57,3 +57,20 @@ jobs:
           path: apk-artifacts/*.apk
           retention-days: 90
           if-no-files-found: error
+
+      - name: Publish APK on orphan branch (git-based distribution)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          rm -rf apk-publish && mkdir apk-publish
+          cp apk-artifacts/AI-Trading-Bot-release.apk apk-publish/ 2>/dev/null || true
+          cp apk-artifacts/AI-Trading-Bot-debug.apk apk-publish/ 2>/dev/null || true
+          cd apk-publish
+          git init -q -b publish-apk
+          git add -A
+          git commit -q -m "APK artifacts from run $RUN_ID" || true
+          git remote add origin2 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git push -f origin2 publish-apk || echo "publish branch push skipped"
