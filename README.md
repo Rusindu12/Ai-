@@ -21,12 +21,19 @@ after first load, including the Sinhala fonts.
 
 ## The APK
 
+```bash
+# prebuilt, from CI on every push (a moving "latest CI build" release)
+curl -LO https://github.com/Rusindu12/Ai-/releases/download/dahat-ci-latest/DahatOS.apk
+adb install -r DahatOS.apk          # then press Home ▸ pick "Dahat OS" ▸ Always
 ```
-CI builds it: Actions ▸ "build Dahat OS" ▸ Run workflow
-artefacts:   DahatOS.apk · DahatOS-debug.apk · DahatOS.aab · CHECKSUMS.txt
-install:     adb install -r DahatOS.apk
-then:        press Home ▸ pick "Dahat OS" ▸ Always
-```
+
+Or build it yourself: Actions ▸ "build Dahat OS" ▸ Run workflow (artefacts:
+`DahatOS.apk`, `DahatOS-debug.apk`, `DahatOS.aab`, `CHECKSUMS.txt`), or locally
+with JDK 17 + Gradle ≥ 8.7 + the Android SDK: `cd android && gradle
+:app:assembleDebug`. The APK is ~2 MB — the whole OS is inside it and it needs no
+network. Without the `DAHAT_KEYSTORE_*` secrets CI signs with a throwaway key, so
+a newer build has to be installed after uninstalling the old one; set those four
+secrets once and upgrades keep your data.
 
 `android/` holds the host: one activity, one WebView served from the APK's own
 assets (no network, no server), plus a deliberately small `DahatBridge` so the OS

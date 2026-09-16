@@ -86,6 +86,26 @@ with JDK 17, `compileSdk 34`, Gradle 8.7, and a release signing key from secrets
 (or a freshly generated one, attached as an artefact so you can keep it).
 Artefacts: `DahatOS.apk`, `DahatOS-debug.apk`, `DahatOS.aab`, `CHECKSUMS.txt`.
 
+The same APK is also published to a moving prerelease, so a phone can pull it
+without opening the Actions UI:
+
+```
+https://github.com/Rusindu12/Ai-/releases/download/dahat-ci-latest/DahatOS.apk
+```
+
+The `verify` job (which gates every APK build) runs all four harnesses on
+`ubuntu-latest`: parse/import check, kernel self-test, app smoke, shell smoke —
+so the APK that CI ships is the same code those 26 + 19 scenarios drive.
+
+Signing, in one paragraph. `app/build.gradle` prefers `DAHAT_KEYSTORE` (env or
+`-Pdahat.keystore`), falls back to the machine's `~/.android/debug.keystore`, and
+otherwise builds *unsigned* rather than failing the run. CI with no secrets
+generates a fresh key per run and uploads it as the `DahatOS-release-keystore`
+artefact: keep that file, set `DAHAT_KEYSTORE_B64` + `DAHAT_KEYSTORE_PASSWORD` +
+`DAHAT_KEY_ALIAS` + `DAHAT_KEY_PASSWORD`, and every later build installs over the
+previous one. Until then, uninstall between builds — Android refuses a signature
+mismatch, and uninstalling clears the OS's localStorage (notes, settings, alarms).
+
 Locally, with an Android SDK installed:
 
 ```bash
