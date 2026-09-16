@@ -151,8 +151,10 @@ jobs:
 
           **Upgrading:** if the four \`DAHAT_KEYSTORE_*\` repository secrets are set, every build is
           signed with the same key and installs over the old one. Without them CI generates a
-          throwaway key, so uninstall the previous build first — Android refuses a different
-          signature. Set them once:
+          throwaway key, so a new build needs the old one uninstalled first — Android refuses a
+          different signature, and uninstalling wipes the OS's data. To keep upgrades painless,
+          download the `DahatOS-release-keystore` artifact from *this* run (Actions → the build
+          → Artifacts) and set these four secrets once:
 
               keytool -genkeypair -keystore dahat-release.keystore -alias dahat \
                 -keyalg RSA -keysize 2048 -validity 10950
