@@ -1,0 +1,79 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  android-release-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npx jest --ci
+
+      - name: Build signed release APK
+        env:
+          ORG_GRADLE_PROJECT_newArchEnabled: 'false'
+        run: |
+          cd android
+          ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Build debug APK too (for quick local install)
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon || echo "debug build skipped"
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p apk-artifacts
+          cp android/app/build/outputs/apk/release/app-release.apk apk-artifacts/AI-Trading-Bot-release.apk || true
+          cp android/app/build/outputs/apk/debug/app-debug.apk apk-artifacts/AI-Trading-Bot-debug.apk || true
+          ls -la apk-artifacts
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-trading-bot-apk
+          path: apk-artifacts/*.apk
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Publish APK on orphan branch (git-based distribution)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          rm -rf apk-publish && mkdir apk-publish
+          cp apk-artifacts/AI-Trading-Bot-release.apk apk-publish/ 2>/dev/null || true
+          cp apk-artifacts/AI-Trading-Bot-debug.apk apk-publish/ 2>/dev/null || true
+          cd apk-publish
+          git init -q -b publish-apk
+          git add -A
+          git commit -q -m "APK artifacts from run $RUN_ID" || true
+          git remote add origin2 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git push -f origin2 publish-apk
