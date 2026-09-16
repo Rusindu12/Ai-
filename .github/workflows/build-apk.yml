@@ -190,9 +190,9 @@ jobs:
             echo "- **APK:** [DahatOS.apk]($url) — install with \`adb install -r DahatOS.apk\`"
             echo "- **Release page:** https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
             echo
-            echo '\`\`\`'
+            printf '%s\n' '```'
             cat CHECKSUMS.txt
-            echo '\`\`\`'
+            printf '%s\n' '```'
           } >> "$GITHUB_STEP_SUMMARY"
           # an annotation, because the raw log is not always reachable from outside
           echo "::notice::DahatOS.apk published → $url ($(stat -c%s DahatOS.apk) bytes, sha256 $(sha256sum DahatOS.apk | cut -c1-16))"
