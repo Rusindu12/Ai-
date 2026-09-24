@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#0a0e17">
+<meta name="color-scheme" content="dark">
+<title>CryptoAI PRO</title>
+<style>
+/* ============================== design tokens ============================= */
+:root{
+  --bg:#0a0e17; --bg2:#0e1421; --card:#121a2b; --card2:#16203a; --line:#1f2a42;
+  --txt:#e9eefb; --mut:#8394b4; --dim:#5b6a86;
+  --gold:#f0b90b; --up:#0ecb81; --dn:#f6465d; --ai:#8b5cf6; --info:#38bdf8;
+  --r:14px; --rs:10px;
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
+body{
+  background:var(--bg); color:var(--txt); font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Sinhala",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#243050;border-radius:3px}
+
+/* ================================ shell ================================== */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:640px;margin:0 auto;position:relative}
+.top{
+  display:flex;align-items:center;gap:8px;padding:calc(8px + var(--safe-t)) 12px 8px;
+  background:linear-gradient(180deg,#0d1424,#0a0e17);border-bottom:1px solid var(--line);z-index:5
+}
+.brand{display:flex;align-items:center;gap:7px;font-weight:800;letter-spacing:.2px;font-size:15px}
+.brand .pro{color:var(--gold)}
+.logo{
+  width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#ff9f1c);
+  display:grid;place-items:center;font-size:13px;color:#1a1200;font-weight:900
+}
+.top .grow{flex:1}
+.conn{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut);max-width:110px}
+.conn b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex:0 0 auto;box-shadow:0 0 0 0 rgba(14,203,129,.6)}
+.dot.live{background:var(--up);animation:pulse 2s infinite}
+.dot.demo{background:var(--gold)}
+.dot.off{background:var(--dn)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,203,129,.5)}70%{box-shadow:0 0 0 7px rgba(14,203,129,0)}100%{box-shadow:0 0 0 0 rgba(14,203,129,0)}}
+.iconbtn{width:34px;height:34px;border-radius:10px;background:#141d31;border:1px solid var(--line);display:grid;place-items:center;font-size:15px}
+.iconbtn:active{transform:scale(.94)}
+.lbtn{font-size:11px;font-weight:700;padding:6px 9px;border-radius:9px;background:#141d31;border:1px solid var(--line);color:var(--gold)}
+
+main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:12px 12px 18px}
+.tab{display:none;animation:fade .18s ease}
+.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ============================== ticker strip ============================= */
+.ticker{overflow:hidden;border-bottom:1px solid var(--line);background:#0b1120;height:28px;position:relative}
+.tick-track{display:flex;gap:18px;align-items:center;height:100%;white-space:nowrap;position:absolute;left:0;animation:slide 60s linear infinite}
+.tick-track.stop{animation-play-state:paused}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{font-size:11.5px;color:var(--mut);display:inline-flex;gap:5px}
+.tk b{color:var(--txt);font-weight:600}
+
+/* ================================ cards ================================= */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px}
+.card.tight{padding:9px 10px}
+.card h3{margin:0 0 9px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--mut);font-weight:700}
+.row{display:flex;align-items:center;gap:8px}
+.row.wrap{flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mt{margin-top:10px}
+.mut{color:var(--mut)}.dim{color:var(--dim)}
+.up{color:var(--up)}.dn{color:var(--dn)}.gold{color:var(--gold)}
+.small{font-size:11.5px}.tiny{font-size:10.5px}
+.b{font-weight:700}.bb{font-weight:800}
+.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.hint{font-size:11px;color:var(--dim);line-height:1.5}
+
+/* =============================== chips/btns ============================= */
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:7px 11px;border-radius:999px;background:#141d31;border:1px solid var(--line);
+  color:var(--mut);font-size:12px;font-weight:600;white-space:nowrap
+}
+.chip.on{background:rgba(240,185,11,.14);border-color:rgba(240,185,11,.45);color:var(--gold)}
+.chip.on.buy{background:rgba(14,203,129,.14);border-color:rgba(14,203,129,.4);color:var(--up)}
+.btn{padding:11px 14px;border-radius:12px;background:#182338;border:1px solid var(--line);font-weight:700;font-size:13px}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:linear-gradient(135deg,var(--gold),#ffa41b);color:#1a1200;border:0}
+.btn.ghost{background:#141d31;color:var(--mut)}
+.btn.buy{background:linear-gradient(135deg,#0ecb81,#0aa76a);color:#012a1b;border:0}
+.btn.sell{background:linear-gradient(135deg,#f6465d,#c9304a);color:#fff;border:0}
+.btn.sm{padding:8px 10px;font-size:12px;border-radius:10px}
+.btn.block{width:100%;display:block}
+.btn:disabled{opacity:.45}
+.btn .k{font-size:10px;display:block;font-weight:600;opacity:.85}
+
+/* =============================== market list ============================ */
+.mrow{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:12px;background:var(--card);border:1px solid var(--line);margin-bottom:7px}
+.mrow:active{background:var(--card2)}
+.mrow .sym{min-width:74px}
+.mrow .sym b{display:block;font-size:13.5px}
+.mrow .sym span{font-size:10px;color:var(--dim)}
+.mrow .px{flex:1;text-align:right;font-size:14px;font-weight:700}
+.mrow .chg{width:74px;text-align:right;font-size:12px;font-weight:700;padding:4px 6px;border-radius:8px;background:rgba(14,203,129,.12);color:var(--up)}
+.mrow .chg.dn{background:rgba(246,70,93,.12);color:var(--dn)}
+.mrow canvas{width:52px;height:26px;flex:0 0 auto}
+.star{font-size:15px;color:#31405e}
+.star.on{color:var(--gold)}
+
+/* ================================= chart ================================ */
+.canvas-wrap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+#chart{display:block;width:100%;height:260px;touch-action:none}
+#rsiChart{display:block;width:100%;height:64px;border-top:1px solid var(--line)}
+#chartTip{
+  position:absolute;pointer-events:none;background:rgba(10,14,23,.92);border:1px solid var(--line);
+  border-radius:8px;padding:6px 8px;font-size:10.5px;line-height:1.5;display:none;z-index:3;min-width:104px
+}
+.chart-stats{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--mut);padding:0 2px 8px}
+.chart-stats b{color:var(--txt);font-weight:600}
+.badge{padding:5px 9px;border-radius:9px;font-size:12px;font-weight:700;background:rgba(14,203,129,.14);color:var(--up)}
+.badge.dn{background:rgba(246,70,93,.14);color:var(--dn)}
+.symbtn{display:flex;align-items:center;gap:6px;font-weight:800;font-size:16px;padding:6px 10px;background:var(--card);border:1px solid var(--line);border-radius:11px}
+
+/* ================================ signals =============================== */
+.verdict{border-radius:var(--r);padding:14px;text-align:center;border:1px solid var(--line);background:var(--card)}
+.verdict .v{font-size:22px;font-weight:900;letter-spacing:.5px}
+.verdict.buy{border-color:rgba(14,203,129,.35);background:linear-gradient(180deg,rgba(14,203,129,.14),var(--card))}
+.verdict.sell{border-color:rgba(246,70,93,.35);background:linear-gradient(180deg,rgba(246,70,93,.14),var(--card))}
+.verdict.neutral{border-color:rgba(131,148,180,.3)}
+.gauge{height:7px;border-radius:4px;background:#1b2540;overflow:hidden;margin-top:6px}
+.gauge i{display:block;height:100%;border-radius:4px}
+.reason{display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed rgba(31,42,66,.9);font-size:12.5px}
+.reason:last-child{border-bottom:0}
+.reason .ic{flex:0 0 auto;font-size:13px}
+.reason .tx{color:#cfd9ee}
+.metric{background:#101728;border:1px solid var(--line);border-radius:var(--rs);padding:8px}
+.metric .k{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+.metric .v{font-size:14px;font-weight:700;margin-top:2px}
+.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.lvl{background:#101728;border:1px solid var(--line);border-radius:var(--rs);padding:9px;text-align:center}
+.lvl .k{font-size:10px;color:var(--dim)}
+.lvl .v{font-size:15px;font-weight:800;margin-top:2px}
+.ai-out{font-size:13px;line-height:1.6;color:#d7e0f2;white-space:pre-wrap}
+.ai-out:empty{display:none}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid #33415f;border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ================================ trading =============================== */
+.seg{display:flex;background:#101728;border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;padding:9px;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--mut)}
+.seg button.on{background:#1d2a45;color:var(--txt)}
+.seg button.on.buy{background:rgba(14,203,129,.18);color:var(--up)}
+.seg button.on.sell{background:rgba(246,70,93,.18);color:var(--dn)}
+label.f{display:block;margin-bottom:8px}
+label.f .lb{font-size:11px;color:var(--mut);margin-bottom:4px;display:block}
+input,select{
+  width:100%;padding:10px;border-radius:10px;background:#0e1626;border:1px solid var(--line);
+  font-size:14px;outline:none
+}
+input:focus,select:focus{border-color:rgba(240,185,11,.5)}
+input[type=number]{font-variant-numeric:tabular-nums}
+.pos{background:#101728;border:1px solid var(--line);border-radius:var(--rs);padding:10px;margin-bottom:7px}
+.pos .hd{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700}
+.pnl{font-weight:800}
+.pbar{height:5px;border-radius:3px;background:#1b2540;margin-top:8px;position:relative;overflow:hidden}
+.pbar span{position:absolute;top:0;bottom:0;border-radius:3px}
+.empty{text-align:center;color:var(--dim);font-size:12px;padding:14px 6px}
+table.kv{width:100%;font-size:12px;border-collapse:collapse}
+table.kv td{padding:4px 0;color:var(--mut)}
+table.kv td:last-child{text-align:right;color:var(--txt);font-weight:600}
+
+/* ================================= bot ================================== */
+.log{background:#080c15;border:1px solid var(--line);border-radius:var(--rs);padding:9px;height:190px;overflow-y:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.8px;line-height:1.6}
+.log div{white-space:pre-wrap;word-break:break-word}
+.log .t{color:#4a5a7a;margin-right:5px}
+.log .ok{color:var(--up)}.log .bad{color:var(--dn)}.log .warn{color:var(--gold)}.log .ai{color:#b79cff}
+.botdot{width:9px;height:9px;border-radius:50%;background:var(--dim);display:inline-block;margin-right:6px}
+.botdot.run{background:var(--up);animation:pulse 1.6s infinite}
+.switchrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed rgba(31,42,66,.8);font-size:13px}
+.switchrow:last-child{border-bottom:0}
+.sw{width:44px;height:25px;border-radius:999px;background:#25314e;position:relative;transition:.18s;flex:0 0 auto}
+.sw i{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#8fa0c0;transition:.18s}
+.sw.on{background:rgba(14,203,129,.4)}
+.sw.on i{left:22px;background:var(--up)}
+
+/* ================================ nav =================================== */
+nav{display:flex;background:#0b1120;border-top:1px solid var(--line);padding-bottom:var(--safe-b);z-index:6}
+nav button{flex:1;padding:9px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim);font-size:9.5px;font-weight:600;position:relative}
+nav button i{font-size:17px;font-style:normal;line-height:1}
+nav button.on{color:var(--gold)}
+nav button.on::before{content:"";position:absolute;top:0;width:26px;height:2px;border-radius:2px;background:var(--gold)}
+nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:15px;border-radius:8px;background:var(--dn);color:#fff;font-size:9px;font-weight:700;display:grid;place-items:center;padding:0 3px}
+
+/* =============================== modals ================================= */
+.modal{position:fixed;inset:0;background:rgba(4,7,13,.72);backdrop-filter:blur(3px);display:none;z-index:50;align-items:flex-end}
+.modal.on{display:flex}
+.sheet{background:var(--bg2);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;width:100%;max-width:640px;margin:0 auto;max-height:88vh;display:flex;flex-direction:column;animation:up .22s ease}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .hd{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--line)}
+.sheet .hd h3{margin:0;font-size:15px;color:var(--txt);text-transform:none;letter-spacing:0}
+.sheet .bd{padding:14px;overflow-y:auto;padding-bottom:calc(18px + var(--safe-b))}
+.toasts{position:fixed;left:0;right:0;bottom:calc(74px + var(--safe-b));display:flex;flex-direction:column;align-items:center;gap:7px;z-index:90;pointer-events:none}
+.toast{background:rgba(18,26,43,.97);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:11px;padding:9px 13px;font-size:12.5px;max-width:88%;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:up .2s ease}
+.toast.ok{border-left-color:var(--up)}.toast.bad{border-left-color:var(--dn)}
+.grab{width:38px;height:4px;border-radius:3px;background:#2a3757;margin:8px auto 0}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================================ top ================================ -->
+  <header class="top">
+    <div class="brand"><span class="logo">◈</span><span>Crypto<span class="pro">AI</span> PRO</span></div>
+    <div class="grow"></div>
+    <div class="conn" id="connBox"><span class="dot" id="connDot"></span><b id="connTxt">…</b></div>
+    <button class="lbtn" id="langBtn">EN</button>
+    <button class="iconbtn" id="setBtn">⚙</button>
+  </header>
+  <div class="ticker"><div class="tick-track stop" id="tickTrack"></div></div>
+
+  <main id="main">
+
+    <!-- ============================= markets ============================ -->
+    <section class="tab on" id="t-markets">
+      <div class="row" style="margin-bottom:8px">
+        <input id="mSearch" placeholder="🔍 BTC, ETH, SOL…" autocomplete="off">
+        <button class="iconbtn" id="mReload" title="reload">⟳</button>
+      </div>
+      <div class="chips" id="mChips">
+        <button class="chip on" data-sort="vol" data-i18n="sort.vol">🔥 Top volume</button>
+        <button class="chip" data-sort="gain" data-i18n="sort.gain">📈 Gainers</button>
+        <button class="chip" data-sort="loss" data-i18n="sort.loss">📉 Losers</button>
+        <button class="chip" data-sort="fav" data-i18n="sort.fav">★ Watchlist</button>
+      </div>
+      <div class="row" style="margin:0 0 9px">
+        <button class="btn ghost sm" id="scanBtn" data-i18n="scan.run">🔎 Scan all signals</button>
+        <span class="small mut" id="scanInfo"></span>
+      </div>
+      <div id="mList"></div>
+      <div class="hint mt" id="mNote"></div>
+    </section>
+
+    <!-- ============================== chart ============================= -->
+    <section class="tab" id="t-chart">
+      <div class="row between" style="margin-bottom:9px">
+        <button class="symbtn" id="symBtn"><span id="symName">BTC/USDT</span><span class="mut">▾</span></button>
+        <span class="badge" id="chgBadge">—</span>
+      </div>
+      <div class="chips" id="tfChips">
+        <button class="chip" data-tf="1m">1m</button>
+        <button class="chip on" data-tf="5m">5m</button>
+        <button class="chip" data-tf="15m">15m</button>
+        <button class="chip" data-tf="1h">1h</button>
+        <button class="chip" data-tf="4h">4h</button>
+        <button class="chip" data-tf="1d">1d</button>
+      </div>
+      <div class="chart-stats" id="chartStats"></div>
+      <div class="canvas-wrap">
+        <canvas id="chart"></canvas>
+        <canvas id="rsiChart"></canvas>
+        <div id="chartTip"></div>
+      </div>
+      <div class="chips" id="indChips">
+        <button class="chip on" data-ind="ema">EMA 20/50</button>
+        <button class="chip" data-ind="bb">Bollinger</button>
+        <button class="chip on" data-ind="vol">Volume</button>
+        <button class="chip on" data-ind="rsi">RSI</button>
+      </div>
+      <div class="row mt">
+        <button class="btn ghost sm" id="alertBtn" data-i18n="chart.alert">🔔 Alert</button>
+        <button class="btn ghost sm" id="sigBtn" data-i18n="chart.analyse">📊 Analyse</button>
+        <button class="btn ghost sm" id="chartTradeBtn" data-i18n="chart.trade">💱 Trade</button>
+      </div>
+    </section>
+
+    <!-- ============================= signals ============================ -->
+    <section class="tab" id="t-signals">
+      <div id="sigVerdict" class="verdict neutral"><div class="v">—</div><div class="small mut">—</div></div>
+      <div class="card mt">
+        <h3 id="sigBlocksTitle" data-i18n="sig.blocks">Signal blocks</h3>
+        <div class="small mut" id="sigTrendLbl">—</div>
+        <div class="gauge"><i id="sigTrendBar" style="width:50%;background:var(--up)"></i></div>
+        <div class="small mut mt" id="sigRevertLbl">—</div>
+        <div class="gauge"><i id="sigRevertBar" style="width:50%;background:var(--info)"></i></div>
+      </div>
+      <div class="card"><h3 id="sigWhy" data-i18n="sig.why">Why</h3><div id="sigReasons"></div></div>
+      <div class="card">
+        <div class="row between">
+          <h3 style="margin:0" data-i18n="mtf.title">Multi-timeframe</h3>
+          <button class="btn ghost sm" id="mtfBtn" data-i18n="mtf.refresh">Refresh</button>
+        </div>
+        <div id="mtfRows" class="mt"></div>
+        <div class="hint mt" id="mtfNote" data-i18n="mtf.note"></div>
+      </div>
+      <div class="card"><h3 data-i18n="sig.ind">Indicators</h3><div class="grid3" id="sigMetrics"></div></div>
+      <div class="card" id="sigLevelsCard"><h3 data-i18n="sig.plan">Trade plan (ATR based)</h3><div class="levels" id="sigLevels"></div>
+        <div class="hint mt" id="sigLevelsNote"></div></div>
+      <div class="card">
+        <h3>🤖 <span data-i18n="ai.title">AI explanation</span></h3>
+        <div class="ai-out" id="aiOut"></div>
+        <div class="row mt">
+          <button class="btn ghost sm" id="aiBtn" data-i18n="ai.generate">Generate</button>
+          <button class="btn ghost sm" id="btBtn" data-i18n="bt.run">🧪 Backtest</button>
+        </div>
+        <div id="btOut" class="small mut mt"></div>
+      </div>
+    </section>
+
+    <!-- ============================== trade ============================= -->
+    <section class="tab" id="t-trade">
+      <div class="seg" id="modeSeg">
+        <button data-mode="paper" class="on">📝 Paper</button>
+        <button data-mode="live">⚡ Live</button>
+      </div>
+      <div class="card mt" id="balCard"><h3 data-i18n="trade.balance">Balance</h3><div id="balBody"></div></div>
+      <div class="card">
+        <div class="row between"><h3 style="margin:0" id="ordTitle" data-i18n="trade.order">Order</h3><span class="small mut mono" id="ordLast">—</span></div>
+        <div class="row mt" style="margin-bottom:9px"><button class="symbtn" id="ordSymBtn" style="font-size:13px"><span id="ordSym">BTC/USDT</span><span class="mut">▾</span></button>
+          <div class="seg" id="typeSeg" style="flex:1"><button data-t="market" class="on">Market</button><button data-t="limit">Limit</button></div></div>
+        <label class="f" id="priceWrap" style="display:none"><span class="lb" id="lblLimit" data-i18n="trade.limitPrice">Limit price</span><input id="ordPrice" type="number" inputmode="decimal" step="any"></label>
+        <label class="f"><span class="lb" id="lblAmt" data-i18n="trade.amount">Amount</span><input id="ordAmt" type="number" inputmode="decimal" step="any" placeholder="0"></label>
+        <div class="grid4" style="margin:-2px 0 9px">
+          <button class="btn ghost sm" data-pct="25">25%</button>
+          <button class="btn ghost sm" data-pct="50">50%</button>
+          <button class="btn ghost sm" data-pct="75">75%</button>
+          <button class="btn ghost sm" data-pct="100">100%</button>
+        </div>
+        <div class="grid2">
+          <label class="f"><span class="lb">TP %</span><input id="ordTp" type="number" inputmode="decimal" step="any" placeholder="optional"></label>
+          <label class="f"><span class="lb">SL %</span><input id="ordSl" type="number" inputmode="decimal" step="any" placeholder="optional"></label>
+        </div>
+        <div class="grid2 mt">
+          <button class="btn buy" id="buyBtn">BUY<span class="k" id="buyEst">—</span></button>
+          <button class="btn sell" id="sellBtn">SELL<span class="k" id="sellEst">—</span></button>
+        </div>
+        <div class="hint mt" id="ordNote"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="calc.title">Position size calculator</h3>
+        <div class="grid3">
+          <label class="f" style="margin:0"><span class="lb" data-i18n="calc.account">Account (USDT)</span><input id="calcAcct" type="number" inputmode="decimal" step="any"></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="calc.risk">Risk %</span><input id="calcRisk" type="number" inputmode="decimal" step="any" value="1"></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="calc.stop">Stop price</span><input id="calcStop" type="number" inputmode="decimal" step="any"></label>
+        </div>
+        <div class="grid3 mt">
+          <div class="metric"><div class="k" data-i18n="calc.size">Position size</div><div class="v" id="calcSize">—</div></div>
+          <div class="metric"><div class="k" data-i18n="calc.notional">Notional</div><div class="v" id="calcNotional">—</div></div>
+          <div class="metric"><div class="k" data-i18n="calc.riskAmt">Risk</div><div class="v" id="calcRiskAmt">—</div></div>
+        </div>
+        <button class="btn ghost sm block mt" id="calcUse" data-i18n="calc.use">Use this size in the order</button>
+        <div class="hint mt" id="calcNote"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="stats.title">Paper statistics</h3>
+        <div class="grid4" id="statsBody"></div>
+        <canvas id="eqChart" height="70" style="width:100%;height:70px;display:block;margin-top:10px"></canvas>
+        <div class="tiny dim" id="statsNote"></div>
+      </div>
+      <div class="card"><h3 id="posTitle" data-i18n="trade.pos">Positions</h3><div id="posList"></div></div>
+      <div class="card"><h3 data-i18n="trade.orders">Open orders</h3><div id="ordList"></div></div>
+      <div class="card"><h3 data-i18n="trade.history">History</h3><div id="histList"></div></div>
+    </section>
+
+    <!-- =============================== bot ============================== -->
+    <section class="tab" id="t-bot">
+      <div class="card tight">
+        <div class="row between">
+          <div class="bb" style="font-size:15px"><span class="botdot" id="botDot"></span><span id="botState">Idle</span></div>
+          <div class="bb pnl" id="botPnl">—</div>
+        </div>
+        <div class="grid4 mt" id="botStats"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="bot.strategy">Strategy</h3>
+        <label class="f"><span class="lb" id="lblStrat" data-i18n="bot.strategy">Strategy</span><select id="bStrat"></select></label>
+        <div class="hint" id="bStratDesc"></div>
+        <div class="grid2 mt">
+          <label class="f" style="margin:0"><span class="lb">Timeframe</span><select id="bTf"></select></label>
+          <label class="f" style="margin:0"><span class="lb" id="lblSize" data-i18n="bot.size">Order size (USDT)</span><input id="bSize" type="number" inputmode="decimal" value="50"></label>
+        </div>
+        <div class="grid2 mt">
+          <label class="f" style="margin:0"><span class="lb">TP %</span><input id="bTp" type="number" inputmode="decimal" value="1.5"></label>
+          <label class="f" style="margin:0"><span class="lb">SL %</span><input id="bSl" type="number" inputmode="decimal" value="0.8"></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3 id="lblSym" data-i18n="bot.symbols">Symbols</h3>
+        <div class="chips" id="bSymbols"></div>
+        <div class="switchrow"><span id="lblShort" data-i18n="bot.short">Allow short (sell first)</span><div class="sw" id="bShort"><i></i></div></div>
+        <div class="switchrow"><span id="lblNotify" data-i18n="bot.notify">Notifications &amp; voice</span><div class="sw on" id="bNotify"><i></i></div></div>
+        <div class="switchrow"><span id="lblKeep" data-i18n="bot.keep">Keep screen awake</span><div class="sw" id="bKeep"><i></i></div></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="bot.risk">Risk limits</h3>
+        <div class="grid3">
+          <label class="f" style="margin:0"><span class="lb" id="lblMaxPos" data-i18n="bot.maxPos">Max positions</span><input id="bMaxPos" type="number" value="3"></label>
+          <label class="f" style="margin:0"><span class="lb" id="lblCool" data-i18n="bot.cool">Cooldown (min)</span><input id="bCool" type="number" value="15"></label>
+          <label class="f" style="margin:0"><span class="lb" id="lblDaily" data-i18n="bot.daily">Daily loss stop</span><input id="bDaily" type="number" value="50"></label>
+        </div>
+        <div class="hint mt" id="bRiskNote"></div>
+      </div>
+      <div class="grid2">
+        <button class="btn primary" id="botStart" data-i18n="bot.start">▶ Start bot</button>
+        <button class="btn ghost" id="botStop" data-i18n="bot.stop">■ Stop</button>
+      </div>
+      <div class="card mt">
+        <div class="row between"><h3 style="margin:0" data-i18n="bot.log">Activity log</h3><button class="btn ghost sm" id="botClear" data-i18n="bot.clear">clear</button></div>
+        <div class="log mt" id="botLog"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================ nav =============================== -->
+  <nav id="nav">
+    <button data-tab="markets" class="on"><i>📈</i><span data-i18n="nav.markets">Markets</span></button>
+    <button data-tab="chart"><i>🕯️</i><span data-i18n="nav.chart">Chart</span></button>
+    <button data-tab="signals"><i>🎯</i><span data-i18n="nav.signals">Signals</span></button>
+    <button data-tab="trade"><i>💱</i><span data-i18n="nav.trade">Trade</span><span class="nb" id="navBadge" style="display:none">0</span></button>
+    <button data-tab="bot"><i>🤖</i><span data-i18n="nav.bot">Bot</span></button>
+  </nav>
+</div>
+
+<!-- =============================== settings ============================== -->
+<div class="modal" id="setModal">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="hd"><h3>⚙ <span data-i18n="set.title">Settings</span></h3><button class="iconbtn" data-close="setModal">✕</button></div>
+    <div class="bd">
+      <div class="card">
+        <h3 data-i18n="set.general">General</h3>
+        <label class="f"><span class="lb" data-i18n="set.lang">Language</span>
+          <select id="setLang"><option value="en">English</option><option value="si">සිංහල</option></select></label>
+        <div class="switchrow"><span data-i18n="set.sound">Sound alerts</span><div class="sw" id="setSound"><i></i></div></div>
+        <div class="switchrow"><span data-i18n="set.haptic">Haptic feedback</span><div class="sw on" id="setHaptic"><i></i></div></div>
+        <div class="switchrow"><span data-i18n="set.tts">Speak signals (TTS)</span><div class="sw" id="setTts"><i></i></div></div>
+        <div class="switchrow"><span data-i18n="set.keep">Keep screen awake</span><div class="sw" id="setKeep"><i></i></div></div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="set.data">Market data</h3>
+        <label class="f"><span class="lb" data-i18n="set.exchange">Exchange (public data)</span>
+          <select id="setEx"></select></label>
+        <div class="switchrow"><span data-i18n="set.testnet">Testnet / demo keys</span><div class="sw" id="setTestnet"><i></i></div></div>
+        <div class="hint" data-i18n="set.exNote"></div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="set.keys">API keys (live trading)</h3>
+        <label class="f"><span class="lb">API key</span><input id="setKey" autocomplete="off" spellcheck="false"></label>
+        <label class="f"><span class="lb">API secret</span><input id="setSecret" type="password" autocomplete="off"></label>
+        <div class="row">
+          <button class="btn primary sm" id="setSaveKeys" data-i18n="set.save">Save</button>
+          <button class="btn ghost sm" id="setTestKeys" data-i18n="set.test">Test connection</button>
+          <button class="btn ghost sm" id="setClearKeys" data-i18n="set.clear">Delete keys</button>
+        </div>
+        <div class="hint mt" id="setKeyStatus"></div>
+        <div class="hint mt" data-i18n="set.keyWarn"></div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="set.aiTitle">AI explanation (optional)</h3>
+        <label class="f"><span class="lb" data-i18n="set.aiProv">Provider</span>
+          <select id="setAiProvider">
+            <option value="off">Off (built-in rules)</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="huggingface">HuggingFace</option>
+            <option value="custom">Custom (OpenAI compatible)</option>
+          </select></label>
+        <label class="f" id="aiKeyWrap"><span class="lb">API key</span><input id="setAiKey" autocomplete="off" spellcheck="false"></label>
+        <label class="f"><span class="lb" data-i18n="set.aiModel">Model</span><input id="setAiModel" placeholder="meta-llama/llama-3.3-70b-instruct:free"></label>
+        <label class="f" id="aiBaseWrap" style="display:none"><span class="lb">Base URL</span><input id="setAiBase" placeholder="https://api.openai.com/v1/chat/completions"></label>
+        <div class="hint" data-i18n="set.aiNote"></div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="set.paper">Paper account</h3>
+        <div class="row">
+          <button class="btn ghost sm" id="setResetPaper" data-i18n="set.resetPaper">Reset to 10,000 USDT</button>
+          <button class="btn ghost sm" id="setWipe" data-i18n="set.wipe">Erase all data</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="set.about">About</h3>
+        <table class="kv">
+          <tr><td>App</td><td>CryptoAI PRO</td></tr>
+          <tr><td data-i18n="set.version">Version</td><td id="setVersion">—</td></tr>
+          <tr><td data-i18n="set.engine">TA engine</td><td id="setEngine">—</td></tr>
+          <tr><td data-i18n="set.mode">Runtime</td><td id="setRuntime">—</td></tr>
+        </table>
+        <div class="hint mt" data-i18n="set.disclaimer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== symbol sheet ========================== -->
+<div class="modal" id="symModal">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="hd"><h3 data-i18n="sym.title">Choose market</h3><button class="iconbtn" data-close="symModal">✕</button></div>
+    <div class="bd">
+      <input id="symSearch" placeholder="🔍" autocomplete="off">
+      <div id="symList" class="mt"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== alert sheet ========================== -->
+<div class="modal" id="alertModal">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="hd"><h3>🔔 <span data-i18n="alert.title">Price alert</span></h3><button class="iconbtn" data-close="alertModal">✕</button></div>
+    <div class="bd">
+      <div class="grid2">
+        <label class="f"><span class="lb" data-i18n="alert.price">Price</span><input id="alertPrice" type="number" inputmode="decimal" step="any"></label>
+        <label class="f"><span class="lb" data-i18n="alert.when">When</span>
+          <select id="alertWhen"><option value="above" data-i18n-opt="alert.above">Rises above</option><option value="below" data-i18n-opt="alert.below">Falls below</option></select></label>
+      </div>
+      <button class="btn primary block" id="alertAdd" data-i18n="alert.add">Add alert</button>
+      <div class="card mt"><h3 data-i18n="alert.list">Active alerts</h3><div id="alertList"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== confirm sheet ========================= -->
+<div class="modal" id="okModal">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="hd"><h3 id="okTitle">Confirm</h3><button class="iconbtn" data-close="okModal">✕</button></div>
+    <div class="bd"><div id="okBody" class="small"></div>
+      <div class="row mt"><button class="btn ghost" style="flex:1" data-close="okModal" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" id="okYes" style="flex:1" data-i18n="confirm">Confirm</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== scan sheet ============================ -->
+<div class="modal" id="scanModal">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="hd"><h3>🔎 <span data-i18n="scan.title">Signal scan</span></h3><button class="iconbtn" data-close="scanModal">✕</button></div>
+    <div class="bd">
+      <div class="gauge"><i id="scanBar" style="width:0%;background:var(--gold)"></i></div>
+      <div class="row between mt">
+        <span class="small mut" id="scanSummary"></span>
+        <button class="btn ghost sm" id="scanStop" data-i18n="scan.stop">Stop</button>
+      </div>
+      <div id="scanList" class="mt"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="ta.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://rusindu12.github.io/Ai-/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rusindu12.github.io/Ai-/"/>
+    <xhtml:link rel="alternate" hreflang="si" href="https://rusindu12.github.io/Ai-/"/>
+  </url>
+  <url>
+    <loc>https://rusindu12.github.io/Ai-/app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>
