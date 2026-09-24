@@ -9,6 +9,8 @@ Fails (exit 1) when something would break the live site:
   * a file listed in the service worker's SHELL is missing (the worker would never install)
   * anything but whitespace follows </html> (it shows up as stray text on the page)
   * the manifest is not valid JSON, or the APK download link is gone
+  * the landing page contains letters that are neither Sinhala nor Latin (a stray line of
+    another script once slipped into a Sinhala string and showed up as gibberish)
 """
 import json
 import os
@@ -16,6 +18,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
@@ -89,6 +92,16 @@ except ValueError as e:
     fail(f"manifest.webmanifest is not valid JSON ({e})")
 if "releases/download" not in read("index.html"):
     fail("index.html: APK download link missing")
+
+# 6. the landing page is English + Sinhala only
+for n, line in enumerate(read("index.html").splitlines(), 1):
+    odd = [c for c in line if unicodedata.category(c)[0] in "LM" and ord(c) > 0x24F
+           and not 0x0D80 <= ord(c) <= 0x0DFF        # Sinhala
+           and not 0x20D0 <= ord(c) <= 0x20FF        # combining marks for symbols (keycaps)
+           and not 0xFE00 <= ord(c) <= 0xFE0F]       # emoji variation selectors
+    if odd:
+        fail(f"index.html:{n}: unexpected script in the text: {''.join(odd)[:40]!r} "
+             f"({unicodedata.name(odd[0], '?')})")
 
 if errors:
     print(f"\n{len(errors)} problem(s) — not deploying.")
