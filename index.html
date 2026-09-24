@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CryptoAI PRO — Sinhala + English crypto terminal (APK + Web App)</title>
+<meta name="description" content="CryptoAI PRO — free Sinhala/English crypto terminal: live markets, candlestick charts, buy/sell signals with entry/TP/SL, paper and live trading, an auto-bot with risk limits and price alerts. Android APK and a web app — no account needed for signals or paper trading.">
+<link rel="canonical" href="https://rusindu12.github.io/Ai-/">
+<meta property="og:url" content="https://rusindu12.github.io/Ai-/">
+<meta name="theme-color" content="#0a0e17">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CryptoAI PRO">
+<meta property="og:title" content="CryptoAI PRO — Sinhala + English crypto terminal">
+<meta property="og:description" content="Live markets, candles, buy/sell signals (entry · TP · SL), paper + live trading, auto-bot with risk limits. Android APK + web app. Free, no account needed.">
+<meta property="og:image" content="https://rusindu12.github.io/Ai-/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CryptoAI PRO — Sinhala + English crypto terminal">
+<meta name="twitter:description" content="Live markets, candles, signals with entry/TP/SL, paper + live trading, auto-bot. APK + web app.">
+<meta name="twitter:image" content="https://rusindu12.github.io/Ai-/og-cover.png">
+
+<meta name="robots" content="index,follow">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="si_LK">
+<link rel="preconnect" href="https://api.binance.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.binance.com">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"CryptoAI PRO",
+ "applicationCategory":"FinanceApplication","operatingSystem":"Android 7.0+ , Web",
+ "description":"Sinhala and English crypto terminal: live markets, candlesticks, signals with entry/target/stop, paper and live trading, auto-bot with risk limits.",
+ "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+ "downloadUrl":"https://github.com/Rusindu12/Rs-et/releases/download/cryptoai-apk-latest/CryptoAI-PRO.apk",
+ "url":"https://rusindu12.github.io/Ai-/","codeRepository":"https://github.com/Rusindu12/Ai-"}
+</script>
+
+<style>
+:root{
+  --bg:#0a0e17; --bg2:#0d1424; --card:#121a2b; --card2:#16203a; --line:#1f2a42;
+  --txt:#e9eefb; --mut:#8394b4; --dim:#5b6a86;
+  --gold:#f0b90b; --gold2:#ffa41b; --up:#0ecb81; --dn:#f6465d; --ai:#8b5cf6; --info:#38bdf8;
+  --r:16px; --maxw:1120px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--txt);
+  font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Sinhala",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden
+}
+body::before{ /* ambient glow */
+  content:"";position:fixed;inset:-20% -10% auto -10%;height:70vh;pointer-events:none;z-index:0;
+  background:radial-gradient(50% 60% at 50% 0%,rgba(240,185,11,.16),transparent 70%),
+             radial-gradient(35% 50% at 85% 10%,rgba(139,92,246,.14),transparent 70%);
+}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3{line-height:1.2;margin:0 0 .5em}
+img,svg{max-width:100%}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px;position:relative;z-index:1}
+section{padding:64px 0;position:relative;z-index:1}
+.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700}
+.mut{color:var(--mut)}.small{font-size:14px}.tiny{font-size:12.5px}
+.center{text-align:center}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:20;background:rgba(10,14,23,.86);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)
+}
+.hbar{max-width:var(--maxw);margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:.2px}
+.brand .pro{color:var(--gold)}
+.logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:grid;place-items:center;flex:0 0 auto}
+nav.top{display:flex;gap:20px;margin-left:auto;font-size:14.5px}
+nav.top a{color:var(--mut);font-weight:600}
+nav.top a:hover{color:var(--txt);text-decoration:none}
+.hbtns{display:flex;gap:8px;align-items:center;margin-left:8px}
+.langbtn{background:#141d31;border:1px solid var(--line);color:var(--mut);font-weight:700;font-size:13px;padding:8px 11px;border-radius:10px;cursor:pointer}
+.langbtn:hover{color:var(--txt)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;border:1px solid var(--line);background:#182338;color:var(--txt);cursor:pointer;transition:transform .12s ease}
+.btn:hover{transform:translateY(-1px);text-decoration:none}
+.btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200;border:0}
+.btn.ghost{background:#141d31;color:var(--txt)}
+.btn.sm{padding:9px 14px;font-size:13.5px;border-radius:10px}
+.btn[disabled]{opacity:.5;cursor:default;transform:none}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1.06fr .94fr;gap:44px;align-items:center;padding-top:52px}
+.hero h1{font-size:clamp(30px,4.4vw,50px);letter-spacing:-.5px}
+.hero h1 span{background:linear-gradient(120deg,var(--gold),#ffd76a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:17.5px;color:#c9d4ea;max-width:50ch}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 18px}
+.trust{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:7px;background:#101728;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12.5px;color:var(--mut)}
+.pill b{color:var(--txt);font-weight:600}
+
+/* ---------- price strip ---------- */
+.strip{display:flex;gap:10px;overflow-x:auto;padding:6px 0 2px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.pk{flex:0 0 auto;min-width:132px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.pk .s{font-size:12px;color:var(--mut);font-weight:700}
+.pk .p{font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.pk .c{font-size:12.5px;font-weight:700}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.livedot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,203,129,.5)}70%{box-shadow:0 0 0 8px rgba(14,203,129,0)}100%{box-shadow:0 0 0 0 rgba(14,203,129,0)}}
+
+/* ---------- phone mockup ---------- */
+.phone{
+  width:min(330px,100%);margin:0 auto;background:#0b1120;border:1px solid #26314d;border-radius:34px;
+  padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 8px rgba(255,255,255,.02)
+}
+.screen{background:var(--bg);border-radius:24px;overflow:hidden;border:1px solid #1a2338}
+.sbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:12.5px}
+.sbar .dot{width:7px;height:7px;border-radius:50%;background:var(--up)}
+.sbar .nm{font-weight:800}
+.sbar .mut{margin-left:auto;font-size:11px}
+.sbody{padding:10px}
+.chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px}
+.verd{margin-top:9px;background:linear-gradient(180deg,rgba(14,203,129,.16),var(--card));border:1px solid rgba(14,203,129,.35);border-radius:12px;padding:11px;text-align:center}
+.verd .v{font-weight:900;font-size:18px;color:var(--up);letter-spacing:.4px}
+.verd .m{font-size:11px;color:var(--mut)}
+.bar{height:6px;border-radius:4px;background:#1b2540;overflow:hidden;margin:8px auto 0;max-width:170px}
+.bar i{display:block;height:100%;width:66%;background:var(--up)}
+.lv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}
+.lv div{background:#101728;border:1px solid var(--line);border-radius:10px;padding:7px;text-align:center;font-size:10.5px;color:var(--dim)}
+.lv b{display:block;font-size:13px;color:var(--txt);font-variant-numeric:tabular-nums}
+.sn{display:flex;border-top:1px solid var(--line);font-size:9.5px;color:var(--dim)}
+.sn span{flex:1;text-align:center;padding:8px 2px}
+.sn span.on{color:var(--gold)}
+.sn span i{display:block;font-style:normal;font-size:15px;margin-bottom:2px}
+
+/* ---------- cards ---------- */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(4,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;transition:border-color .15s ease,transform .15s ease}
+.card:hover{border-color:#2c3a5c;transform:translateY(-2px)}
+.card .ic{font-size:24px;margin-bottom:10px}
+.card h3{font-size:16.5px;margin-bottom:6px}
+.card p{margin:0;color:var(--mut);font-size:14.2px}
+.span2{grid-column:span 2}
+
+/* ---------- tabs showcase ---------- */
+.tabsbox{display:grid;gap:12px;grid-template-columns:repeat(5,1fr)}
+.tabcard{background:linear-gradient(180deg,#121a2b,#0f1626);border:1px solid var(--line);border-radius:14px;padding:16px}
+.tabcard .ic{font-size:22px}
+.tabcard h3{font-size:14.5px;margin:8px 0 4px}
+.tabcard p{margin:0;font-size:13px;color:var(--mut)}
+
+/* ---------- steps ---------- */
+.steps{display:grid;gap:16px;grid-template-columns:repeat(3,1fr);counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;top:-14px;left:18px;width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200;font-weight:900;display:grid;place-items:center;font-size:14px}
+.step h3{font-size:16px;margin:8px 0 6px}
+.step p{margin:0;color:var(--mut);font-size:14px}
+.dlbox{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:linear-gradient(120deg,rgba(240,185,11,.12),rgba(139,92,246,.10));border:1px solid #2c3550;border-radius:var(--r);padding:20px}
+.dlbox .meta{font-size:12.5px;color:var(--mut)}
+code{background:#101728;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px;color:#e6c86a}
+
+/* ---------- safety ---------- */
+.safety{display:grid;gap:16px;grid-template-columns:1.1fr .9fr}
+.warn{background:rgba(246,70,93,.08);border:1px solid rgba(246,70,93,.35);border-radius:var(--r);padding:20px}
+.safe{background:rgba(14,203,129,.07);border:1px solid rgba(14,203,129,.3);border-radius:var(--r);padding:20px}
+ul.ticks{margin:10px 0 0;padding-left:0;list-style:none}
+ul.ticks li{position:relative;padding-left:26px;margin-bottom:8px;color:var(--mut);font-size:14.2px}
+ul.ticks li::before{content:"✓";position:absolute;left:0;top:-1px;color:var(--up);font-weight:800}
+.warn ul.ticks li::before{content:"!";color:var(--dn)}
+
+/* ---------- faq ---------- */
+.faq{max-width:820px;margin:0 auto}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+details[open]{border-color:#2c3a5c}
+summary{cursor:pointer;font-weight:700;font-size:15.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";float:right;color:var(--gold);font-weight:800}
+details[open] summary::after{content:"–"}
+details p{margin:10px 0 0;color:var(--mut);font-size:14.3px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:34px 0;margin-top:20px;position:relative;z-index:1}
+.fgrid{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.flinks{display:flex;flex-wrap:wrap;gap:18px;font-size:14px}
+.disclaimer{color:var(--dim);font-size:12.5px;margin-top:18px;max-width:90ch}
+
+/* ---------- hero canvas ---------- */
+.hero{position:relative}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.55;pointer-events:none;z-index:0;
+  mask-image:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent)}
+.hero > div{position:relative;z-index:1}
+
+/* ---------- stats band ---------- */
+.band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0c1220,#0a0e17)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:26px 20px}
+.stat{text-align:center}
+.stat b{display:block;font-size:clamp(26px,3.4vw,38px);font-weight:900;letter-spacing:-.5px;
+  background:linear-gradient(120deg,var(--gold),#ffd76a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:13px;color:var(--mut)}
+
+/* ---------- live demo ---------- */
+.demo{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:8px 13px;border-radius:999px;background:#141d31;border:1px solid var(--line);color:var(--mut);
+  font-size:13px;font-weight:700;cursor:pointer}
+.chip.on{background:rgba(240,185,11,.14);border-color:rgba(240,185,11,.45);color:var(--gold)}
+.chartwrap{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0b1120}
+#demoChart{display:block;width:100%;height:250px}
+.charttip{position:absolute;pointer-events:none;background:rgba(10,14,23,.94);border:1px solid var(--line);border-radius:8px;
+  padding:6px 9px;font-size:11px;display:none;font-variant-numeric:tabular-nums}
+.vcard{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:linear-gradient(180deg,#121a2b,#0f1626)}
+.vcard.buy{border-color:rgba(14,203,129,.4);background:linear-gradient(180deg,rgba(14,203,129,.13),#0f1626)}
+.vcard.sell{border-color:rgba(246,70,93,.4);background:linear-gradient(180deg,rgba(246,70,93,.13),#0f1626)}
+.vrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vbadge{font-size:24px;font-weight:900;letter-spacing:.4px;color:var(--mut)}
+.vcard.buy .vbadge{color:var(--up)}.vcard.sell .vbadge{color:var(--dn)}
+.gauge{height:7px;border-radius:4px;background:#1b2540;overflow:hidden;margin-top:10px}
+.gauge i{display:block;height:100%;width:0;background:var(--up);transition:width .5s ease}
+.reasons{list-style:none;margin:12px 0 0;padding:0;font-size:13.6px;color:#c9d4ea}
+.reasons li{padding:6px 0 6px 20px;position:relative;border-bottom:1px dashed rgba(31,42,66,.85)}
+.reasons li:last-child{border-bottom:0}
+.reasons li::before{content:"•";position:absolute;left:4px;color:var(--gold)}
+.lrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.lrow div{background:#101728;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:10.5px;color:var(--dim)}
+.lrow b{display:block;font-size:14px;color:var(--txt);font-variant-numeric:tabular-nums}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.mini div{background:#101728;border:1px solid var(--line);border-radius:10px;padding:8px}
+.mini .k{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+.mini .v{font-size:14px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.btline{margin-top:12px;font-size:13px;color:var(--mut)}
+.btline b{color:var(--txt)}
+.srcnote{font-size:11.5px;color:var(--dim);margin-top:10px}
+.srcnote.warn{color:var(--gold)}
+.demo-cta{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+.block{display:block;width:100%}
+
+/* ---------- included matrix ---------- */
+.cmp{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table.matrix{width:100%;border-collapse:collapse;min-width:560px;font-size:14.5px}
+table.matrix th,table.matrix td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line)}
+table.matrix thead th{font-size:12.5px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);background:#0f1626}
+table.matrix thead th:nth-child(2){color:var(--gold)}
+table.matrix td:nth-child(2),table.matrix td:nth-child(3){text-align:center;font-weight:700}
+table.matrix tr:last-child td{border-bottom:0}
+.yes{color:var(--up)}.no{color:var(--dim)}
+.fineprint{font-size:12px;color:var(--dim);margin-top:10px}
+
+/* ---------- misc ---------- */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:none}
+.skip{position:absolute;left:-9999px;top:0;background:var(--gold);color:#1a1200;padding:10px 14px;border-radius:0 0 10px 0;font-weight:700;z-index:50}
+.skip:focus{left:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}#heroCanvas{display:none}}
+@media (max-width:960px){
+  .demo{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .hero{grid-template-columns:1fr;gap:34px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .tabsbox{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr}
+  .safety{grid-template-columns:1fr}
+  /* keep the section links reachable on phones: wrap them onto a scrollable second row */
+  .hbar{flex-wrap:wrap}
+  nav.top{order:3;width:100%;margin:6px -4px 0;padding:0 4px 2px;gap:16px;
+    overflow-x:auto;scrollbar-width:none;white-space:nowrap;-webkit-overflow-scrolling:touch}
+  nav.top::-webkit-scrollbar{display:none}
+  nav.top a{font-size:14px}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:1fr}
+  .span2{grid-column:span 1}
+  section{padding:46px 0}
+  .tabsbox{grid-template-columns:1fr}
+  .hbar{padding:10px 14px;gap:9px}
+  .brand{font-size:15.5px}
+  .hbtns .btn{padding:9px 12px;font-size:13px}
+  .btn{padding:12px 16px;font-size:14.5px}
+  .hero h1{font-size:30px}
+  .dlbox{padding:16px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#features" data-i18n="a11y.skip">Skip to content</a>
+
+<header>
+  <div class="hbar">
+    <div class="brand">
+      <span class="logo">
+        <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-6 3.4 3.4L19 6" fill="none" stroke="#1a1200" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="6" r="2" fill="#1a1200"/></svg>
+      </span>
+      <span>Crypto<span class="pro">AI</span> PRO</span>
+    </div>
+    <nav class="top">
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#inside" data-i18n="nav.inside">Inside the app</a>
+      <a href="#demo" data-i18n="nav.demo">Live demo</a>
+      <a href="#install" data-i18n="nav.install">Install</a>
+      <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      <a href="https://github.com/Rusindu12/Ai-" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <div class="hbtns">
+      <button class="langbtn" id="langBtn" aria-label="Switch language / භාෂාව මාරු කරන්න">සිං</button>
+      <a class="btn sm primary" href="app/" data-i18n="cta.open">Open web app</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============================= hero ============================= -->
+  <section class="hero wrap">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div>
+      <div class="eyebrow" data-i18n="hero.eyebrow">සිංහල + English · free · open source</div>
+      <h1><span data-i18n="hero.h1a">Your crypto market,</span><br><span data-i18n="hero.h1b">signals and bot — in one place</span></h1>
+      <p class="lead" data-i18n="hero.lead">
+        Live markets, candlestick charts, a blended buy/sell signal with entry · target · stop,
+        paper and live trading, and an auto-bot with hard risk limits. Android APK and a web app.
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="app/" data-i18n="cta.open">Open web app</a>
+        <a class="btn" id="dlApk" href="https://github.com/Rusindu12/Rs-et/releases/download/cryptoai-apk-latest/CryptoAI-PRO.apk" data-i18n="cta.apk">Download APK (Android)</a>
+        <button class="btn ghost" id="pwaBtn" hidden data-i18n="cta.pwa">Add to home screen</button>
+      </div>
+      <div class="trust">
+        <span class="pill">🔓 <b data-i18n="trust.noacct">No account needed</b></span>
+        <span class="pill">💸 <b data-i18n="trust.free">100% free</b></span>
+        <span class="pill">🔐 <b data-i18n="trust.keys">API keys stay on your device</b></span>
+        <span class="pill">📴 <b data-i18n="trust.offline">Works offline (demo data)</b></span>
+      </div>
+      <div style="margin-top:26px">
+        <div class="small mut" style="margin-bottom:8px"><span class="livedot"></span>
+          <span data-i18n="strip.live">Live prices</span> · <span id="stripSrc" class="mut">Binance</span></div>
+        <div class="strip" id="strip"></div>
+      </div>
+    </div>
+
+    <!-- phone mockup -->
+    <div>
+      <div class="phone">
+        <div class="screen">
+          <div class="sbar">
+            <span class="dot"></span><span class="nm">BTC/USDT</span>
+            <span class="mut" id="pvTf" data-i18n="phone.live">live · 1h</span>
+          </div>
+          <div class="sbody">
+            <div class="chartbox">
+              <svg viewBox="0 0 300 150" role="img" aria-label="candlestick chart">
+                <g stroke="#1f2a42" stroke-width="1">
+                  <line x1="0" y1="30" x2="300" y2="30"/><line x1="0" y1="75" x2="300" y2="75"/><line x1="0" y1="120" x2="300" y2="120"/>
+                </g>
+                <g id="candles"></g>
+                <path d="M6 118 L56 96 L106 104 L156 66 L206 74 L256 42 L292 34" fill="none" stroke="#f0b90b" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M6 126 L56 108 L106 114 L156 86 L206 92 L256 66 L292 58" fill="none" stroke="#38bdf8" stroke-width="1.6" opacity=".85"/>
+                <circle cx="292" cy="34" r="4" fill="#0ecb81"/>
+              </svg>
+            </div>
+            <div class="verd" id="pvCard">
+              <div class="v" id="pvBadge" data-i18n="phone.verdict">BUY</div>
+              <div class="m"><span id="pvPair">BTC/USDT · 1h</span> · <span id="pvConf" data-i18n="phone.conf">confidence 66%</span></div>
+              <div class="bar"><i id="pvBar"></i></div>
+            </div>
+            <div class="lv">
+              <div><span data-i18n="phone.entry">Entry</span><b id="pvEntry">63,940</b></div>
+              <div><span data-i18n="phone.tp">Target</span><b class="up" id="pvTp">65,120</b></div>
+              <div><span data-i18n="phone.sl">Stop</span><b class="dn" id="pvSl">63,180</b></div>
+            </div>
+          </div>
+          <div class="sn">
+            <span class="on"><i>📈</i><span data-i18n="tab.markets">Markets</span></span>
+            <span><i>🕯️</i><span data-i18n="tab.chart">Chart</span></span>
+            <span class="on"><i>🎯</i><span data-i18n="tab.signal">Signal</span></span>
+            <span><i>💱</i><span data-i18n="tab.trade">Trade</span></span>
+            <span><i>🤖</i><span data-i18n="tab.bot">Bot</span></span>
+          </div>
+        </div>
+      </div>
+      <p class="center tiny mut" style="margin-top:12px" data-i18n="phone.note">Interface preview — the same layout runs in the app and in the web app.</p>
+    </div>
+  </section>
+
+  <!-- ============================ stats band ========================= -->
+  <section class="band" style="padding:0" aria-label="At a glance">
+    <div class="wrap stats">
+      <div class="stat"><b data-count="26">0</b><span data-i18n="stat.pairs">markets scanned at once</span></div>
+      <div class="stat"><b data-count="12">0</b><span data-i18n="stat.indicators">indicators per signal</span></div>
+      <div class="stat"><b data-count="4">0</b><span data-i18n="stat.strategies">bot strategies</span></div>
+      <div class="stat"><b data-count="0">0</b><span data-i18n="stat.keys">keys needed to start</span></div>
+    </div>
+  </section>
+
+  <!-- ============================ live demo ========================== -->
+  <section id="demo" class="wrap">
+    <div class="center" style="max-width:760px;margin:0 auto 26px">
+      <div class="eyebrow" data-i18n="demo.eyebrow">Live demo · no install</div>
+      <h2 data-i18n="demo.h2">Watch the engine read real candles right here</h2>
+      <p class="mut" data-i18n="demo.sub">This is <code>ta.js</code> — the very same analysis engine that runs inside the APK — scoring live Binance candles in your browser.</p>
+    </div>
+    <div class="demo">
+      <div class="panel">
+        <div class="chips" id="demoPairs" role="group" aria-label="Market"></div>
+        <div class="chips" id="demoTfs" role="group" aria-label="Timeframe"></div>
+        <div class="chartwrap">
+          <canvas id="demoChart" role="img" aria-label="Candlestick chart of the selected market"></canvas>
+          <div class="charttip" id="demoTip"></div>
+        </div>
+        <div class="srcnote" id="demoSrc"><span data-i18n="demo.loading">Fetching candles…</span></div>
+      </div>
+      <div>
+        <div class="vcard" id="demoVerdict" aria-live="polite">
+          <div class="vrow">
+            <span class="vbadge" id="dvBadge">—</span>
+            <span class="small mut" id="dvPair">BTC/USDT · 1h</span>
+          </div>
+          <div class="gauge"><i id="dvBar"></i></div>
+          <div class="tiny mut" id="dvConf"></div>
+          <ul class="reasons" id="dvReasons"></ul>
+          <div class="lrow" id="dvLevels" hidden></div>
+        </div>
+        <div class="mini" id="dvMetrics"></div>
+        <div class="btline" id="dvBacktest"></div>
+        <div class="demo-cta">
+          <a class="btn primary block" href="app/" data-i18n="demo.open">Run it on your own screens</a>
+          <a class="btn ghost block" href="https://github.com/Rusindu12/Rs-et/releases/download/cryptoai-apk-latest/CryptoAI-PRO.apk" data-i18n="cta.apk">Download APK (Android)</a>
+        </div>
+        <p class="srcnote" data-i18n="demo.disc">Educational analysis, not investment advice. Past performance does not predict the future.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== features =========================== -->
+  <section id="features" class="wrap">
+    <div class="center" style="max-width:720px;margin:0 auto 34px">
+      <div class="eyebrow" data-i18n="feat.eyebrow">What's inside</div>
+      <h2 data-i18n="feat.h2">Everything a retail trader actually uses</h2>
+      <p class="mut" data-i18n="feat.sub">No sign-up walls, no paywalled indicators. Open it and start.</p>
+    </div>
+    <div class="grid">
+      <div class="card reveal"><div class="ic">📈</div><h3 data-i18n="f1.t">Markets dashboard</h3><p data-i18n="f1.d">Top volume, gainers, losers and your own watchlist with 24h change and a sparkline, refreshed live over WebSocket.</p></div>
+      <div class="card reveal"><div class="ic">🕯️</div><h3 data-i18n="f2.t">Real charting</h3><p data-i18n="f2.d">Candles from 1m to 1d with EMA 20/50, Bollinger bands, volume and an RSI(14) panel. Drag anywhere to inspect a candle.</p></div>
+      <div class="card reveal"><div class="ic">🎯</div><h3 data-i18n="f3.t">Blended signals</h3><p data-i18n="f3.d">Trend and oscillator blocks are scored separately, so an overbought trend is not blindly sold — the app says “wait” when the edge is weak.</p></div>
+      <div class="card reveal"><div class="ic">🧮</div><h3 data-i18n="f4.t">Entry · target · stop</h3><p data-i18n="f4.d">Levels come from ATR volatility with a target/stop plan and reward-to-risk, plus a fee-aware backtest on 500 candles.</p></div>
+      <div class="card reveal"><div class="ic">📝</div><h3 data-i18n="f5.t">Paper trading</h3><p data-i18n="f5.d">10,000 USDT practice account with long and short, TP/SL, limit orders, 0.10% fees, history and live P&amp;L.</p></div>
+      <div class="card reveal"><div class="ic">⚡</div><h3 data-i18n="f6.t">Live trading (opt-in)</h3><p data-i18n="f6.d">Binance and Bybit spot with keys you keep: requests are HMAC-signed on the device, so the secret never leaves it.</p></div>
+      <div class="card reveal"><div class="ic">🤖</div><h3 data-i18n="f7.t">Auto-bot with brakes</h3><p data-i18n="f7.d">Four strategies, multi-symbol, max positions, per-symbol cooldown and a daily-loss stop that halts the bot by itself.</p></div>
+      <div class="card reveal"><div class="ic">🔔</div><h3 data-i18n="f8.t">Alerts &amp; voice</h3><p data-i18n="f8.d">Price alerts with notification, sound, vibration and spoken replies — and full Sinhala or English labels.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================ inside ============================ -->
+  <section id="inside">
+    <div class="wrap">
+      <div class="center" style="max-width:720px;margin:0 auto 30px">
+        <div class="eyebrow" data-i18n="in.eyebrow">Five tabs, no clutter</div>
+        <h2 data-i18n="in.h2">All your data in one place</h2>
+        <p class="mut" data-i18n="in.sub">Markets → chart → signal → trade → bot. Nothing else in the way.</p>
+      </div>
+      <div class="tabsbox">
+        <div class="tabcard reveal"><div class="ic">📈</div><h3 data-i18n="tab.markets">Markets</h3><p data-i18n="in.markets">Volume/gainers/losers views, search, watchlist stars.</p></div>
+        <div class="tabcard reveal"><div class="ic">🕯️</div><h3 data-i18n="tab.chart">Chart</h3><p data-i18n="in.chart">Candles, indicators, crosshair, timeframe chips.</p></div>
+        <div class="tabcard reveal"><div class="ic">🎯</div><h3 data-i18n="tab.signal">Signal</h3><p data-i18n="in.signal">Verdict, confidence, reasons, metrics, trade plan, backtest.</p></div>
+        <div class="tabcard reveal"><div class="ic">💱</div><h3 data-i18n="tab.trade">Trade</h3><p data-i18n="in.trade">Paper or live orders, open positions, history.</p></div>
+        <div class="tabcard reveal"><div class="ic">🤖</div><h3 data-i18n="tab.bot">Bot</h3><p data-i18n="in.bot">Strategy, symbols, risk limits, run log.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== install ============================ -->
+  <section id="install" class="wrap">
+    <div class="center" style="max-width:720px;margin:0 auto 30px">
+      <div class="eyebrow" data-i18n="ins.eyebrow">Get it</div>
+      <h2 data-i18n="ins.h2">APK or web app — both free</h2>
+      <p class="mut" data-i18n="ins.sub">Android 7.0+ · ~3.8 MB · debug-signed (Android will warn about “unknown apps”, that is normal).</p>
+    </div>
+
+    <div class="dlbox reveal">
+      <div>
+        <div style="font-weight:800;font-size:17px" data-i18n="ins.dlt">CryptoAI PRO.apk</div>
+        <div class="meta"><span id="apkMeta" data-i18n="ins.meta">Android 7.0+ · built by GitHub Actions on every push</span></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn primary" href="https://github.com/Rusindu12/Rs-et/releases/download/cryptoai-apk-latest/CryptoAI-PRO.apk" data-i18n="cta.apk">Download APK (Android)</a>
+        <a class="btn ghost" href="app/" data-i18n="cta.openWeb">Use the web app</a>
+      </div>
+    </div>
+
+    <div class="steps" style="margin-top:34px">
+      <div class="step reveal">
+        <h3 data-i18n="st1.t">Download the APK</h3>
+        <p data-i18n="st1.d">Tap the button above on your phone. The file lands in your Downloads folder.</p>
+      </div>
+      <div class="step reveal">
+        <h3 data-i18n="st2.t">Allow the install</h3>
+        <p data-i18n="st2.d">Open the file → Android asks to allow “install unknown apps” for your browser/file manager → allow, then Install.</p>
+      </div>
+      <div class="step reveal">
+        <h3 data-i18n="st3.t">Open and pick a market</h3>
+        <p data-i18n="st3.d">No keys, no sign-up. Signals, charts and paper trading work immediately; add API keys later only if you want live trading.</p>
+      </div>
+    </div>
+
+    <div class="card reveal" style="margin-top:22px">
+      <h3 data-i18n="ins.web.t">Prefer the browser?</h3>
+      <p data-i18n="ins.web.d">The web app is the same terminal (paper mode — for live orders use the Android app, where API requests are signed on-device). On Android/Chrome or iPhone/Safari use “Add to Home Screen” and it runs full-screen like an app.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <a class="btn primary sm" href="app/" data-i18n="cta.open">Open web app</a>
+        <button class="btn ghost sm" id="pwaBtn2" hidden data-i18n="cta.pwa">Add to home screen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ matrix ============================ -->
+  <section id="why" class="wrap">
+    <div class="center" style="max-width:760px;margin:0 auto 30px">
+      <div class="eyebrow" data-i18n="why.eyebrow">Straight talk</div>
+      <h2 data-i18n="why.h2">What is included — and what it never does</h2>
+      <p class="mut" data-i18n="why.sub">No subscription, no custody, no lock-in. The whole terminal is in the repo.</p>
+    </div>
+    <div class="cmp">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th data-i18n="why.col0">Included in the terminal</th>
+            <th data-i18n="why.col1">CryptoAI PRO</th>
+            <th data-i18n="why.col2">Typical paid signal group</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td data-i18n="why.r1">Charts + indicators (EMA, Bollinger, RSI, MACD, ATR, Stochastic)</td><td class="yes">✓</td><td class="no" data-i18n="why.n1">usually hidden from free members</td></tr>
+          <tr><td data-i18n="why.r2">Entry · target · stop for every signal</td><td class="yes">✓</td><td class="no" data-i18n="why.n2">often “VIP only”</td></tr>
+          <tr><td data-i18n="why.r3">Fee-aware backtest you can inspect</td><td class="yes">✓</td><td class="no" data-i18n="why.n3">not published</td></tr>
+          <tr><td data-i18n="why.r4">Paper trading to test the signals yourself</td><td class="yes">✓</td><td class="no" data-i18n="why.n4">rare</td></tr>
+          <tr><td data-i18n="why.r5">Auto-bot with risk limits and a daily-loss stop</td><td class="yes">✓</td><td class="no" data-i18n="why.n5">usually social trading only</td></tr>
+          <tr><td data-i18n="why.r6">Monthly cost</td><td class="yes" data-i18n="why.free">free</td><td class="no" data-i18n="why.n6">often a monthly fee</td></tr>
+          <tr><td data-i18n="why.r7">Who holds your money</td><td class="yes" data-i18n="why.self">you, on your exchange</td><td class="no" data-i18n="why.n7">sometimes a pooled account</td></tr>
+          <tr><td data-i18n="why.r8">Sinhala interface</td><td class="yes">✓</td><td class="no" data-i18n="why.n8">rare</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fineprint" data-i18n="why.fine">The right-hand column is a general pattern in paid signal channels, not a statement about any specific product or person.</p>
+  </section>
+
+  <!-- =========================== safety ============================= -->
+  <section class="wrap">
+    <div class="safety">
+      <div class="safe">
+        <h3 data-i18n="safe.h2">🔐 How your keys and data are handled</h3>
+        <ul class="ticks">
+          <li data-i18n="safe.1">API keys are stored in the app's private storage on your phone — never uploaded, never in a web page.</li>
+          <li data-i18n="safe.2">Every order is signed with HMAC-SHA256 on the device by the Kotlin layer.</li>
+          <li data-i18n="safe.3">Create keys with trading enabled and **withdrawal disabled**. The app never asks for withdrawal rights.</li>
+          <li data-i18n="safe.4">Signals, charts and paper trading need no account and no key at all.</li>
+        </ul>
+      </div>
+      <div class="warn">
+        <h3 data-i18n="warn.h2">⚠️ Read this first</h3>
+        <ul class="ticks">
+          <li data-i18n="warn.1">This is an educational tool, not financial advice. Signals can be wrong.</li>
+          <li data-i18n="warn.2">Crypto trading is highly risky — you can lose money, quickly.</li>
+          <li data-i18n="warn.3">A live bot cannot know about news, halts or thin liquidity. Start with small size.</li>
+          <li data-i18n="warn.4">Never trade money you cannot afford to lose.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= faq ============================== -->
+  <section id="faq" class="wrap">
+    <div class="center" style="max-width:720px;margin:0 auto 30px">
+      <div class="eyebrow">FAQ</div>
+      <h2 data-i18n="faq.h2">Questions and answers</h2>
+    </div>
+    <div class="faq">
+      <details class="reveal"><summary data-i18n="q1">Do I need an account or API key?</summary><p data-i18n="a1">No. Prices, charts, the signal engine, alerts and paper trading work with no account and no key. Keys are only needed if you want to place real orders on Binance or Bybit.</p></details>
+      <details class="reveal"><summary data-i18n="q2">Is it really free?</summary><p data-i18n="a2">Yes — free and open source (this repo). There is no subscription and no paid indicator tier. Optional AI explanations use your own provider key if you choose to add one; without a key the built-in explanation is used.</p></details>
+      <details class="reveal"><summary data-i18n="q3">Does it work offline?</summary><p data-i18n="a3">The app opens offline and shows clearly-labelled simulated demo data, so you can explore every screen. Real prices need internet.</p></details>
+      <details class="reveal"><summary data-i18n="q4">Which exchanges are supported?</summary><p data-i18n="a4">Public market data from Binance, Bybit and OKX (switchable in settings, with automatic fallback). Live trading is supported on Binance and Bybit spot. Binance testnet is supported too.</p></details>
+      <details class="reveal"><summary data-i18n="q5">How safe is the bot?</summary><p data-i18n="a5">It enforces a maximum number of open positions, a per-symbol cooldown and a daily-loss stop that halts trading by itself, and it runs in a foreground service with a visible notification. Still: test in paper mode first, and only risk what you can afford to lose.</p></details>
+      <details class="reveal"><summary data-i18n="q6">Where is the source?</summary><p data-i18n="a6">This site and the web terminal (ta.js + app.js) live in the Ai- repository; the Android shell, the Kotlin signing bridge and the CI that builds the APK are in the Rs-et repository.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="brand">
+        <span class="logo">
+          <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-6 3.4 3.4L19 6" fill="none" stroke="#1a1200" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="6" r="2" fill="#1a1200"/></svg>
+        </span>
+        <span>Crypto<span class="pro">AI</span> PRO</span>
+      </div>
+      <div class="flinks">
+        <a href="app/" data-i18n="cta.open">Open web app</a>
+        <a href="https://github.com/Rusindu12/Rs-et/releases/tag/cryptoai-apk-latest" target="_blank" rel="noopener" data-i18n="foot.releases">APK releases</a>
+        <a href="https://github.com/Rusindu12/Ai-" target="_blank" rel="noopener" data-i18n="foot.repo">Source code</a>
+        <a href="https://github.com/Rusindu12/Rs-et/blob/main/crypto-app/INSTALL_SI.md" target="_blank" rel="noopener" data-i18n="foot.guide">සිංහල install guide</a>
+      </div>
+      <div class="small mut">Made with ❤️ for Sinhala traders · <span id="year"></span></div>
+    </div>
+    <p class="disclaimer" data-i18n="foot.disc">
+      CryptoAI PRO is an educational market-analysis tool. It does not provide investment advice and does not guarantee results.
+      Cryptocurrency trading involves substantial risk of loss. Signals, backtests and the auto-bot are provided “as is”, without warranty of any kind.
+      Always do your own research and only trade funds you can afford to lose.
+    </p>
+  </div>
+</footer>
+
+<script src="app/ta.js"></script>
+<script>
+/* ============================== i18n ==================================== */
+const STR = {
+  en: {
+    "nav.demo": "Live demo", "nav.features": "Features", "nav.inside": "Inside the app",
+    "a11y.skip": "Skip to content",
+    "stat.pairs": "markets scanned at once", "stat.indicators": "indicators per signal",
+    "stat.strategies": "bot strategies", "stat.keys": "keys needed to start",
+    "demo.eyebrow": "Live demo · no install", "demo.h2": "Watch the engine read real candles right here",
+    "demo.sub": "This is ta.js — the very same analysis engine that runs inside the APK — scoring live Binance candles in your browser.",
+    "demo.loading": "Fetching candles…", "demo.open": "Run it on your own screens",
+    "demo.disc": "Educational analysis, not investment advice. Past performance does not predict the future.",
+    "demo.live": "Live Binance {tf} candles · analysed in your browser by ta.js",
+    "demo.sample": "Sample candles (no exchange connection) — the engine and the maths are real, the prices are not.",
+    "demo.bt": "Backtest on these candles (0.10% fee/side): {trades} trades · win rate {win}% · net {pnl}% · buy &amp; hold {bh}%",
+    "demo.wait": "wait", "demo.conf": "confidence {c}%",
+    "why.eyebrow": "Straight talk", "why.h2": "What is included — and what it never does",
+    "why.sub": "No subscription, no custody, no lock-in. The whole terminal is in the repo.",
+    "why.col0": "Included in the terminal", "why.col1": "CryptoAI PRO", "why.col2": "Typical paid signal group",
+    "why.r1": "Charts + indicators (EMA, Bollinger, RSI, MACD, ATR, Stochastic)",
+    "why.r2": "Entry · target · stop for every signal", "why.r3": "Fee-aware backtest you can inspect",
+    "why.r4": "Paper trading to test the signals yourself", "why.r5": "Auto-bot with risk limits and a daily-loss stop",
+    "why.r6": "Monthly cost", "why.r7": "Who holds your money", "why.r8": "Sinhala interface",
+    "why.n1": "usually hidden from free members", "why.n2": "often “VIP only”", "why.n3": "not published",
+    "why.n4": "rare", "why.n5": "usually social trading only", "why.n6": "often a monthly fee",
+    "why.n7": "sometimes a pooled account", "why.n8": "rare",
+    "why.free": "free", "why.self": "you, on your exchange",
+    "why.fine": "The right-hand column is a general pattern in paid signal channels, not a statement about any specific product or person.",
+  },
+  si: {
+    "nav.demo": "සජීවී demo", "nav.features": "විශේෂාංග", "nav.inside": "App එක ඇතුළේ",
+    "a11y.skip": "කෙලින්ම අන්තර්ගතයට",
+    "stat.pairs": "එකවර scan වන වෙළඳපොල", "stat.indicators": "සංඥාවකට දර්ශක",
+    "stat.strategies": "රොබෝ උපාය", "stat.keys": "පටන් ගන්න ඕන යතුරු",
+    "demo.eyebrow": "සජීවී demo · install නැතුව", "demo.h2": "මෙතනම engine එක සැබෑ කැන්ඩල් කියවන හැටි බලන්න",
+    "demo.sub": "මේ තමයි ta.js — APK එක ඇතුළේ දුවන එකම විශ්ලේෂණ engine එක — ඔබේ browser එකේදීම සජීවී Binance කැන්ඩල් ලකුණු කරනවා.",
+    "demo.loading": "කැන්ඩල් ලබාගනිමින්…", "demo.open": "ඔබේම තිරවල එය run කරන්න",
+    "demo.disc": "අධ්‍යාපනික විශ්ලේෂණයක්, ආයෝජන උපදෙසක් නොවේ. අතීත ප්‍රතිඵල අනාගතය සහතික නොකරයි.",
+    "demo.live": "සජීවී Binance {tf} කැන්ඩල් · ඔබේ browser එකේදීම ta.js එකෙන් විශ්ලේෂණය",
+    "demo.sample": "නියැදි කැන්ඩල් (හුවමාරු සම්බන්ධතාවක් නැත) — engine එක සහ ගණනය සැබෑ, මිල නොවේ.",
+    "demo.bt": "මේ කැන්ඩල් මත backtest (ගාස්තු 0.10%/පැත්ත): වෙළඳාම් {trades} · දිනුම් {win}% · ශුද්ධ {pnl}% · buy &amp; hold {bh}%",
+    "demo.wait": "රැඳී සිටින්න", "demo.conf": "විශ්වාසය {c}%",
+    "why.eyebrow": "කෙළින්ම කියමු", "why.h2": "මොනවද ඇතුළත් — සහ මොනවද කවදාවත් කරන්නේ නැත්තේ",
+    "why.sub": "Subscription නෑ, ඔබේ මුදල් අපි ළඟ තියාගන්නේ නෑ, lock-in නෑ. මුළු ටර්මිනල් එකම repo එකේ.",
+    "why.col0": "ටර්මිනල් එකේ ඇතුළත්", "why.col1": "CryptoAI PRO", "why.col2": "සාමාන්‍ය ගෙවන සංඥා කණ්ඩායමක්",
+    "why.r1": "ප්‍රස්තාර + දර්ශක (EMA, Bollinger, RSI, MACD, ATR, Stochastic)",
+    "why.r2": "හැම සංඥාවකටම ඇතුල්වීම · ඉලක්කය · නැවතුම", "why.r3": "ඔබටම බලන්න පුළුවන් ගාස්තු සහිත backtest",
+    "why.r4": "සංඥා ඔබම පරීක්ෂා කරන්න පුහුණු වෙළඳාම", "why.r5": "අවදානම් සීමා සහ දෛනික පාඩු නැවතුම සහිත auto-රොබෝ",
+    "why.r6": "මාසික වියදම", "why.r7": "ඔබේ මුදල් තියෙන්නේ කා ළඟද", "why.r8": "සිංහල interface එක",
+    "why.n1": "නොමිලේ සාමාජිකයන්ට සාමාන්‍යයෙන් හංගලා", "why.n2": "බොහෝ විට “VIP සඳහා පමණයි”", "why.n3": "ප්‍රකාශ නොකරයි",
+    "why.n4": "කලාතුරකින්", "why.n5": "සාමාන්‍යයෙන් social trading විතරයි", "why.n6": "බොහෝ විට මාසික ගෙවීමක්",
+    "why.n7": "සමහර විට පොදු ගිණුමක්", "why.n8": "කලාතුරකින්",
+    "why.free": "නොමිලේ", "why.self": "ඔබ, ඔබේ හුවමාරුවේ",
+    "why.fine": "දකුණු තීරුව ගෙවන සංඥා කණ්ඩායම්වල සාමාන්‍ය රටාවක් — කිසිම නිශ්චිත නිෂ්පාදනයක් හෝ පුද්ගලයෙක් ගැන ප්‍රකාශයක් නොවේ.",
+    "nav.features": "විශේෂාංග", "nav.inside": "App එක ඇතුළේ", "nav.install": "Install", "nav.faq": "ප්‍රශ්න",
+    "cta.open": "Web app එක අරින්න", "cta.openWeb": "Web app එක පාවිච්චි කරන්න", "cta.apk": "APK එක බාගන්න (Android)",
+    "cta.pwa": "Home screen එකට එක් කරන්න",
+    "hero.eyebrow": "සිංහල + English · නොමිලේ · open source",
+    "hero.h1a": "ඔබේ crypto වෙළඳපොල,", "hero.h1b": "සංඥා සහ රොබෝ — එක තැනක",
+    "hero.lead": "සජීවී වෙළඳපොල, කැන්ඩල් ප්‍රස්තාර, entry · ඉලක්කය · නැවතුම සමඟ මිලදී/විකුණුම් සංඥා, පුහුණු සහ සැබෑ වෙළඳාම, දැඩි අවදානම් සීමා සහිත auto-රොබෝ. Android APK එකක් සහ web app එකක්.",
+    "trust.noacct": "ගිණුමක් අවශ්‍ය නැත", "trust.free": "100% නොමිලේ", "trust.keys": "API යතුරු ඔබේම උපාංගයේ",
+    "trust.offline": "අන්තර්ජාලය නැතුවත් වැඩ (නියැදි දත්ත)",
+    "strip.live": "සජීවී මිල",
+    "phone.live": "සජීවී · 5m", "phone.verdict": "මිලදී ගන්න", "phone.conf": "විශ්වාසය 66%",
+    "phone.entry": "ඇතුල්වීම", "phone.tp": "ඉලක්කය", "phone.sl": "නැවතුම",
+    "phone.note": "මෙය interface preview එකක් — app එකේ සහ web app එකේ මේ layout එකමයි.",
+    "tab.markets": "වෙළඳපොල", "tab.chart": "ප්‍රස්තාරය", "tab.signal": "සංඥා", "tab.trade": "වෙළඳාම", "tab.bot": "රොබෝ",
+    "feat.eyebrow": "ඇතුළේ මොනවද", "feat.h2": "සැබෑ trader කෙනෙක් පාවිච්චි කරන හැම දේම",
+    "feat.sub": "Sign-up බාධක නෑ, ගෙවන දර්ශක නෑ. ඇරියාම පටන් ගන්න පුළුවන්.",
+    "f1.t": "වෙළඳපොල dashboard", "f1.d": "වැඩිම පරිමාව, වැඩිම ලාභ, වැඩිම පාඩු සහ ඔබේම watchlist — 24h වෙනස සහ mini graph සමඟ, WebSocket එකෙන් සජීවීව.",
+    "f2.t": "සැබෑ charting", "f2.d": "1m සිට 1d දක්වා කැන්ඩල්, EMA 20/50, Bollinger, volume සහ RSI(14) panel. ඇඟිල්ල අදින්න → ඒ කැන්ඩල් එකේ විස්තර.",
+    "f3.t": "සංයුක්ත සංඥා", "f3.d": "ප්‍රවණතාව සහ oscillator කොටස් වෙන වෙනම ලකුණු කරන නිසා overbought ප්‍රවණතාවක් අන්ධ විකුණුමකට යන්නේ නෑ — වාසිය දුර්වල නම් app එක \"ඉන්න\" කියනවා.",
+    "f4.t": "ඇතුල්වීම · ඉලක්කය · නැවතුම", "f4.d": "මිල මට්ටම් ATR වෙනස්වීම් මත ගණනය වේ, ලාභ:අවදානම සමඟ — සහ කැන්ඩල් 500ක ගාස්තු සහිත backtest එකක්.",
+    "f5.t": "පුහුණු වෙළඳාම", "f5.d": "10,000 USDT පුහුණු ගිණුමක් — long/short, TP/SL, limit ඇණවුම්, 0.10% ගාස්තු, ඉතිහාසය සහ සජීවී ලාභ/පාඩුව.",
+    "f6.t": "සැබෑ වෙළඳාම (ඔබ කැමති නම්)", "f6.d": "Binance සහ Bybit spot — යතුරු ඔබ ළඟමයි: ඉල්ලීම් උපාංගයේදීම HMAC අත්සන් වන නිසා secret එක කවදාවත් එළියට යන්නේ නෑ.",
+    "f7.t": "තිරිංග සහිත auto-රොබෝ", "f7.d": "උපාය 4ක්, කොයින් කිහිපයක්, උපරිම ස්ථාපන සංඛ්‍යාව, නැවත ඇතුල්වීමට නියමිත කාලයක් සහ දෛනික පාඩු සීමාවෙන් තමන්ම නවතින රොබෝවක්.",
+    "f8.t": "සටහන් සහ හඬ", "f8.d": "මිල සටහන් — notification, හඬ, කම්පනය සහ කථන පිළිතුරු සමඟ. සම්පූර්ණ සිංහල හෝ English labels.",
+    "in.eyebrow": "Tab පහක්, අනවශ්‍ය දේවල් නෑ", "in.h2": "දත්ත ඔක්කොම එක තැනක", "in.sub": "වෙළඳපොල → ප්‍රස්තාරය → සංඥා → වෙළඳාම → රොබෝ. වෙන කිසිවක් බාධාවට නෑ.",
+    "in.markets": "පරිමාව/ලාභ/පාඩු දර්ශන, සෙවීම, watchlist තරු.",
+    "in.chart": "කැන්ඩල්, දර්ශක, crosshair, කාල රාමු chips.",
+    "in.signal": "තීරණය, විශ්වාසය, හේතු, දර්ශක, වෙළඳ සැලැස්ම, backtest.",
+    "in.trade": "පුහුණු හෝ සැබෑ ඇණවුම්, විවෘත ස්ථාපන, ඉතිහාසය.",
+    "in.bot": "උපාය, කොයින්, අවදානම් සීමා, ක්‍රියාකාරකම් සටහන.",
+    "ins.eyebrow": "අරගන්න", "ins.h2": "APK එක හෝ web app එක — දෙකම නොමිලේ",
+    "ins.sub": "Android 7.0+ · ~3.8 MB · debug-signed (Android එකෙන් \"unknown apps\" အကြောင်းအရာတစ်ခု අහයි — ඒක සාමාන්‍යයි).",
+    "ins.dlt": "CryptoAI PRO.apk", "ins.meta": "Android 7.0+ · හැම push එකකටම GitHub Actions එකෙන් build වේ",
+    "st1.t": "APK එක බාගන්න", "st1.d": "Phone එකෙන් උඩ තියෙන බොත්තම ඔබන්න. File එක Downloads folder එකට එයි.",
+    "st2.t": "Install එකට අවසර දෙන්න", "st2.d": "File එක අරින්න → Android එකෙන් \"install unknown apps\" අවසර අහයි (browser/file manager එකට) → allow → Install.",
+    "st3.t": "ඇරලා කොයින් එකක් තෝරන්න", "st3.d": "යතුරු හෝ ලියාපදිංචියක් අවශ්‍ය නෑ. සංඥා, ප්‍රස්තාර සහ පුහුණු වෙළඳාම ඒ මොහොතේම වැඩ කරයි; සැබෑ වෙළඳාමට පමණයි පස්සේ API යතුරු එක් කරන්නේ.",
+    "ins.web.t": "Browser එකෙන්ම කැමතිද?", "ins.web.d": "Web app එකත් මේ ටර්මිනල් එකමයි (paper mode — සැබෑ ඇණවුම් සඳහා Android app එක පාවිච්චි කරන්න, එහි API ඉල්ලීම් උපාංගයේදීම අත්සන් වේ). Android/Chrome හෝ iPhone/Safari එකේ \"Add to Home Screen\" දාන්න — app එකක් වගේ full-screen වැඩ කරයි.",
+    "safe.h2": "🔐 යතුරු සහ දත්ත සමඟ කරන දේ",
+    "safe.1": "API යතුරු phone එකේ app එකේ පෞද්ගලික ගබඩාවේ — කවදාවත් upload වෙන්නේ නෑ, web page එකකට යන්නේ නෑ.",
+    "safe.2": "හැම ඇණවුමක්ම උපාංගයේ Kotlin පැත්තෙන් HMAC-SHA256 අත්සන් කරයි.",
+    "safe.3": "Trading ON, **withdrawal OFF** කරලා යතුරු හදන්න. App එක කවදාවත් withdrawal අවසර ඉල්ලන්නේ නෑ.",
+    "safe.4": "සංඥා, ප්‍රස්තාර සහ පුහුණු වෙළඳාමට ගිණුමක් හෝ යතුරක් අවශ්‍ය නෑ.",
+    "warn.h2": "⚠️ මුලින්ම මේක කියවන්න",
+    "warn.1": "මෙය අධ්‍යාපනික මෙවලමක්, ආයෝජන උපදෙසක් නොවේ. සංඥා වැරදි විය හැක.",
+    "warn.2": "Crypto වෙළඳාම ඉතා අවදානම් සහිතයි — ඉක්මනින් මුදල් අහිමි විය හැක.",
+    "warn.3": "සැබෑ රොබෝ එකකට ප්‍රවෘත්ති, වෙළඳාම නතර කිරීම් හෝ අඩු පරිමාවක් දැනගන්න බෑ. පොඩි ප්‍රමාණයකින් පටන් ගන්න.",
+    "warn.4": "අහිමි කර ගැනීමට හැකි මුදලට වඩා කිසිසේත් වෙළඳාම් නොකරන්න.",
+    "faq.h2": "ප්‍රශ්න සහ උත්තර",
+    "q1": "ගිණුමක් හෝ API යතුරක් අවශ්‍යද?", "a1": "නෑ. මිල, ප්‍රස්තාර, සංඥා, සටහන් සහ පුහුණු වෙළඳාම ගිණුමක් හෝ යතුරක් නැතුව වැඩ කරයි. සැබෑ ඇණවුම් යැවීමට පමණයි Binance/Bybit යතුරු අවශ්‍ය.",
+    "q2": "මේක ඇත්තටම නොමිලේද?", "a2": "ඔව් — නොමිලේ සහ open source (මේ repo එකේම). Subscription එකක් හෝ ගෙවන දර්ශක නෑ. Optional AI පැහැදිලි කිරීම් සඳහා ඔබේම provider යතුරක් දාන්න පුළුවන්; යතුරක් නැත්නම් ගොඩනඟා ඇති පැහැදිලි කිරීම භාවිතා වේ.",
+    "q3": "අන්තර්ජාලය නැතුව වැඩ කරයිද?", "a3": "App එක offline එකේත් ඕපන් වෙනවා — පැහැදිලිව \"නියැදි දත්ත\" කියලා පෙන්වලා. සැබෑ මිලට ඉන්ටර්නෙට් ඕන.",
+    "q4": "කොයි හුවමාරුද support කරන්නේ?", "a4": "Binance, Bybit සහ OKX වලින් පොදු මිල දත්ත (සැකසුම්වලින් මාරු කරන්න පුළුවන්, fallback ස්වයංක්‍රීයව). සැබෑ වෙළඳාම Binance සහ Bybit spot වලට. Binance testnet එකත් වැඩ කරයි.",
+    "q5": "රොබෝ එක කොච්චර ආරක්ෂිතද?", "a5": "උපරිම විවෘත ස්ථාපන සංඛ්‍යාවක්, කොයින් එකකට නැවත ඇතුල්වීමට නියමිත කාලයක් සහ දෛනික පාඩු සීමාවෙන් තමන්ම නවතින රීතියක් තියෙනවා; ඒ වගේම foreground notification එකක් සමඟ ධාවනය වේ. ඒත්: පළමුව paper mode එකෙන් පරීක්ෂා කරන්න, අහිමි කර ගැනීමට හැකි මුදලට වඩා කිසිසේත් නොදෙන්න.",
+    "q6": "Source code එක කොහෙද?", "a6": "ඔක්කොම Rs-et repository එකේ: Android shell, Kotlin අත්සන් bridge එක, web/JS ටර්මිනල් එක (ta.js + app.js) සහ APK එක හදන CI.",
+    "foot.releases": "APK releases", "foot.repo": "Source code", "foot.guide": "සිංහල install guide",
+    "foot.disc": "CryptoAI PRO යනු අධ්‍යාපනික වෙළඳපොල විශ්ලේෂණ මෙවලමකි. එය ආයෝජන උපදෙස් ලබා නොදෙන අතර ප්‍රතිඵල සහතික නොකරයි. Crypto වෙළඳාම සැලකිය යුතු පාඩු අවදානමක් ගෙන දෙයි. සංඥා, backtest සහ auto-රොබෝ \"තියෙන ලෙසම\", කිසිදු වගකීමක් රහිතව ලබා දේ. සෑම විටම ඔබේම පර්යේෂණ කරන්න, අහිමි කර ගැනීමට හැකි මුදලට වඩා කිසිසේත් වෙළඳාම් නොකරන්න.",
+    "meta.src": "නියැදි මිල",
+  }
+};
+
+let LANG = "en";
+/** Translate a key, with {var} interpolation — same contract as t() in the app. */
+function t(k, vars) {
+  let s = (STR[LANG] && STR[LANG][k]) || null;
+  if (s && vars) Object.keys(vars).forEach((name) => { s = s.replace("{" + name + "}", vars[name]); });
+  return s;
+}
+
+function applyLang(lang, persist) {
+  LANG = lang;
+  document.documentElement.lang = lang === "si" ? "si" : "en";
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const key = node.dataset.i18n;
+    if (!node.dataset.en) node.dataset.en = node.innerHTML;   // keep the original English markup
+    const si = t(key);
+    node.innerHTML = lang === "si" && si ? si : node.dataset.en;
+  });
+  const btn = document.getElementById("langBtn");
+  btn.textContent = lang === "si" ? "EN" : "සිං";
+  btn.setAttribute("aria-label", lang === "si" ? "Switch to English" : "සිංහලට මාරු වන්න");
+  if (persist) { try { localStorage.setItem("cryptoai.web.lang", lang); } catch (e) { } }
+}
+function refreshDemoText() {
+  if (typeof demoData === "object" && demoData && window.TA) demoPaint(TA.analyze(demoData.candles), demoData.candles, demoData.live);
+}
+document.getElementById("langBtn").onclick = () => { applyLang(LANG === "si" ? "en" : "si", true); refreshDemoText(); };
+try {
+  const saved = localStorage.getItem("cryptoai.web.lang");
+  const want = saved || ((navigator.language || "").toLowerCase().startsWith("si") ? "si" : "en");
+  if (want === "si") applyLang("si", false);
+} catch (e) { }
+
+/* ============================ live price strip ========================== */
+const PAIRS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "DOGEUSDT"];
+const FALLBACK = { BTCUSDT: [63940, 1.24], ETHUSDT: [2480, 0.85], SOLUSDT: [148.2, -0.62],
+  BNBUSDT: [568, 0.41], XRPUSDT: [0.524, -1.05], DOGEUSDT: [0.1065, 2.11] };
+const fmtP = (v) => v >= 1000 ? v.toLocaleString(undefined, { maximumFractionDigits: 0 })
+  : v >= 1 ? v.toFixed(2) : v.toFixed(v < 0.01 ? 5 : 4);
+
+function paintStrip(map, note) {
+  const box = document.getElementById("strip");
+  box.innerHTML = PAIRS.map((s) => {
+    const d = map[s] || FALLBACK[s];
+    const chg = Array.isArray(d) ? d[1] : d.chg, px = Array.isArray(d) ? d[0] : d.last;
+    return `<div class="pk"><div class="s">${s.replace("USDT", "/USDT")}</div>
+      <div class="p">${fmtP(px)}</div>
+      <div class="c ${chg >= 0 ? "up" : "dn"}">${chg >= 0 ? "+" : ""}${chg.toFixed(2)}%</div></div>`;
+  }).join("");
+  document.getElementById("stripSrc").textContent = note;
+}
+paintStrip({}, "…");
+(async function loadPrices() {
+  try {
+    const url = "https://api.binance.com/api/v3/ticker/24hr?symbols=" + encodeURIComponent(JSON.stringify(PAIRS));
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    const map = {};
+    j.forEach((x) => { map[x.symbol] = { last: +x.lastPrice, chg: +x.priceChangePercent }; });
+    if (!Object.keys(map).length) throw new Error("empty");
+    paintStrip(map, "Binance · " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+  } catch (e) {
+    paintStrip({}, LANG === "si" ? "නියැදි මිල (offline)" : "sample prices (offline)");
+  }
+})();
+
+/* ============================ phone candles ============================= */
+(function candles() {
+  const g = document.getElementById("candles");
+  if (!g) return;
+  let seed = 20, out = "";
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  let price = 96;
+  for (let i = 0; i < 22; i++) {
+    const o = price, c = Math.max(24, Math.min(132, o + (rnd() - 0.42) * 16));
+    const hi = Math.max(o, c) - rnd() * 6, lo = Math.min(o, c) + rnd() * 6;
+    const x = 8 + i * 13;
+    const up = c <= o;                              // smaller y = higher price
+    const col = up ? "#0ecb81" : "#f6465d";
+    out += `<line x1="${x}" y1="${hi}" x2="${x}" y2="${lo}" stroke="${col}" stroke-width="1.6"/>`;
+    out += `<rect x="${x - 3}" y="${Math.min(o, c)}" width="6" height="${Math.max(1.6, Math.abs(c - o))}" fill="${col}" rx="1"/>`;
+    price = c;
+  }
+  g.innerHTML = out;
+})();
+
+/* ========================= hero background canvas ====================== */
+(function heroCanvas() {
+  const cv = document.getElementById("heroCanvas");
+  if (!cv) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || !cv.getContext) return;
+  const ctx = cv.getContext("2d");
+  let raf = null, phase = 0, visible = true;
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const series = [];
+  let p = 0.5;
+  for (let i = 0; i < 90; i++) {
+    const o = p, c = Math.max(0.08, Math.min(0.92, o + (rnd() - 0.47) * 0.09));
+    series.push({ o, c, h: Math.max(o, c) + rnd() * 0.035, l: Math.min(o, c) - rnd() * 0.035 });
+    p = c;
+  }
+  function size() {
+    const r = cv.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.max(1, r.width * dpr);
+    cv.height = Math.max(1, r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return r;
+  }
+  function draw() {
+    const r = size();
+    const W = r.width, H = r.height;
+    ctx.clearRect(0, 0, W, H);
+    const n = 34, cw = W / n, off = Math.floor(phase) % series.length;
+    for (let i = 0; i < n; i++) {
+      const c = series[(off + i) % series.length];
+      const x = i * cw + cw / 2 + (phase % 1) * cw;
+      const y = (v) => 40 + (1 - v) * (H - 90);
+      const up = c.c >= c.o;
+      const col = up ? "rgba(14,203,129,.75)" : "rgba(246,70,93,.75)";
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(x, y(c.h)); ctx.lineTo(x, y(c.l)); ctx.stroke();
+      const t = y(Math.max(c.o, c.c)), b = y(Math.min(c.o, c.c));
+      ctx.fillRect(x - cw * 0.28, t, cw * 0.56, Math.max(2, b - t));
+    }
+    // gold trend line over the top
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const c = series[(off + i) % series.length];
+      const x = i * cw + cw / 2, yy = 40 + (1 - (c.o + c.c) / 2) * (H - 90);
+      i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy);
+    }
+    ctx.strokeStyle = "rgba(240,185,11,.9)"; ctx.lineWidth = 2.4; ctx.stroke();
+  }
+  function tick() {
+    if (!visible || document.hidden) { raf = null; return; }
+    phase += 0.02;
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  function start() { if (!raf && visible) raf = requestAnimationFrame(tick); }
+  const hero = cv.parentElement;
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((e) => { visible = e[0].isIntersecting; start(); }, { threshold: 0.02 }).observe(hero);
+  }
+  document.addEventListener("visibilitychange", start);
+  window.addEventListener("resize", draw);
+  draw();
+  start();
+})();
+
+/* ============================== live demo ============================== */
+const DEMO_PAIRS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
+const DEMO_TFS = ["15m", "1h", "4h", "1d"];
+const TF_MS = { "15m": 900000, "1h": 3600000, "4h": 14400000, "1d": 86400000 };
+let demoPair = "BTCUSDT", demoTf = "1h", demoData = null, demoAuto = true, demoBusy = false;
+
+function fmtPx(v) {
+  const a = Math.abs(+v);
+  if (!isFinite(a)) return "—";
+  if (a >= 1000) return (+v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (a >= 1) return (+v).toFixed(a >= 100 ? 2 : 4);
+  return (+v).toPrecision(4);
+}
+function synthCandles(sym, tf, n) {
+  let seed = 0;
+  for (let i = 0; i < sym.length + tf.length; i++) seed = (seed * 31 + (sym + tf).charCodeAt(i)) & 0x7fffffff;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const base = { BTCUSDT: 64000, ETHUSDT: 2480, SOLUSDT: 148 }[sym] || 100;
+  const step = TF_MS[tf] || 3600000, t0 = Math.floor(Date.now() / step) * step - (n - 1) * step;
+  const out = [];
+  let p = base * (1 - (rnd() - 0.45) * 0.1);
+  const vol = 0.012;
+  for (let i = 0; i < n; i++) {
+    const drift = (i / n - 0.5) * 0.003;
+    const o = p, c = Math.max(1e-8, p * (1 + (rnd() - 0.5) * vol + drift));
+    out.push({ t: t0 + i * step, o, h: Math.max(o, c) * (1 + rnd() * 0.004), l: Math.min(o, c) * (1 - rnd() * 0.004), c, v: 500 + rnd() * 2000 });
+    p = c;
+  }
+  return out;
+}
+async function demoFetch(sym, tf) {
+  const url = `https://api.binance.com/api/v3/klines?symbol=${sym}&interval=${tf}&limit=200`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const j = await res.json();
+  if (!Array.isArray(j) || j.length < 60) throw new Error("short series");
+  return j.map((k) => ({ t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] }));
+}
+
+function drawDemoChart(candles) {
+  const cv = document.getElementById("demoChart");
+  if (!cv || !cv.getContext) return;
+  const wrap = cv.parentElement;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = wrap.clientWidth || 420, H = 250;
+  cv.width = W * dpr; cv.height = H * dpr;
+  cv.style.height = H + "px";
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const n = Math.min(90, candles.length);
+  const view = candles.slice(candles.length - n);
+  const closes = view.map((c) => c.c);
+  const padR = 54, padT = 10, padB = 18;
+  let mn = Infinity, mx = -Infinity;
+  view.forEach((c) => { mn = Math.min(mn, c.l); mx = Math.max(mx, c.h); });
+  const e20 = TA ? TA.ema(closes, 20) : null, e50 = TA ? TA.ema(closes, 50) : null;
+  (e20 || []).forEach((v) => { if (v) { mn = Math.min(mn, v); mx = Math.max(mx, v); } });
+  (e50 || []).forEach((v) => { if (v) { mn = Math.min(mn, v); mx = Math.max(mx, v); } });
+  const pad = (mx - mn) * 0.06 || mx * 0.005;
+  mn -= pad; mx += pad;
+  const plotW = W - padR, cw = plotW / n;
+  const X = (i) => i * cw + cw / 2;
+  const Y = (v) => padT + (H - padT - padB) * (1 - (v - mn) / (mx - mn));
+  // grid + axis
+  ctx.font = "10px ui-monospace,monospace"; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  for (let g = 0; g <= 4; g++) {
+    const v = mn + ((mx - mn) * g) / 4, y = Y(v);
+    ctx.strokeStyle = "rgba(31,42,66,.7)"; ctx.beginPath(); ctx.moveTo(0, y + .5); ctx.lineTo(plotW, y + .5); ctx.stroke();
+    ctx.fillStyle = "#5b6a86"; ctx.fillText(fmtPx(v), plotW + 5, y);
+  }
+  // candles
+  view.forEach((c, i) => {
+    const up = c.c >= c.o;
+    const col = up ? "#0ecb81" : "#f6465d";
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(i), Y(c.h)); ctx.lineTo(X(i), Y(c.l)); ctx.stroke();
+    const t = Y(Math.max(c.o, c.c)), b = Y(Math.min(c.o, c.c));
+    ctx.fillRect(X(i) - cw * 0.3, t, cw * 0.6, Math.max(1.2, b - t));
+  });
+  // EMAs
+  [[e20, "#f0b90b"], [e50, "#38bdf8"]].forEach(([ser, col]) => {
+    if (!ser) return;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < n; i++) {
+      const v = ser[i];
+      if (v == null) continue;
+      started ? ctx.lineTo(X(i), Y(v)) : (ctx.moveTo(X(i), Y(v)), started = true);
+    }
+    ctx.stroke();
+  });
+  // last price tag
+  const last = view[view.length - 1].c;
+  const y = Y(last), up = view[view.length - 1].c >= view[view.length - 1].o;
+  ctx.strokeStyle = up ? "rgba(14,203,129,.65)" : "rgba(246,70,93,.65)";
+  ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(plotW, y); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = up ? "#0ecb81" : "#f6465d";
+  ctx.fillRect(plotW + 1, y - 8, padR - 2, 16);
+  ctx.fillStyle = "#04140c"; ctx.textAlign = "center";
+  ctx.font = "bold 10px ui-monospace,monospace";
+  ctx.fillText(fmtPx(last), plotW + padR / 2, y);
+}
+
+function demoPaint(rep, candles, live) {
+  const card = document.getElementById("demoVerdict");
+  const verdict = rep.verdict;
+  const cls = verdict.indexOf("BUY") >= 0 ? "buy" : verdict.indexOf("SELL") >= 0 ? "sell" : "neutral";
+  const col = cls === "buy" ? "var(--up)" : cls === "sell" ? "var(--dn)" : "var(--mut)";
+  card.className = "vcard " + cls;
+  const badge = document.getElementById("dvBadge");
+  badge.textContent = verdict === "NEUTRAL" ? (LANG === "si" ? "රැඳී සිටින්න" : "NEUTRAL — WAIT") : (LANG === "si" ? SI_VERDICT[verdict] || verdict : verdict);
+  badge.style.color = col;
+  document.getElementById("dvPair").textContent = demoPair.replace("USDT", "/USDT") + " · " + demoTf + " · " + fmtPx(rep.price);
+  const bar = document.getElementById("dvBar");
+  bar.style.width = rep.confidence + "%"; bar.style.background = col;
+  document.getElementById("dvConf").textContent = (LANG === "si" ? "විශ්වාසය" : "confidence") + " " + rep.confidence + "% · score " + rep.score;
+  document.getElementById("dvReasons").innerHTML = rep.reasons.slice(0, 4)
+    .map((r) => `<li>${(LANG === "si" ? r.si : r.en)}</li>`).join("");
+  const lv = document.getElementById("dvLevels");
+  if (rep.levels) {
+    lv.hidden = false;
+    const L = rep.levels;
+    lv.innerHTML = `
+      <div><span>${LANG === "si" ? "ඇතුල්වීම" : "Entry"}</span><b>${fmtPx(L.entry)}</b></div>
+      <div><span>${LANG === "si" ? "ඉලක්කය" : "Target"}</span><b class="up">${fmtPx(L.tp)}</b></div>
+      <div><span>${LANG === "si" ? "නැවතුම" : "Stop"}</span><b class="dn">${fmtPx(L.sl)}</b></div>`;
+  } else { lv.hidden = true; }
+  const m = rep.metrics;
+  const cells = [
+    ["RSI 14", m.rsi], ["Trend", m.trend], ["ATR %", m.atrPct],
+    ["Bollinger %B", (m.pctB || 0) + "%"], ["Stoch %K", m.stochK], ["Volume ×", m.volRatio],
+  ];
+  document.getElementById("dvMetrics").innerHTML = cells.map(([k, v]) =>
+    `<div><div class="k">${k}</div><div class="v">${v == null ? "—" : v}</div></div>`).join("");
+  const bt = TA.backtest(candles, { minScore: 25, feePct: 0.1 });
+  document.getElementById("dvBacktest").innerHTML = t("demo.bt", {
+    trades: bt.trades, win: bt.winRate, pnl: (bt.pnlPct > 0 ? "+" : "") + bt.pnlPct, bh: bt.buyHoldPct,
+  });
+  const src = document.getElementById("demoSrc");
+  src.className = "srcnote" + (live ? "" : " warn");
+  src.textContent = live ? t("demo.live", { tf: demoTf }) : t("demo.sample");
+
+  // mirror everything into the hero phone mockup
+  const pv = document.getElementById("pvBadge");
+  if (pv) {
+    pv.textContent = verdict === "NEUTRAL" ? (LANG === "si" ? "රැඳී සිටින්න" : "WAIT") : (LANG === "si" ? SI_VERDICT[verdict] || verdict : verdict);
+    pv.style.color = col;
+    document.getElementById("pvPair").textContent = demoPair.replace("USDT", "/USDT") + " · " + demoTf;
+    document.getElementById("pvConf").textContent = (LANG === "si" ? "විශ්වාසය" : "confidence") + " " + rep.confidence + "%";
+    document.getElementById("pvBar").style.width = rep.confidence + "%";
+    document.getElementById("pvBar").style.background = col;
+    const L = rep.levels;
+    document.getElementById("pvEntry").textContent = fmtPx(L ? L.entry : rep.price);
+    document.getElementById("pvTp").textContent = L ? fmtPx(L.tp) : "—";
+    document.getElementById("pvSl").textContent = L ? fmtPx(L.sl) : "—";
+  }
+}
+const SI_VERDICT = { "STRONG BUY": "ශක්තිමත් මිලදී ගැනීම", "BUY": "මිලදී ගන්න", "SELL": "විකුණන්න", "STRONG SELL": "ශක්තිමත් විකුණුම්" };
+
+async function demoLoad() {
+  if (demoBusy) return;
+  demoBusy = true;
+  const src = document.getElementById("demoSrc");
+  if (src && !demoData) src.textContent = t("demo.loading");
+  let candles = null, live = true;
+  try { candles = await demoFetch(demoPair, demoTf); }
+  catch (e) { candles = synthCandles(demoPair, demoTf, 200); live = false; }
+  demoData = { pair: demoPair, tf: demoTf, candles, live };
+  if (!TA) { demoBusy = false; return; }
+  const rep = TA.analyze(candles);
+  drawDemoChart(candles);
+  demoPaint(rep, candles, live);
+  demoBusy = false;
+}
+
+function paintDemoChips() {
+  const pairs = document.getElementById("demoPairs");
+  const tfs = document.getElementById("demoTfs");
+  if (!pairs || !tfs) return;
+  pairs.innerHTML = DEMO_PAIRS.map((p) => `<button class="chip ${p === demoPair ? "on" : ""}" data-dpair="${p}">${p.replace("USDT", "/USDT")}</button>`).join("");
+  tfs.innerHTML = DEMO_TFS.map((x) => `<button class="chip ${x === demoTf ? "on" : ""}" data-dtf="${x}">${x}</button>`).join("");
+  pairs.querySelectorAll("[data-dpair]").forEach((b) => b.onclick = () => { demoPair = b.dataset.dpair; demoAuto = false; paintDemoChips(); demoLoad(); });
+  tfs.querySelectorAll("[data-dtf]").forEach((b) => b.onclick = () => { demoTf = b.dataset.dtf; demoAuto = false; paintDemoChips(); demoLoad(); });
+}
+
+/* =============================== reveal =============================== */
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((n, i) => { n.style.transitionDelay = (i % 4) * 60 + "ms"; io.observe(n); });
+} else {
+  document.querySelectorAll(".reveal").forEach((n) => n.classList.add("in"));   // older WebViews
+}
+/* safety net: if anything above ever fails, never leave content invisible */
+setTimeout(() => document.querySelectorAll(".reveal:not(.in)").forEach((n) => n.classList.add("in")), 2500);
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ================================= PWA ================================ */
+let deferredPrompt = null;
+const pwaBtns = [document.getElementById("pwaBtn"), document.getElementById("pwaBtn2")];
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault(); deferredPrompt = e;
+  pwaBtns.forEach((b) => { if (b) b.hidden = false; });
+});
+pwaBtns.forEach((b) => b && (b.onclick = async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    pwaBtns.forEach((x) => x && (x.hidden = true));
+  } else {
+    alert(LANG === "si"
+      ? "Browser menu එකෙන් “Add to Home Screen” / “Install app” තෝරන්න."
+      : "Open your browser menu and choose “Add to Home Screen” / “Install app”.");
+  }
+}));
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => { }));
+}
+
+/* ---------------------------- live demo boot --------------------------- */
+paintDemoChips();
+demoLoad().then(refreshDemoText);
+setInterval(() => {                                  // rotate markets until the visitor picks one
+  if (!demoAuto || document.hidden) return;
+  const i = DEMO_PAIRS.indexOf(demoPair);
+  demoPair = DEMO_PAIRS[(i + 1) % DEMO_PAIRS.length];
+  paintDemoChips();
+  demoLoad();
+}, 14000);
+setInterval(() => { if (!document.hidden && demoAuto) demoLoad(); }, 60000);
+if (typeof applyLang === "function") { /* keep verdict text in sync with the language toggle */ }
+
+/* ---------------------------- stats count-up --------------------------- */
+(function countUp() {
+  const nodes = [...document.querySelectorAll("[data-count]")];
+  if (!nodes.length) return;
+  const run = (n) => {
+    const target = parseInt(n.dataset.count, 10) || 0;
+    if (!target) { n.textContent = "0"; return; }
+    const t0 = performance.now(), dur = 900;
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / dur);
+      n.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  if ("IntersectionObserver" in window) {
+    const io2 = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); }
+    }), { threshold: 0.4 });
+    nodes.forEach((n) => io2.observe(n));
+  } else nodes.forEach(run);
+})();
+</script>
+</body>
+</html>
+odes.forEach(run);
+})();
+</script>
+</body>
+</html>

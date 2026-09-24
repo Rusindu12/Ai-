@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rusindu12.github.io/Ai-/sitemap.xml
