@@ -1,4 +1,4 @@
-# CryptoAI PRO — website + web terminal
+CryptoAI PRO site — built by R Sehansa · RS Ai Group# CryptoAI PRO — website + web terminal
 
 The public site for **CryptoAI PRO**: a landing page (EN + සිංහල) and the **web
 app** itself, plus PWA support so it can be installed to the home screen.
