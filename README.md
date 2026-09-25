@@ -89,6 +89,27 @@ python3 -m http.server 8080     # → http://localhost:8080
 The landing page and the web app both work from a plain static server (the app
 falls back to clearly-labelled demo data when it cannot reach an exchange).
 
+## Adaptive AI sell targets
+
+In the terminal's **Bot** tab, keep **🎯 AI sell rate** enabled and the bot running.
+For symbols being analysed, the local AI/TA engine revises open bot and bot-DCA
+targets as fresh market data arrives. The original rate is no longer a lower bound:
+ATR, trend/conviction, momentum and reversal signals can raise **or lower** it,
+including while a trade is recovering. Manual and limit-trade targets stay unchanged.
+
+Paper position cards show **Initial AI → Current AI**; target changes and reasons
+also appear in the bot log. Initial/current targets and update metadata persist
+for paper and tracked live positions. The profit floor uses each position's actual
+size and the engine's estimated fees, not the size configured for the next buy.
+This is not a profit or execution guarantee; actual fees, slippage and market gaps
+can differ. Existing exit-mode / emergency-brake rules still apply.
+
+Turning the AI sell-rate chip off stops revisions (the existing exit-mode rules
+still apply). After Stop, the watchdog uses the last target; it does not run fresh
+AI analysis. Browser operation still requires the app's engine to be active.
+These adaptive-target changes are additional to the archived v50 upstream patch;
+port them upstream before overwriting `app/` with `tools/sync-app.sh`.
+
 ## The live demo on the landing page
 
 The `#demo` section loads candles straight from Binance and runs **`app/ta.js`**
