@@ -24,37 +24,37 @@ Object.assign(STR.en, {
   "sys.uptime": "Uptime", "sys.ticks": "Ticks", "sys.load": "Load", "sys.procs2": "Processes",
   "sys.startall": "▶ Start all", "sys.pauseall": "⏸ Pause all", "sys.caches": "🧹 Clear caches",
   "sys.panic": "🔒 PANIC lock",
-  "mod.proc": "🧩 Process Management", "mod.proc.d": "Engine scheduler එකේ real tasks — එකක් විසින් එකක් pause/resume/kill කරන්න, priority වෙනස් කරන්න.",
+  "mod.proc": "🧩 Process Management", "mod.proc.d": "Real tasks in the engine scheduler — pause / resume / kill each one and change its priority.",
   "p.name": "Process", "p.state": "State", "p.every": "Every", "p.load": "Load", "p.ticks": "Ticks", "p.err": "Err", "p.prio": "Priority", "p.act": "Actions",
   "st.run": "running", "st.pause": "paused", "st.stop": "stopped",
   "pr.hi": "high", "pr.n": "normal", "pr.lo": "low",
-  "mod.mem": "🧠 Memory Management", "mod.mem.d": "JS heap + localStorage usage — real-time sampler එකෙන්.",
+  "mod.mem": "🧠 Memory Management", "mod.mem.d": "JS heap + localStorage usage — from a real-time sampler.",
   "mem.heap": "JS heap (used / limit)", "mem.stor": "localStorage", "mem.hist": "last 60 samples",
   "mem.clear": "🧹 Clear engine caches", "mem.trim": "📜 Trim logs & files",
   "mem.na": "this browser doesn't expose heap stats — storage audit still real",
   "mem.top": "Largest keys",
-  "mod.dev": "📱 Device Management", "mod.dev.d": "උපාංගයේ real status — battery, screen, CPU cores, bridge.",
+  "mod.dev": "📱 Device Management", "mod.dev.d": "Real device status — battery, screen, CPU cores, bridge.",
   "dev.bat": "Battery", "dev.screen": "Screen", "dev.cores": "CPU cores", "dev.ram": "Device RAM", "dev.nettype": "Network", "dev.env": "Environment",
   "dev.haptic": "📳 Haptic test", "dev.keep": "☀ Keep screen ON", "dev.keepoff": "☀ Keep screen OFF", "dev.report": "📋 Copy device report",
   "dev.charging": "charging", "dev.disch": "on battery",
-  "mod.file": "🗂️ File Management", "mod.file.d": "App data එකෙන් real files export/import — virtual FS එක localStorage එකේ.",
+  "mod.file": "🗂️ File Management", "mod.file.d": "Export / import real files from the app data — the virtual FS lives in localStorage.",
   "f.trades": "⬇ Trades CSV", "f.settings": "⬇ Settings backup", "f.log": "⬇ Activity log", "f.signal": "⬇ Signal report",
-  "f.import": "⬆ Import settings", "f.none": "files නෑ — ඉහළ export buttons වලින් හදන්න",
+  "f.import": "⬆ Import settings", "f.none": "No files yet — create one with the export buttons above",
   "f.dl": "download", "f.del": "delete", "f.saved": "saved to virtual FS + downloaded",
-  "f.imported": "settings import කළා ✓", "f.bad": "invalid settings file",
+  "f.imported": "Settings imported ✓", "f.bad": "invalid settings file",
   "mod.sec": "🛡️ Security Management", "mod.sec.d": "PIN lock, auto-lock, security audit + event log.",
   "sec.set": "Set PIN", "sec.change": "Change PIN", "sec.clear": "Remove PIN",
   "sec.lock": "🔒 Lock now", "sec.autolock": "Auto-lock after", "sec.never": "off",
   "sec.panic": "🚨 PANIC: lock + pause everything", "sec.audit": "Security audit", "sec.log": "Security event log",
-  "sec.enter": "PIN එක යාන්න", "sec.new": "අලුත් PIN එක (4–8)", "sec.again": "නැවත PIN එක", "sec.miss": "PIN match වුණේ නෑ — ආයේ",
-  "sec.wrong": "වැරදි PIN", "sec.ok": "unlocked ✓", "sec.setok": "PIN set වුණා ✓",
+  "sec.enter": "Enter your PIN", "sec.new": "New PIN (4–8 digits)", "sec.again": "Repeat the PIN", "sec.miss": "The PINs did not match — try again",
+  "sec.wrong": "Wrong PIN", "sec.ok": "unlocked ✓", "sec.setok": "PIN set ✓",
   "a.pin": "PIN lock", "a.auto": "Auto-lock", "a.keys": "Trading keys", "a.mode": "Data mode", "a.store": "Key storage",
-  "a.pin.ok": "on — app එක අගුලු වෙනවා", "a.pin.no": "off — PIN එකක් දාන්න",
+  "a.pin.ok": "on — the app locks", "a.pin.no": "off — set a PIN",
   "a.auto.ok": "on", "a.auto.no": "off",
-  "a.keys.dev": "on-device (bridge) — secret web/page එකට යන්නේ නෑ", "a.keys.no": "no keys saved", "a.keys.web": "browser — live trading N/A",
+  "a.keys.dev": "on-device (bridge) — the secret never reaches the web page", "a.keys.no": "no keys saved", "a.keys.web": "browser — live trading N/A",
   "a.mode.live": "live exchange data", "a.mode.demo": "simulated demo data",
-  "a.store.dev": "Android secure bridge", "a.store.web": "browser localStorage only",
-  "mod.net": "📡 Network Management", "mod.net.d": "Exchange latency probes + request log — හැමදාම real.",
+  "a.store.dev": "on-device app storage", "a.store.web": "browser localStorage only",
+  "mod.net": "📡 Network Management", "mod.net.d": "Exchange latency probes + request log — always real.",
   "net.conn": "Connection", "net.ws": "Stream", "net.src": "Data source", "net.reqs": "Requests",
   "net.ping": "⚡ Probe now", "net.host": "Exchange", "net.ms": "Latency", "net.last": "Last",
   "net.rlog": "Recent requests", "net.total": "total", "net.fail": "failed",
@@ -90,14 +90,14 @@ Object.assign(STR.si, {
   "sec.set": "PIN සාදන්න", "sec.change": "PIN වෙනස් කරන්න", "sec.clear": "PIN ඉවත් කරන්න",
   "sec.lock": "🔒 දැන්ම අගුලු දමන්න", "sec.autolock": "ස්වයං-අගුලුව", "sec.never": "නෑ",
   "sec.panic": "🚨 PANIC: අගුලු දලා ඔක්කොම නවත්වන්න", "sec.audit": "ආරක්ෂක පරීක්ෂාව", "sec.log": "ආරක්ෂක සිදුවීම්",
-  "sec.enter": "PIN එක යාන්න", "sec.new": "අලුත් PIN එක (4–8)", "sec.again": "නැවත PIN එක", "sec.miss": "PIN match වුණේ නෑ — ආයේ",
+  "sec.enter": "PIN එක දාන්න", "sec.new": "අලුත් PIN එක (4–8)", "sec.again": "නැවත PIN එක", "sec.miss": "PIN match වුණේ නෑ — ආයේ",
   "sec.wrong": "වැරදි PIN", "sec.ok": "අගුලු හැරුණා ✓", "sec.setok": "PIN set වුණා ✓",
   "a.pin": "PIN අගුල", "a.auto": "Auto-lock", "a.keys": "Trading keys", "a.mode": "Data mode", "a.store": "Key storage",
   "a.pin.ok": "ON — app එක අගුලු වෙනවා", "a.pin.no": "OFF — PIN එකක් දාන්න",
   "a.auto.ok": "ON", "a.auto.no": "OFF",
   "a.keys.dev": "device එකේ (bridge) — secret web page එකට යන්නේ නෑ", "a.keys.no": "keys save වෙලා නෑ", "a.keys.web": "browser — live trading N/A",
   "a.mode.live": "live exchange data", "a.mode.demo": "සිමියුලේටඩ් demo data",
-  "a.store.dev": "Android secure bridge", "a.store.web": "browser localStorage විතරයි",
+  "a.store.dev": "device එකේ app storage", "a.store.web": "browser localStorage විතරයි",
   "mod.net": "📡 ජාල කළමනාකරණය", "mod.net.d": "Exchange latency probes + request log — හැම එකක්ම real.",
   "net.conn": "සම්බන්ධතාව", "net.ws": "Stream", "net.src": "Data source", "net.reqs": "Requests",
   "net.ping": "⚡ දැන්ම පරීක්ෂා", "net.host": "Exchange", "net.ms": "ප්‍රමාදය", "net.last": "අවසන්",
@@ -334,6 +334,9 @@ function panic() {
   Engine.procs.forEach((p) => { if (p.state === "run" && p.name !== "heartbeat") p.state = "pause"; });
   Engine.pausedAll = false;
   slog("panic", "");
+  /* v50: PANIC stops the trading bot too — it used to pause only these monitor tasks
+     while the bot kept opening trades. Open bot trades go to the watchdog (profit exits only). */
+  try { if (typeof state !== "undefined" && state.bot && state.bot.running && typeof botStop === "function") botStop(); } catch (e) {}
   try { if (typeof bc === "function" && bc("isAutoOn") === true) bc("setAutoOn", false); } catch (e) {}
   lockNow();
   paintIfVisible();
@@ -412,7 +415,7 @@ function expSignal() {
     if (typeof lastReport !== "undefined" && lastReport) {
       rep += "verdict: " + (lastReport.verdict || "?") + "  conf: " + (lastReport.conf != null ? Math.round(lastReport.conf) + "%" : "?") + "\n";
       (lastReport.reasons || []).slice(0, 10).forEach((r) => { rep += " • " + r + "\n"; });
-    } else { rep += "(open a chart first — Signal tab එකෙන් report generate කරන්න)\n"; }
+    } else { rep += "(open a chart first — then generate the report from the Signal tab)\n"; }
   } catch (e) {}
   const name = "signal-" + (st.sym || "x") + "-" + stamp() + ".txt";
   fsAdd("/reports", name, rep); download(name, rep, "text/plain");

@@ -85,6 +85,16 @@
   if (!S.acc || typeof S.acc !== "object") S.acc = {};     /* v46: per-feature reliability ∈ [-1,1] */
   if (!S.w || typeof S.w !== "object") S.w = Object.assign({}, SEED);
   FEATURES.forEach(([id]) => { if (typeof S.w[id] !== "number") S.w[id] = SEED[id] || 0; });
+  /* v50: history-training lessons used to be counted as live wins / losses — that
+     inflated the "Win rate" card and the live accuracy that sizes bot trades. Take
+     them out once; from now on history training only moves the weights. */
+  if (!S.histFix) {
+    S.wins = Math.max(0, (S.wins || 0) - (S.hCorrect || 0));
+    S.losses = Math.max(0, (S.losses || 0) - Math.max(0, (S.hs || 0) - (S.hCorrect || 0)));
+    S.n = Math.max(0, (S.n || 0) - (S.hs || 0));
+    S.histFix = 1;
+    persist();
+  }
 
   /* ------------------------------------------------------------ TA helpers */
   const last = (a) => a[a.length - 1];
@@ -242,7 +252,7 @@
   /* ------------------------------------------------------------- learning -- */
   /* v45: outcome-weighted lessons — big wins/losses and high-conviction calls
      teach more; streak tracks consecutive wins(+) / losses(−) for discipline */
-  function learn(f, outcome, weight, pnlUsd) {
+  function learn(f, outcome, weight, pnlUsd, hist) {
     if (!f) return;
     const w = weight != null ? Math.max(0.3, Math.min(2.5, weight)) : 1;
     FEATURES.forEach(([id]) => {
@@ -254,6 +264,7 @@
         S.acc[id] = Math.max(-1, Math.min(1, (S.acc[id] || 0) * 0.95 + 0.05 * voted));
       }
     });
+    if (hist) return;                  /* v50: history lesson — weights only, trainHistory persists once */
     S.n++;
     if (outcome > 0) { S.wins++; S.streak = S.streak >= 0 ? S.streak + 1 : 1; }
     else { S.losses++; S.streak = S.streak <= 0 ? S.streak - 1 : -1; }
@@ -279,7 +290,7 @@
       const entry = klines[i].c, exitP = klines[i + fwd].c;
       const ret = (exitP - entry) / entry;
       const win = bias > 0 ? ret > 0.0015 : ret < -0.0015;   /* cover ~fees */
-      learn(f, win ? 1 : -1);
+      learn(f, win ? 1 : -1, 1, undefined, true);
       signals++; if (win) correct++;
     }
     S.hs += signals; S.hCorrect += correct; S.trainedAt = Date.now();

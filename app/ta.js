@@ -362,6 +362,9 @@
     const minScore = opts.minScore != null ? opts.minScore : 22;
     const tpMult = opts.tpMult != null ? opts.tpMult : 2.2;
     const slMult = opts.slMult != null ? opts.slMult : 1.3;
+    /* v50: optional fixed-percent targets (the bot's TP % / SL %) instead of ATR multiples */
+    const tpPct = opts.tpPct > 0 ? opts.tpPct / 100 : 0;
+    const slPct = opts.slPct > 0 ? opts.slPct / 100 : 0;
     const fee = (opts.feePct != null ? opts.feePct : 0.1) / 100;
     const allowShort = opts.allowShort !== false;
     const warmup = Math.max(60, opts.warmup || 60);
@@ -392,10 +395,10 @@
         const rep = analyze(candles.slice(0, i + 1));
         if (rep.ok && rep.score >= minScore) {
           const a = rep.metrics.atr || c.c * 0.01;
-          pos = { dir: 1, entry: c.c, sl: c.c - slMult * a, tp: c.c + tpMult * a, i };
+          pos = { dir: 1, entry: c.c, sl: slPct ? c.c * (1 - slPct) : c.c - slMult * a, tp: tpPct ? c.c * (1 + tpPct) : c.c + tpMult * a, i };
         } else if (rep.ok && allowShort && rep.score <= -minScore) {
           const a = rep.metrics.atr || c.c * 0.01;
-          pos = { dir: -1, entry: c.c, sl: c.c + slMult * a, tp: c.c - tpMult * a, i };
+          pos = { dir: -1, entry: c.c, sl: slPct ? c.c * (1 + slPct) : c.c + slMult * a, tp: tpPct ? c.c * (1 - tpPct) : c.c - tpMult * a, i };
         }
       }
       peak = Math.max(peak, equity);

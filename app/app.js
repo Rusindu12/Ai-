@@ -70,7 +70,7 @@ const STR = {
     "brain.lessons": "Lessons", "brain.hist": "History training", "brain.factors2": "Factors",
     "brain.train": "Train on history", "brain.reset": "Reset",
     "brain.training": "🧠 training on 500 candles…", "brain.trained": "🧠 trained on {n} historical signals · {p}% were profitable — weights updated",
-    "brain.needK": "Load a chart first (need 200+ candles)", "brain.resetBody": "Reset all learned weights to defaults? The brain starts from zero again.",
+    "brain.needK": "Needs 200+ real candles — open a chart while live data is on", "brain.resetBody": "Reset all learned weights to defaults? The brain starts from zero again.",
     "brain.note": "More lessons = smarter decisions. Weights persist across restarts; the 24/7 engine keeps learning in the background.",
     "brain.f.trendEma": "EMA trend (fast)", "brain.f.trendSlow": "Big trend (slow)", "brain.f.trendPx": "Price vs EMA",
     "brain.f.macd": "MACD momentum", "brain.f.rsi": "RSI momentum", "brain.f.stoch": "Stochastic",
@@ -82,7 +82,7 @@ const STR = {
     "bot.dca": "Auto-DCA", "bot.vol": "Crash guard", "bot.aitp": "🎯 AI sell rate", "bot.dcaDrop": "DCA drop %", "bot.dcaMax": "DCA max buys", "bot.volDrop": "Crash drop %", "mp.warn": "⚠️ SL is OFF in this mode: a losing trade is HELD until it recovers to ≥ min profit, then sold. If the market keeps falling the position can stay open for days — higher win-rate, less risk control. Use money you can leave in the market.",
     "conn.live": "live", "conn.demo": "demo data", "conn.off": "offline", "conn.loading": "loading…",
     "sort.vol": "🔥 Top volume", "sort.gain": "📈 Gainers", "sort.loss": "📉 Losers", "sort.fav": "★ Watchlist",
-    "demo.note": "⚠ No exchange connection — showing simulated demo data. Signals & bot work, prices are not real.",
+    "demo.note": "⚠ No exchange connection — showing simulated demo data. Prices are not real; the bot waits for live data.",
     "m.note": "Tap a market to open its chart. Paper trading uses live prices; live trading needs API keys.",
     "chart.hint": "Drag on the chart to inspect candles.",
     "chart.analyse": "📊 Analyse", "chart.alert": "🔔 Alert", "chart.trade": "💱 Trade",
@@ -135,10 +135,10 @@ const STR = {
     "set.keys": "API keys (live trading)", "set.save": "Save", "set.test": "Test connection", "set.clear": "Delete keys",
     "set.keyWarn": "Use keys with trading enabled and withdrawal DISABLED. Keys are stored in this app's private storage and only used to sign requests on your device.",
     "set.keySaved": "Keys saved", "set.keyOk": "Connection OK", "set.keyFail": "Connection failed",
-    "set.badKey": "API key එක සම්පූර්ණ නෑ — {n} අකුරු තියෙනවා, ඕන {want}. Binance එකේ Copy button එකෙන් full key එක copy කරලා paste කරන්න",
-    "set.hint.format": "Key එක සම්පූර්ණයින් copy වෙලා නෑ — Binance එකේ API Key එක ලඟ තියෙන Copy button එක ඔබලා, ආයේ paste කරන්න (64 අකුරු, spaces නැතුව)",
-    "set.hint.perm": "Key එක හරි, ඒත් permission නෑ — Binance → API Management → Edit restrictions → Enable Reading + Enable Spot & Margin Trading දෙකම tick කරලා Save කරන්න (Withdrawals OFF තියන්න)",
-    "set.hint.secret": "Secret එක වැරදියි — Secret Key එකත් Copy button එකෙන්ම copy කරලා ආයේ paste කරන්න",
+    "set.badKey": "API key incomplete — it has {n} characters, it needs {want}. Copy the full key with the Copy button on the exchange and paste it again",
+    "set.hint.format": "The key was not copied completely — tap the Copy button next to the API Key on Binance and paste it again (64 characters, no spaces)",
+    "set.hint.perm": "The key is valid but has no permission — Binance → API Management → Edit restrictions → tick Enable Reading and Enable Spot & Margin Trading, then Save (keep Withdrawals OFF)",
+    "set.hint.secret": "The secret is wrong — copy the Secret Key with its own Copy button and paste it again",
     "set.noKeys": "No keys saved",
     "set.aiTitle": "AI explanation (optional)", "set.aiProv": "Provider", "set.aiModel": "Model",
     "set.aiNote": "With a key, the AI turns the indicator report into plain language. Without one, the built-in rule-based explanation is used.",
@@ -160,6 +160,12 @@ const STR = {
     "bt.few": "Not enough history to backtest.",
     "bt.disclaimer": "Past performance does not predict the future.",
     "live.unsupported": "Live trading is only available in the Android app.",
+    "live.noData": "No live market data right now — live orders are off until the exchange connection is back.",
+    "bot.noLive": "⏸ no live market data — the bot waits (it does not trade simulated prices)",
+    "bot.noCandles": "no fresh candles from the exchange — skipped",
+    "chart.sample": "sample candles — the exchange sent none",
+    "trade.dayPnl": "Today P&L", "bt.tpsl": "TP {tp}% · SL {sl}% (bot settings)",
+    "demo.voided": "Live prices are back — {n} demo trade(s) made on simulated prices were voided (no profit / loss)",
     "scan.run": "🔎 Scan all signals", "scan.title": "Signal scan", "scan.stop": "Stop",
     "scan.running": "Scanning {done}/{total}…", "scan.result": "{n} pairs on {tf} · {strong} strong",
     "scan.empty": "Run a scan to rank every market by signal strength.",
@@ -186,7 +192,7 @@ const STR = {
     "brain.lessons": "පාඩම්", "brain.hist": "History training", "brain.factors2": "Factors",
     "brain.train": "History එකෙන් train කරන්න", "brain.reset": "Reset",
     "brain.training": "🧠 candles 500ක් උඩ train වෙමින්…", "brain.trained": "🧠 ඓතිහාසික signals {n}ක් උඩ train වුණා · {p}% ලාභයි — weights යාවත්කාලීන වුණා",
-    "brain.needK": "මුලින්ම chart එකක් open කරන්න (candles 200+ ඕන)", "brain.resetBody": "ඉගෙනගත්ත හැම weight එකක්ම default වලට reset කරන්නද?",
+    "brain.needK": "සැබෑ candles 200+ ඕන — live දත්ත තියෙද්දී chart එකක් open කරන්න", "brain.resetBody": "ඉගෙනගත්ත හැම weight එකක්ම default වලට reset කරන්නද?",
     "brain.note": "පාඩම් වැඩි වෙන කොට තීරණ ඔලුවට. Weights restart වුණත් ඉතුරු වෙනවා; 24/7 engine එකේදීත් ඉගෙන ගන්නවා.",
     "brain.f.trendEma": "EMA ප්‍රවණතාව", "brain.f.trendSlow": "ලොකු ප්‍රවණතාව", "brain.f.trendPx": "මිල vs EMA",
     "brain.f.macd": "MACD ගම්‍යතාව", "brain.f.rsi": "RSI ගම්‍යතාව", "brain.f.stoch": "Stochastic",
@@ -198,7 +204,7 @@ const STR = {
     "bot.dca": "Auto-DCA", "bot.vol": "Crash guard", "bot.aitp": "🎯 AI විකුණුම් රේට්", "bot.dcaDrop": "DCA පහළවීම %", "bot.dcaMax": "DCA ගැනීම් ගණන", "bot.volDrop": "Crash %", "mp.warn": "⚠️ මේ mode එකේ SL වැඩ නෑ — loss වෙච්ච trade එක, ආයේත් ලාභ වෙනකම් hold කරලා ඉන්පස්සේ sell වෙනවා. Market එක දිගටම වැටුණොත් position එක දවස් ගානක් open වෙලා තියෙන්න පුළුවන් — win-rate වැඩි නමුත් risk control අඩුයි. Market එකේ තියාගන්න පුළුවන් සල්ලි විතරක් පාවිච්චි කරන්න.",
     "conn.live": "සජීවී", "conn.demo": "නියැදි දත්ත", "conn.off": "නොබැඳි", "conn.loading": "පූරණය…",
     "sort.vol": "🔥 වැඩිම පරිමාව", "sort.gain": "📈 ඉහළ ගිය", "sort.loss": "📉 පහළ ගිය", "sort.fav": "★ මගේ ලැයිස්තුව",
-    "demo.note": "⚠ හුවමාරු සම්බන්ධතාවක් නැත — නියැදි (demo) දත්ත පෙන්වයි. සංඥා සහ රොබෝ වැඩ කරයි, මිල සැබෑ නොවේ.",
+    "demo.note": "⚠ හුවමාරු සම්බන්ධතාවක් නැත — නියැදි (demo) දත්ත පෙන්වයි. මිල සැබෑ නොවේ; රොබෝ සැබෑ දත්ත එනකම් රැඳී සිටියි.",
     "m.note": "මිල සටහන බැලීමට යම් කොයින් එකක් ඔබන්න. Paper වෙළඳාම සජීවී මිල භාවිතා කරයි; සැබෑ වෙළඳාමට API යතුරු අවශ්‍යයි.",
     "chart.hint": "කැන්ඩල් බැලීමට ප්‍රස්තාරය මත ඇඟිල්ල අදින්න.",
     "chart.analyse": "📊 විශ්ලේෂණය", "chart.alert": "🔔 සටහන්", "chart.trade": "💱 වෙළඳාම",
@@ -276,6 +282,12 @@ const STR = {
     "bt.few": "පසුපරීක්ෂාවට ප්‍රමාණවත් ඉතිහාසයක් නැත.",
     "bt.disclaimer": "අතීත ප්‍රතිඵල අනාගතය සහතික නොකරයි.",
     "live.unsupported": "සැබෑ වෙළඳාම Android app එකේදී පමණි.",
+    "live.noData": "දැන් සැබෑ වෙළඳපොළ දත්ත නෑ — exchange සම්බන්ධය ආයේ එනකම් සැබෑ ඇණවුම් නවතලා.",
+    "bot.noLive": "⏸ සැබෑ වෙළඳපොළ දත්ත නෑ — රොබෝ රැඳී සිටියි (නියැදි මිලට trade කරන්නේ නෑ)",
+    "bot.noCandles": "exchange එකෙන් අලුත් කැන්ඩල් ආවේ නෑ — මඟ හැරියා",
+    "chart.sample": "නියැදි කැන්ඩල් — exchange එකෙන් ආවේ නෑ",
+    "trade.dayPnl": "අද ලාභ/අලාභ", "bt.tpsl": "TP {tp}% · SL {sl}% (රොබෝ සැකසුම්)",
+    "demo.voided": "සැබෑ මිල ආපහු ආවා — නියැදි මිලට කළ demo trades {n}ක් අවලංගු කළා (ලාභ/අලාභ නෑ)",
     "scan.run": "🔎 හැම සංඥාවම scan කරන්න", "scan.title": "සංඥා scan", "scan.stop": "නවත්වන්න",
     "scan.running": "Scan වෙමින් {done}/{total}…", "scan.result": "{tf} මත කොයින් {n}ක් · ශක්තිමත් {strong}ක්",
     "scan.empty": "හැම වෙළඳපොලක්ම සංඥා ශක්තිය අනුව ශ්‍රේණිගත කරන්න scan එකක් run කරන්න.",
@@ -297,6 +309,8 @@ function t(key, vars) {
   return s;
 }
 const vLabel = (v) => t("VERDICT." + v);
+/* v50: readable small/large indicator values — toPrecision(2) showed "2.5e+2" */
+const fmtSig = (v) => { const a = Math.abs(v); return a >= 100 ? v.toFixed(0) : a >= 1 ? v.toFixed(2) : v.toPrecision(2); };
 
 /* ------------------------------------------------------------------- state */
 const WATCHLIST = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "AVAXUSDT",
@@ -329,6 +343,7 @@ const state = {
   bot: null,
   alerts: [],
   toOpenOrders: [],
+  lastPx: {},               // v50: last REAL price per symbol (demo mode continues from it)
 };
 
 let TA = null; // ta.js
@@ -341,6 +356,8 @@ function save() {
     const s = {
       settings: state.settings, favs: state.favs, sym: state.sym, tf: state.tf, sort: state.sort,
       paper: state.paper, bot: botCfg(), alerts: state.alerts, chartInd: state.chartInd,
+      livePos: (state.bot && state.bot.livePos) || [],   /* v50: real positions survive a restart */
+      lastPx: state.lastPx,
     };
     localStorage.setItem(LSKEY, JSON.stringify(s));
   } catch (e) { /* storage full / private mode */ }
@@ -362,6 +379,8 @@ function load() {
     if (s.paper) state.paper = s.paper;
     if (s.alerts) state.alerts = s.alerts;
     if (s.chartInd) Object.assign(state.chartInd, s.chartInd);
+    if (Array.isArray(s.livePos) && s.livePos.length) bot().livePos = s.livePos;
+    if (s.lastPx && typeof s.lastPx === "object") state.lastPx = s.lastPx;
     const savedBot = s.bot || s.botCfg;             /* save() writes "bot" — accept both */
     if (savedBot) {
       /* one-time upgrade: old default "signal" → the self-learning brain (empty dropdown bug meant users never chose) */
@@ -530,8 +549,16 @@ const demo = { prices: {}, klines: {}, timer: null };
 function demoInit() {
   WATCHLIST.forEach((s) => {
     const rnd = mulberry(seedy(s) + 7);
+    /* v50: continue from the last real price when there is one — a jump to the old
+       sample prices made open trades look like huge wins / losses */
+    const real = (state.tickers[s] && state.tickers[s].last) || state.lastPx[s];
     const base = DEMO_BASE[s] || 1 + (seedy(s) % 5000) / 100;
     const chg = (rnd() - 0.45) * 9;
+    if (real) {                          /* start exactly at the real price */
+      const open = real / (1 + chg / 100);
+      demo.prices[s] = { last: real, open, high: Math.max(real, open) * (1 + rnd() * 0.01), low: Math.min(real, open) * (1 - rnd() * 0.01), vol: 5e6 + rnd() * 9e7, ts: now() };
+      return;
+    }
     const last = base * (1 + chg / 100);
     demo.prices[s] = { last, open: base, high: base * (1 + Math.abs(chg) / 100 + rnd() * 0.01), low: base * (1 - Math.abs(chg) / 60), vol: 5e6 + rnd() * 9e7, ts: now() };
   });
@@ -601,6 +628,16 @@ async function fetchKlinesSmart(sym, tf, limit) {
       }
     } catch (e) { /* try next */ }
   }
+  /* v50: every exchange failed. With live prices, never mix in simulated candles (the
+     bot used to trade them — BTC candles at 63,000 under a live 100,000 ticker): keep
+     the last real candles, else hand back flagged sample candles that are not cached */
+  if (state.dataMode === "live") {
+    const old = state.klinesCache[key];
+    if (old && old.candles && !old.candles.demo) return old.candles;
+    const d = demoCandles(sym, tf, Math.min(limit, 300));
+    d.demo = true;
+    return d;
+  }
   const c = demoCandles(sym, tf, Math.min(limit, 300));
   state.klinesCache[key] = { at: now(), candles: c };
   return c;
@@ -609,6 +646,7 @@ async function fetchKlinesSmart(sym, tf, limit) {
 function publishTicker(sym, tk) {
   const prev = state.tickers[sym];
   state.tickers[sym] = tk;
+  if (state.dataMode === "live" && tk.last) state.lastPx[sym] = tk.last;
   if (sym === state.sym) paintChartHeader();
   const row = document.querySelector('[data-mrow="' + sym + '"]');
   if (row) paintRow(row, sym);
@@ -697,6 +735,11 @@ function startPolling() {
 function startTimers() {
   if (tickTimer) clearInterval(tickTimer);
   tickTimer = setInterval(async () => {
+    /* v50: demo mode is only a fallback — keep trying the exchanges (also in the
+       background while the bot runs) and switch back to live data when one answers */
+    if (state.dataMode === "demo" && (!document.hidden || (state.bot && state.bot.running))) {
+      if (await fetchTickersSmart()) { await backToLive(); return; }
+    }
     if (document.hidden) return;
     // refresh the visible chart + the signal report every 45s on live data
     if (state.dataMode === "live" && state.tab === "chart") {
@@ -712,6 +755,33 @@ function startTimers() {
     }
     if (state.tab === "signals") paintSignals();
   }, 20000);
+}
+
+/* v50: paper trades opened on simulated prices would turn into fake profit / loss
+   against real prices — refund them (no P&L) and drop their limit orders */
+function voidDemoTrades() {
+  const p = paper(); let n = 0;
+  p.positions = p.positions.filter((x) => {
+    if (!x.demo) return true;
+    p.bal -= x.openCash; n++;
+    p.history.unshift({ ts: now(), sym: x.sym, side: "VOID", qty: x.qty, price: x.entry, src: x.src, pnl: null, reason: "demo" });
+    return false;
+  });
+  const before = p.orders.length;
+  p.orders = p.orders.filter((o) => !o.demo);
+  n += before - p.orders.length;
+  if (n) { save(); toast(t("demo.voided", { n }), "", 4200); logLine(t("demo.voided", { n }), "warn"); }
+}
+/* v50: after demo mode — drop simulated candles and restart the live stream */
+async function backToLive() {
+  state.klinesCache = {}; state.repCache = {};
+  voidDemoTrades();
+  if (demo.timer) { clearInterval(demo.timer); demo.timer = null; }
+  setConn("live");
+  state.klines = await fetchKlinesSmart(state.sym, state.tf, 300);
+  logLine("exchange connection back — live data (" + state.dataSource + ")", "ok");
+  renderAll(); if (state.tab === "chart") renderChart();
+  startStream();
 }
 
 /* --------------------------------------------------------------- connection */
@@ -921,7 +991,8 @@ function paintChartHeader() {
     ["24h low", fmtPrice(lo)],
     ["24h vol", tk.vol ? (tk.vol / 1e6).toFixed(2) + "M" : "—"],
     ["24h chg", `<span class="${(tk.chg || 0) >= 0 ? "up" : "dn"}">${fmtPct(tk.chg || 0)}</span>`],
-  ].map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join("");
+  ].map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join("") +
+    (state.klines.demo ? `<span class="dn">⚠ ${t("chart.sample")}</span>` : "");   /* v50 */
   if (state.tab === "trade") { $("ordSym").textContent = state.sym.replace("USDT", "/USDT"); $("ordLast").textContent = fmtPrice(tk.last); updateOrderEst(); }
 }
 
@@ -1156,7 +1227,7 @@ let lastReport = null;
 function paintSignals() {
   if (BGQ) return; /* 24/7 bg engine — skip UI */
   const v = $("sigVerdict");
-  if (!state.klines || state.klines.length < 30 || !TA) {
+  if (!state.klines || state.klines.length < 30 || !TA || state.klines.demo) {   /* v50: not on sample candles */
     v.className = "verdict neutral"; v.innerHTML = `<div class="v">—</div><div class="small mut">${t("sig.none")}</div>`;
     return;
   }
@@ -1194,7 +1265,7 @@ function paintSignals() {
   const m = rep.metrics;
   const cells = [
     ["RSI 14", m.rsi == null ? "—" : m.rsi, m.rsi == null ? "" : m.rsi > 70 ? "dn" : m.rsi < 30 ? "up" : ""],
-    ["MACD hist", m.macdHist == null ? "—" : (m.macdHist > 0 ? "+" : "") + m.macdHist.toPrecision(2), m.macdHist > 0 ? "up" : "dn"],
+    ["MACD hist", m.macdHist == null ? "—" : (m.macdHist > 0 ? "+" : "") + fmtSig(m.macdHist), m.macdHist > 0 ? "up" : "dn"],
     ["Trend", m.trend, m.trend === "UP" ? "up" : m.trend === "DOWN" ? "dn" : ""],
     ["EMA 20", m.ema20 == null ? "—" : fmtPrice(m.ema20), ""],
     ["EMA 50", m.ema50 == null ? "—" : fmtPrice(m.ema50), ""],
@@ -1302,12 +1373,15 @@ async function runBacktest() {
   out.innerHTML = '<span class="spinner"></span> ' + t("bt.running");
   await sleep(30);
   const cfg = botCfg();
+  /* v50: TP / SL are the bot's percentages — "(tp / 100) * 20" turned 1.5 % into a
+     0.3 × ATR target (≈ 0.12 % on 5m), below the 0.2 % round-trip fee: every run lost */
   const r = TA.backtest(state.klines, {
-    minScore: 25, tpMult: (cfg.tp / 100) * 20, slMult: (cfg.sl / 100) * 20, allowShort: cfg.allowShort, feePct: 0.1,
+    minScore: 25, tpPct: cfg.tp, slPct: cfg.sl, allowShort: cfg.allowShort, feePct: 0.1,
   });
   const pnlCls = r.pnlPct >= 0 ? "up" : "dn";
   out.innerHTML = `
     <div class="small b">${t("bt.header", { n: state.klines.length })}</div>
+    <div class="tiny dim">${t("bt.tpsl", { tp: cfg.tp, sl: cfg.sl })}</div>
     <div class="mt">${t("bt.result", { trades: r.trades, win: r.winRate, pnl: r.pnlPct, dd: r.maxDD, bh: r.buyHoldPct })}</div>
     <div class="small ${pnlCls} mt">${r.trades ? "avg " + r.avgPct + "% per trade" : ""}</div>
     <div class="tiny dim mt">${t("bt.disclaimer")}</div>`;
@@ -1388,6 +1462,7 @@ function openPaper(sym, price, usdtAmount, tpPct, slPct, src, dir) {
     tp: tpPct ? price * (1 + (dir > 0 ? tpPct : -tpPct) / 100) : null,
     sl: slPct ? price * (1 - (dir > 0 ? slPct : -slPct) / 100) : null,
   };
+  if (state.dataMode === "demo") pos.demo = true;   /* v50: opened on simulated prices */
   p.positions.push(pos);
   p.history.unshift({ ts: now(), sym, side: dir > 0 ? "BUY" : "SHORT", qty, price, src: pos.src, pnl: null });
   if (p.history.length > 300) p.history.length = 300;   /* v48: bound storage */
@@ -1431,12 +1506,39 @@ function closePaper(posId, price, reason) {
 function closePaperAll(sym, price, reason) {
   paper().positions.filter((x) => !sym || x.sym === sym).forEach((x) => closePaper(x.id, price, reason));
 }
+/* v50: split `q` coins off an open paper position — the new part keeps the same entry,
+   TP / SL, source and AI sell rate, so a partial sell no longer re-buys the rest */
+function splitPaper(pos, q) {
+  const p = paper();
+  const part = Object.assign({}, pos, { id: "p" + (p.seq++), qty: q, openCash: pos.openCash * (q / pos.qty) });
+  delete part.brain;                 /* only the final close of a trade teaches the brain */
+  pos.qty -= q; pos.openCash -= part.openCash;
+  p.positions.push(part);
+  return part;
+}
+/* v50: sell `qty` coins from the open paper longs of `sym` (oldest first) */
+function paperSellQty(sym, qty, price, reason) {
+  let left = qty, sold = 0, pnl = 0;
+  paper().positions.filter((x) => x.sym === sym && x.dir > 0).forEach((pos) => {
+    if (left <= pos.qty * 1e-9) return;
+    const target = left >= pos.qty * (1 - 1e-9) ? pos : splitPaper(pos, left);
+    const r = closePaper(target.id, price, reason);
+    if (r.ok) { sold += target.qty; pnl += r.pnl; left -= target.qty; }
+  });
+  return { sold, pnl };
+}
 function checkPaperPositions(sym, price) {
   const p = paper();
-  /* —— "සතයක් හරි" profit-exit: sell at ≥ min net profit, NEVER sell at a loss —— */
-  if (botCfg().exitMode === "minprofit") {
+  const isBot = (x) => x.src === "bot" || x.src === "bot-dca";
+  /* v50: simulated prices never close a trade that was opened on real prices */
+  const mine = (x) => x.sym === sym && (state.dataMode !== "demo" || x.demo);
+  /* —— "සතයක් හරි" profit-exit: sell at ≥ min net profit, NEVER sell at a loss ——
+     v50: this is a BOT exit mode — it manages the bot's own trades only; manual and
+     limit trades keep the TP / SL the user typed (handled by the classic block below) */
+  const mpMode = botCfg().exitMode === "minprofit";
+  if (mpMode) {
     const mp = Math.max(0.01, Number(botCfg().minProfit) || 0.01);
-    p.positions.filter((x) => x.sym === sym).slice().forEach((pos) => {
+    p.positions.filter((x) => mine(x) && isBot(x)).slice().forEach((pos) => {
       const np = posNetPnl(pos, price);
       const heldDays = (now() - pos.ts) / 86400000;
       const brakeOn = botCfg().maxHoldDays > 0 && heldDays > botCfg().maxHoldDays &&
@@ -1457,9 +1559,8 @@ function checkPaperPositions(sym, price) {
       }
       /* loss → hold for recovery; SL is intentionally disabled in this mode */
     });
-    return;
   }
-  p.positions.filter((x) => x.sym === sym).forEach((pos) => {
+  p.positions.filter((x) => mine(x) && !(mpMode && isBot(x))).forEach((pos) => {
     if (pos.tp && ((pos.dir > 0 && price >= pos.tp) || (pos.dir < 0 && price <= pos.tp))) {
       const r = closePaper(pos.id, pos.tp, "TP");
       notify(t("trade.tp"), `${pos.sym.replace("USDT", "/USDT")} ${pos.dir > 0 ? "long" : "short"} closed at ${fmtPrice(pos.tp)} · ${r.pnl >= 0 ? "+" : ""}${fmtUsd(r.pnl)}`, "ok");
@@ -1480,8 +1581,12 @@ function checkPaperPositions(sym, price) {
 const liveEx = () => (state.settings.exchange === "bybit" ? "bybit" : "binance");
 const canTradeLive = () => hasBridge() && (state.settings.exchange === "binance" || state.settings.exchange === "bybit");
 
+let liveSyncAt = 0;
 async function liveCall(method, path, params) {
   const ex = liveEx();
+  /* v50: align the signing clock with the exchange every 30 min — a phone clock that
+     runs ahead made Binance / Bybit reject signed calls (the bridge had syncTime, unused) */
+  if (now() - liveSyncAt > 30 * 60000) { liveSyncAt = now(); bc(ex + "SyncTime"); }
   const raw = bc(ex + "Signed", method, path, JSON.stringify(params || {}));
   if (raw == null) throw new Error(t("live.unsupported"));
   const j = JSON.parse(raw);
@@ -1511,7 +1616,9 @@ async function qtyFilter(sym) {
     if (liveEx() === "bybit") {
       const j = JSON.parse(await httpGet(`https://api.bybit.com/v5/market/instruments-info?category=spot&symbol=${sym}`));
       const x = (((j.result || {}).list || [])[0] || {}).lotSizeFilter || {};
-      const step = +x.basePrecision ? Math.pow(10, -+x.basePrecision) : +(x.qtyStep || 0.000001);
+      /* v50: basePrecision IS the step ("0.000001") — 10^-0.000001 made the step ≈ 1 coin,
+         so every fractional order (0.0004 BTC…) rounded to 0 and was refused */
+      const step = +x.basePrecision || +x.qtyStep || 0.000001;
       f = { step: step || 0.000001, min: +(x.minOrderQty || 0), dp: Math.max(0, Math.round(-Math.log10(step || 0.000001))) };
     } else {
       const j = JSON.parse(await httpGet("https://api.binance.com/api/v3/exchangeInfo?symbol=" + sym));
@@ -1526,21 +1633,49 @@ async function qtyFilter(sym) {
 }
 function roundQty(qty, f) {
   const s = f.step || 0.000001;
-  const v = Math.floor(qty / s) * s;
+  /* v50: + 1e-9 — float division (1.13 / 0.01 = 112.999…) used to drop a whole step */
+  const v = Math.floor(qty / s + 1e-9) * s;
   return +v.toFixed(f.dp);
 }
+/* plain decimal for the API — String(1e-7) would send "1e-7" */
+const plainNum = (x, dp) => (dp != null ? Number(x).toFixed(dp) : Number(x).toFixed(12).replace(/\.?0+$/, ""));
 async function livePlaceOrder(sym, side, qty, price, type) {
   const f = await qtyFilter(sym);
   const q = roundQty(qty, f);
   if (!(q > 0) || q < (f.min || 0)) throw new Error("qty below exchange minimum (" + (f.min || f.step) + ")");
+  const limit = /^limit$/i.test(type || "");
   if (liveEx() === "bybit") {
-    const p = { category: "spot", symbol: sym, side: side === "BUY" ? "Buy" : "Sell", orderType: type || "Market", qty: String(q) };
-    if ((type || "Market") === "Limit") { p.price = String(price); p.timeInForce = "GTC"; }
+    /* v50: Bybit v5 wants "Market" / "Limit" (callers pass "MARKET" / "LIMIT", so limit
+       orders went out with no price), and a spot market order counts qty in USDT unless
+       marketUnit = baseCoin — a 0.001 BTC buy was read as 0.001 USDT */
+    const p = { category: "spot", symbol: sym, side: side === "BUY" ? "Buy" : "Sell", orderType: limit ? "Limit" : "Market", qty: plainNum(q, f.dp) };
+    if (limit) { p.price = plainNum(price); p.timeInForce = "GTC"; }
+    else p.marketUnit = "baseCoin";
     return await liveCall("POST", "/v5/order/create", p);
   }
-  const p = { symbol: sym, side: side, type: type || "MARKET", quantity: String(q) };
-  if ((type || "MARKET") === "LIMIT") { p.price = String(price); p.timeInForce = "GTC"; }
+  const p = { symbol: sym, side: side, type: limit ? "LIMIT" : "MARKET", quantity: plainNum(q, f.dp) };
+  if (limit) { p.price = plainNum(price); p.timeInForce = "GTC"; }
   return await liveCall("POST", "/api/v3/order", p);
+}
+/* v50: what a live market BUY really got — Binance returns executedQty, the quote spent
+   and the fee per fill; a fee paid in the coin itself is not in the wallet to sell later */
+function liveFill(res, sym, q, px) {
+  const base = sym.replace(/USDT$/, "");
+  let qty = q, price = px;
+  if (res && +res.executedQty > 0) {
+    qty = +res.executedQty;
+    if (+res.cummulativeQuoteQty > 0) price = +res.cummulativeQuoteQty / +res.executedQty;
+    (res.fills || []).forEach((x) => { if (x.commissionAsset === base) qty -= +x.commission || 0; });
+  }
+  return { qty: Math.max(0, qty), price };
+}
+/* v50: never try to sell more than the wallet holds (fees, dust, a manual sell) */
+async function liveSellable(sym, want) {
+  try {
+    const bal = await liveBalances();
+    const c = bal[sym.replace(/USDT$/, "")] || { free: 0, locked: 0 };
+    return { qty: Math.min(want, +c.free || 0), locked: +c.locked || 0 };
+  } catch (e) { return { qty: want, locked: 0 }; }
 }
 async function liveOpenOrders() {
   if (liveEx() === "bybit") {
@@ -1597,7 +1732,7 @@ async function paintBalances() {
         <div><div class="small dim">${t("trade.free")}</div><div class="bb">${fmtUsd(p.bal)}</div></div>
         <div><div class="small dim">${t("pos.pnl")}</div><div class="bb ${u >= 0 ? "up" : "dn"}">${fmtUsd(u)}</div></div>
       </div>
-      <div class="small dim mt">${t("bot.stat.pnl")}: <span class="${p.dayPnl >= 0 ? "up" : "dn"}">${fmtUsd(p.dayPnl)}</span> ·
+      <div class="small dim mt">${t("trade.dayPnl")}: <span class="${p.dayPnl >= 0 ? "up" : "dn"}">${fmtUsd(p.dayPnl)}</span> ·
         ${p.positions.length} ${t("trade.pos").toLowerCase()} · ${base}</div>`;
     return;
   }
@@ -1605,6 +1740,7 @@ async function paintBalances() {
   box.innerHTML = '<div class="hint"><span class="spinner"></span> …</div>';
   try {
     const bal = await liveBalances();
+    state.liveBal = bal;                    /* v50: the % buttons size live orders from this */
     const base = state.sym.replace("USDT", "");
     const usdt = bal.USDT || { free: 0, locked: 0 };
     const b = bal[base] || { free: 0, locked: 0 };
@@ -1723,24 +1859,19 @@ async function placeOrder(side) {
   const sl = parseFloat($("ordSl").value) || 0;
   if (!price || !qty || qty <= 0) { toast(t("error") + ": " + t("trade.amount"), "bad"); return; }
   if (live && !canTradeLive()) { toast(t("live.unsupported"), "bad"); return; }
+  /* v50: never send a real order while the prices on screen are simulated */
+  if (live && state.dataMode !== "live") { toast(t("live.noData"), "bad", 3600); return; }
 
-  if (side === "SELL") {
-    // spot semantics: sell closes what you hold (paper: your long positions)
-    if (!live) {
-      const pos = paper().positions.filter((x) => x.sym === state.sym && x.dir > 0);
-      if (!pos.length) { toast(t("error") + ": " + t("trade.none"), "bad"); return; }
-      let left = qty;
-      pos.forEach((p) => {
-        if (left <= 0) return;
-        const q = Math.min(left, p.qty);
-        if (q >= p.qty) { const r = closePaper(p.id, price, "manual"); toast(`${t("trade.closed")} ${fmtUsd(r.pnl)}`, r.pnl >= 0 ? "ok" : "bad"); left -= q; }
-        else {
-          const part = p.qty - q;
-          const r = closePaper(p.id, price, "manual-part");
-          if (r.ok) openPaper(p.sym, price, part * price, 0, 0, p.src, 1);
-          left -= q;
-        }
-      });
+  // spot semantics: sell closes what you hold (paper: your long positions)
+  if (side === "SELL" && !live) {
+    const held = paper().positions.filter((x) => x.sym === state.sym && x.dir > 0);
+    if (!held.length) { toast(t("error") + ": " + t("trade.none"), "bad"); return; }
+    /* v50: a limit SELL waits for its price (handled in doIt) — only market sells fill now,
+       and a partial sell keeps the rest of the position as it was */
+    if (!isLimit) {
+      const r = paperSellQty(state.sym, qty, price, "manual");
+      toast(`${t("trade.closed")} ${fmtUsd(r.pnl)}`, r.pnl >= 0 ? "ok" : "bad");
+      $("ordAmt").value = ""; updateOrderEst();
       paintTrade(); paintBotStats();
       return;
     }
@@ -1755,15 +1886,32 @@ async function placeOrder(side) {
         setTimeout(() => { paintBalances(); refreshLiveOrders(); }, 900);
       } else if (isLimit) {
         const p = paper();
+        const last = tk.last || 0;
+        /* v50: like a real exchange — a limit that is already through the market
+           fills at once at the market price; otherwise it waits for its price */
+        const marketable = last > 0 && (side === "BUY" ? price >= last : price <= last);
         if (side === "SELL") {
           const held = p.positions.filter((x) => x.sym === state.sym && x.dir > 0).reduce((sum, x) => sum + x.qty, 0);
           if (!held) { toast(t("error") + ": " + t("trade.none"), "bad"); return; }
-          p.orders.push({ id: uid(), sym: state.sym, side, qty: Math.min(qty, held), price, type: "LIMIT", closeLong: true, ts: now() });
+          if (marketable) {
+            const r = paperSellQty(state.sym, Math.min(qty, held), last, "limit");
+            toast(`${t("trade.filled")} @ ${fmtPrice(last)} · ${fmtUsd(r.pnl)}`, r.pnl >= 0 ? "ok" : "bad");
+            paintTrade(); paintBotStats();
+          } else {
+            p.orders.push({ id: uid(), sym: state.sym, side, qty: Math.min(qty, held), price, type: "LIMIT", closeLong: true, ts: now(), demo: state.dataMode === "demo" || undefined });
+            save(); paintOrders();
+            toast(t("trade.placed") + " (limit)", "ok");
+          }
+        } else if (marketable) {
+          const r = openPaper(state.sym, last, qty * last, tp, sl, "limit", 1);
+          if (r.error) { toast(t("trade.insufficient"), "bad"); return; }
+          toast(t("trade.filled") + " · BUY " + fmtQty(qty) + " @ " + fmtPrice(last), "ok");
+          paintTrade();
         } else {
-          p.orders.push({ id: uid(), sym: state.sym, side, qty, price, type: "LIMIT", ts: now(), tp, sl });
+          p.orders.push({ id: uid(), sym: state.sym, side, qty, price, type: "LIMIT", ts: now(), tp, sl, demo: state.dataMode === "demo" || undefined });
+          save(); paintOrders();
+          toast(t("trade.placed") + " (limit)", "ok");
         }
-        save(); paintOrders();
-        toast(t("trade.placed") + " (limit)", "ok");
       } else {
         const r = openPaper(state.sym, price, qty * price, tp, sl, "manual", 1);
         if (r.error) { toast(t("trade.insufficient"), "bad"); return; }
@@ -1792,15 +1940,15 @@ function checkPaperLimitOrders() {
   p.orders = p.orders.filter((o) => {
     const tk = state.tickers[o.sym];
     if (!tk) return true;
+    if (state.dataMode === "demo" && !o.demo) return true;   /* v50: simulated prices don't fill real-price orders */
     const hit = o.side === "BUY" ? tk.last <= o.price : tk.last >= o.price;
     if (!hit) return true;
     if (o.closeLong) {
-      let left = o.qty;
-      paper().positions.filter((x) => x.sym === o.sym && x.dir > 0).forEach((pos) => {
-        if (left <= 0) return;
-        if (pos.qty <= left) { closePaper(pos.id, o.price, "limit-tp"); left -= pos.qty; }
-      });
-      notify(t("trade.filled"), `LIMIT SELL ${fmtQty(o.qty)} ${o.sym.replace("USDT", "/USDT")} @ ${fmtPrice(o.price)}`, "ok");
+      /* v50: sells what is still held (partial fills too) and reports what really sold */
+      const held = paper().positions.filter((x) => x.sym === o.sym && x.dir > 0).reduce((s, x) => s + x.qty, 0);
+      const r = held > 0 ? paperSellQty(o.sym, Math.min(o.qty, held), o.price, "limit") : { sold: 0, pnl: 0 };
+      if (r.sold > 0) notify(t("trade.filled"), `LIMIT SELL ${fmtQty(r.sold)} ${o.sym.replace("USDT", "/USDT")} @ ${fmtPrice(o.price)} · ${fmtUsd(r.pnl)}`, "ok");
+      else toast(`LIMIT SELL ${o.sym.replace("USDT", "/USDT")}: ${t("trade.none")}`, "bad");
       changed = true;
       return false;
     }
@@ -1988,6 +2136,12 @@ async function botTick() {
   try { await botTickInner(b, cfg); } finally { b._busy = false; }
 }
 async function botTickInner(b, cfg) {
+  /* v50: the bot trades on real market data only — in demo mode (no exchange reachable)
+     it waits instead of trading simulated prices and teaching the brain from them */
+  if (state.dataMode !== "live") {
+    if (now() - (b._demoLog || 0) > 300000) { b._demoLog = now(); logLine(t("bot.noLive"), "warn"); }
+    return;
+  }
   const lossSinceStart = paper().dayPnl - (b.dayStartPnl || 0);
   if (lossSinceStart <= -Math.abs(cfg.dailyLoss)) {
     logLine(t("bot.dailyStop") + " (" + fmtUsd(lossSinceStart) + ")", "bad");
@@ -2011,7 +2165,7 @@ async function botTickInner(b, cfg) {
   try {
     if (now() - (b._lastStatus || 0) > 10000) {
       b._lastStatus = now();
-      const openN = paper().positions.filter((x) => x.src === "bot").length;
+      const openN = paper().positions.filter((x) => x.src === "bot").length + (b.livePos || []).length;
       bc("updateTradeStatus", "🤖 " + cfg.strategy + " · " + openN + "/" + cfg.maxPos + " pos · PnL " + fmtUsd(b.stats.pnl) + " · " + fmtClock(now()));
     }
   } catch (e) {}
@@ -2025,6 +2179,13 @@ async function botEvalSymbol(sym, cfg) {
   if (cache && now() - cache.at < 5000) klines = cache.candles;   /* v40: fresh candles for 2s cadence */
   else klines = await fetchKlinesSmart(sym, cfg.tf, 300);
   if (!klines || klines.length < 60) return;
+  /* v50: never decide on simulated or stale candles while the prices are live */
+  const lastT = klines[klines.length - 1].t || 0;
+  if (klines.demo || (lastT && now() - lastT > 3 * TF_MIN[cfg.tf] * 60000)) {
+    b.lastStale = b.lastStale || {};
+    if (now() - (b.lastStale[sym] || 0) > 300000) { b.lastStale[sym] = now(); logLine(sym + " " + cfg.tf + ": " + t("bot.noCandles"), "warn"); }
+    return;
+  }
   /* v48: reuse the TA analysis while candles are fresh — the 2s tick no longer re-analyzes */
   const repC = state.repCache = state.repCache || {};
   const rk = "rep|" + key;
@@ -2141,9 +2302,13 @@ async function botEvalSymbol(sym, cfg) {
   }
 
   // entry guards
+  /* v50: one bot position per coin — the flip exits above manage held[0] only and
+     Auto-DCA is the one way to add to a coin (cooldown 0 used to stack buys) */
+  if (held.length || liveHeld.length) return;
   const cool = (b.lastEntry[sym] || 0) + cfg.cooldown * 60000;
   if (now() < cool) return;
-  const openCount = paper().positions.filter((x) => x.src === "bot").length;
+  /* v50: live positions count toward Max positions too */
+  const openCount = paper().positions.filter((x) => x.src === "bot").length + (b.livePos || []).length;
   if (openCount >= cfg.maxPos) { logLine("max positions reached (" + cfg.maxPos + ")", "warn"); return; }
   /* —— crash guard: don't catch falling knives —— */
   const tk = state.tickers[sym];
@@ -2170,11 +2335,15 @@ async function botEvalSymbol(sym, cfg) {
     const qty = sizeUse / price;
     const res = await livePlaceOrder(sym, "BUY", qty, price, "MARKET");
     const f = await qtyFilter(sym);
-    const q = roundQty(qty, f);
-    (b.livePos = b.livePos || []).push({ sym, qty: q, entry: price, tp: price * (1 + tpUse / 100), sl: price * (1 - slUse / 100), aiTpPct: aiRate ? tpUse : null, aiTp0: aiRate ? tpUse : null, ts: now(), id: res.orderId || uid() });
+    /* v50: book what was really bought — executed qty minus a fee taken in the coin,
+       at the average fill price (Binance reports it; Bybit falls back to the ticker) */
+    const fill = liveFill(res, sym, roundQty(qty, f), price);
+    const q = fill.qty, px = fill.price;
+    (b.livePos = b.livePos || []).push({ sym, qty: q, entry: px, tp: px * (1 + tpUse / 100), sl: px * (1 - slUse / 100), aiTpPct: aiRate ? tpUse : null, aiTp0: aiRate ? tpUse : null, ts: now(), id: res.orderId || (res.result && res.result.orderId) || uid() });
     b.lastEntry[sym] = now();
-    notify(t("trade.placed"), `LIVE BUY ${fmtQty(q)} ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)}`, "ok");
-    logLine(`live buy ${fmtQty(q)} ${sym} @ ${fmtPrice(price)}`, "ok");
+    save();                              /* v50: live positions survive a restart */
+    notify(t("trade.placed"), `LIVE BUY ${fmtQty(q)} ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(px)}`, "ok");
+    logLine(`live buy ${fmtQty(q)} ${sym} @ ${fmtPrice(px)}`, "ok");
     return;
   }
 
@@ -2194,40 +2363,57 @@ async function botEvalSymbol(sym, cfg) {
   } catch (e) {}
   b.lastEntry[sym] = now();
   notify(t("trade.placed"),
-    `${dir > 0 ? "BUY" : "SHORT"} ${cfg.size} USDT ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)}\nTP ${fmtPrice(r.pos.tp)} · SL ${fmtPrice(r.pos.sl)}`,
+    `${dir > 0 ? "BUY" : "SHORT"} ${sizeUse} USDT ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)}\nTP ${fmtPrice(r.pos.tp)} · SL ${fmtPrice(r.pos.sl)}`,
     "ok");
   logLine(`open ${dir > 0 ? "long" : "short"} ${sym} @ ${fmtPrice(price)} tp ${fmtPrice(r.pos.tp)} sl ${fmtPrice(r.pos.sl)}`, "ok");
 }
 
+const liveSelling = new Set();          /* v50: position ids with a SELL in flight */
 function botOnTick(sym, price) {
   const b = bot(), cfg = botCfg();
-  if (!b.running || !b.livePos || !b.livePos.length) return;
+  /* v50: the watchdog calls this after ■ Stop too — it used to return at once because
+     the bot was not running, so stopped live positions were never sold */
+  if ((!b.running && !b.watchdog) || !b.livePos || !b.livePos.length) return;
+  if (state.dataMode !== "live") return;          /* v50: no real orders on simulated prices */
   b.livePos.filter((x) => x.sym === sym).forEach(async (p) => {
+    if (liveSelling.has(p.id)) return;            /* v50: one SELL at a time per position */
+    let why = null, np = 0;
     /* —— minprofit mode: sell live only at ≥ min net profit, never at a loss —— */
     if (cfg.exitMode === "minprofit") {
-      const np = posNetPnl(p, price);
+      np = posNetPnl(p, price);
       const mp = Math.max(0.01, Number(cfg.minProfit) || 0.01);
       /* v41: AI sell rate — hold for this trade own target (>= min profit, never at a loss) */
       if (p.aiTpPct != null && cfg.aiTp !== false) {
         const moveP = ((price - p.entry) / p.entry) * 100 * (p.dir || 1);
         if (!(moveP >= p.aiTpPct && np >= mp)) return;
       } else if (np < mp) return;
-      try {
-        await livePlaceOrder(sym, "SELL", p.qty, price, "MARKET");
-        notify(t("mp.done"), `LIVE SELL ${fmtQty(p.qty)} ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)} · +${fmtUsd(np)}`, "ok");
+      why = "profit";
+    } else if (price >= p.tp || price <= p.sl) {
+      why = price >= p.tp ? "tp" : "sl";
+    } else return;
+    liveSelling.add(p.id);
+    try {
+      /* v50: sell what the wallet really holds (fee taken in the coin, dust, manual sells) */
+      const f = await qtyFilter(sym);
+      const have = await liveSellable(sym, p.qty);
+      const q = roundQty(have.qty, f);
+      if (!(q > 0) || q < (f.min || 0)) {
+        if (have.locked > 0) { logLine(sym + ": coins locked in an open order — live sell waits", "warn"); return; }
+        b.livePos = b.livePos.filter((x) => x !== p); save();
+        logLine(sym + ": nothing left to sell in the wallet — live position removed", "warn");
+        return;
+      }
+      await livePlaceOrder(sym, "SELL", q, price, "MARKET");
+      b.livePos = b.livePos.filter((x) => x !== p); save();
+      if (why === "profit") {
+        notify(t("mp.done"), `LIVE SELL ${fmtQty(q)} ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)} · +${fmtUsd(np)}`, "ok");
         logLine(`live profit-exit ${sym} @ ${fmtPrice(price)} +${fmtUsd(np)}`, "ok");
-        b.livePos = b.livePos.filter((x) => x !== p);
-      } catch (e) { logLine("live close failed: " + e.message, "bad"); }
-      return;
-    }
-    if (price >= p.tp || price <= p.sl) {
-      try {
-        await livePlaceOrder(sym, "SELL", p.qty, price, "MARKET");
-        notify(price >= p.tp ? t("trade.tp") : t("trade.sl"), `LIVE SELL ${fmtQty(p.qty)} ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)}`, price >= p.tp ? "ok" : "bad");
-        logLine(`live close ${sym} @ ${fmtPrice(price)}`, price >= p.tp ? "ok" : "bad");
-        b.livePos = b.livePos.filter((x) => x !== p);
-      } catch (e) { logLine("live close failed: " + e.message, "bad"); }
-    }
+      } else {
+        notify(why === "tp" ? t("trade.tp") : t("trade.sl"), `LIVE SELL ${fmtQty(q)} ${sym.replace("USDT", "/USDT")} @ ${fmtPrice(price)}`, why === "tp" ? "ok" : "bad");
+        logLine(`live close ${sym} @ ${fmtPrice(price)}`, why === "tp" ? "ok" : "bad");
+      }
+    } catch (e) { logLine("live close failed: " + e.message, "bad"); }
+    finally { liveSelling.delete(p.id); }
   });
 }
 function onPrice(sym, price) {
@@ -2282,7 +2468,7 @@ function botStart() {
   if (!hasBridge()) {
     wdStart(); wdWake(true);
     try { if (typeof Notification !== "undefined" && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
-    logLine("🌐 web 24/7: worker heartbeat + wake lock ON — tab එක open තියෙනවා නම් bot එක නවතින්නේ නෑ", "");
+    logLine("🌐 web 24/7: worker heartbeat + wake lock ON — the bot keeps running while this tab stays open", "");
   }
   logLine("── bot started · " + cfg.strategy + " · " + cfg.tf + " · ⏱2s scan · " + cfg.symbols.join(", ") + " ──", "ok");
   /* v45: auto history training — the brain starts every session with backtested
@@ -2293,7 +2479,7 @@ function botStart() {
       try {
         for (const s of cfg.symbols.slice(0, 3)) {
           const k = await fetchKlinesSmart(s, cfg.tf, 500);
-          if (k && k.length >= 260) {
+          if (k && k.length >= 260 && !k.demo && state.dataMode === "live") {   /* v50: real candles only */
             const r = Brain.trainHistory(k);
             logLine("🧠 auto-train " + s + " " + cfg.tf + ": +" + r.signals + " lessons (" + Math.round(r.acc * 100) + "% acc)", "ai");
           }
@@ -2339,6 +2525,34 @@ function botStop() {
   bc("setKeepScreenOn", !!(state.settings.keep));
   logLine("── bot stopped ──", "warn");
   paintBot(); paintBotStats(); paint247();
+}
+
+/* v50: full stop — bot loop, watchdog and every keep-alive. Reset / Erase used to drop
+   the bot object while its timer, the worker and the Android service kept running
+   (UI said Idle, the old loop still ticked, and Android auto-resumed it on next launch) */
+function botHalt() {
+  const b = state.bot;
+  if (!b) return;
+  if (b.loop) { clearInterval(b.loop); b.loop = null; }
+  if (b.wdLoop) { clearInterval(b.wdLoop); b.wdLoop = null; }
+  b.running = false; b.watchdog = false;
+  bc("setAutoOn", false);
+  bc("stopBgService");
+  bc("setTradingActive", false);
+  bc("setKeepScreenOn", !!state.settings.keep);
+  try { wdStop(); wdWake(false); } catch (e) { }
+}
+/* v50: live positions are saved now — after a restart (or a paper reset) with the bot
+   not running, the watchdog keeps selling them at profit, same as after ■ Stop */
+function liveWatchdogResume() {
+  const b = bot();
+  if (b.running || b.wdLoop || !(b.livePos || []).length || !canTradeLive()) return;
+  b.watchdog = true;
+  b.wdLoop = setInterval(botWatchdog, 3000);
+  bc("startBgService", "⏱ watchdog · " + b.livePos.length + " pos — selling at profit only");
+  bc("setTradingActive", true);
+  logLine("⏱ watchdog: " + b.livePos.length + " live position(s) restored — selling at profit only", "ai");
+  paintBot(); paint247();
 }
 
 /* v47: watchdog tick — profit exits ONLY for open bot/live positions */
@@ -2634,9 +2848,10 @@ function bindUI() {
   $("mSearch").oninput = (e) => { state.search = e.target.value.trim(); paintMarkets(); };
   $("mReload").onclick = async () => {
     toast("…", "", 900);
+    const wasDemo = state.dataMode === "demo";
     const ok = await fetchTickersSmart();
     if (!ok) { demoInit(); state.dataMode = "demo"; state.dataSource = "demo"; startStream(); }
-    else state.dataMode = "live";
+    else { state.dataMode = "live"; if (wasDemo) { await backToLive(); return; } }
     setConn(state.dataMode === "live" ? "live" : "demo");
     state.klines = await fetchKlinesSmart(state.sym, state.tf, 300);
     renderAll(); renderChart();
@@ -2703,13 +2918,17 @@ function bindUI() {
     const tk = state.tickers[state.sym] || {};
     const pct = parseInt(b.dataset.pct, 10) / 100;
     if (!tk.last) return;
-    if (state.settings.liveMode === "live") { $("ordAmt").value = ((paper().bal * pct) / tk.last).toFixed(6); }
-    else {
+    const sell = $("ordAmt").dataset.side === "sell";
+    if (state.settings.liveMode === "live") {
+      /* v50: live orders are sized from the exchange wallet, not the paper balance */
+      const bal = state.liveBal || {};
+      const coin = (bal[state.sym.replace("USDT", "")] || {}).free || 0, usdt = (bal.USDT || {}).free || 0;
+      $("ordAmt").value = (sell && coin > 0 ? coin * pct : (usdt * pct) / tk.last).toFixed(6);
+    } else {
       // buy: % of free USDT · sell: % of the open long
       const long = paper().positions.filter((x) => x.sym === state.sym && x.dir > 0).reduce((s, x) => s + x.qty, 0);
       const usdt = paper().bal * pct;
-      const usingLong = document.querySelector("#typeSeg button.on") && $("ordAmt").dataset.side === "sell";
-      $("ordAmt").value = (long > 0 && $("ordAmt").dataset.side === "sell" ? long * pct : usdt / tk.last).toFixed(6);
+      $("ordAmt").value = (long > 0 && sell ? long * pct : usdt / tk.last).toFixed(6);
     }
     updateOrderEst();
   });
@@ -2724,7 +2943,7 @@ function bindUI() {
     const tf = botCfg().tf;
     let k = state.klines && state.klines.length > 250 && state.tf === tf ? state.klines : (state.klinesCache[state.sym + "|" + tf] || {}).candles;
     if (!k || k.length < 200) k = await fetchKlinesSmart(state.sym, tf, 500);
-    if (!k || k.length < 200) { toast(t("brain.needK"), "bad"); return; }
+    if (!k || k.length < 200 || k.demo || state.dataMode !== "live") { toast(t("brain.needK"), "bad"); return; }   /* v50: real candles only */
     toast(t("brain.training"), "", 1200);
     await sleep(60);
     const r = Brain.trainHistory(k);
@@ -2775,9 +2994,11 @@ function bindUI() {
     toast(t("saved"), "ok");
     closeStream();
     state.tickers = {};
+    state.klinesCache = {}; state.repCache = {};      /* v50: candles of the old exchange */
+    const wasDemo = state.dataMode === "demo";
     const ok = await fetchTickersSmart();
     if (!ok) { demoInit(); state.dataMode = "demo"; state.dataSource = "demo"; toast(t("demo.note"), "bad", 3600); }
-    else state.dataMode = "live";
+    else { state.dataMode = "live"; if (wasDemo) { if (demo.timer) { clearInterval(demo.timer); demo.timer = null; } voidDemoTrades(); } }
     state.klines = await fetchKlinesSmart(state.sym, state.tf, 300);
     startStream(); setConn(state.dataMode === "live" ? "live" : "demo"); renderAll(); renderChart();
   };
@@ -2826,12 +3047,18 @@ function bindUI() {
   $("setAiBase").onchange = (e) => { state.settings.aiBase = e.target.value.trim(); save(); };
   $("setResetPaper").onclick = () => {
     openOk(t("set.resetPaper"), "…", () => {
-      state.paper = freshPaper(); state.bot = null; save(); renderAll(); paintSettings();
+      botHalt();
+      const keepLive = (state.bot && state.bot.livePos) || [];   /* real coins are not paper */
+      state.paper = freshPaper(); state.bot = null;
+      if (keepLive.length) bot().livePos = keepLive;
+      save(); renderAll(); paintSettings();
+      liveWatchdogResume();
       toast(t("saved"), "ok");
     });
   };
   $("setWipe").onclick = () => {
     openOk(t("set.wipe"), "⚠ " + t("set.disclaimer"), () => {
+      botHalt();
       try { localStorage.removeItem(LSKEY); } catch (e) { }
       state.paper = freshPaper(); state.bot = null; state.alerts = []; state.favs = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
       save(); renderAll(); paintSettings(); toast(t("saved"), "ok");
@@ -2880,6 +3107,7 @@ function init() {
       } catch (e) { console.warn("auto-resume", e); }
     }, 2500);
   }
+  setTimeout(() => { try { liveWatchdogResume(); } catch (e) { } }, 6000);   /* v50 */
   // surface nav badge for alerts when they exist
   paintAlertBadge();
   logLine("CryptoAI PRO ready" + (B ? " (Android)" : " (browser · paper only)"), "");
@@ -2913,6 +3141,7 @@ async function runScan() {
     if (!s.running) break;
     try {
       const k = state.dataMode === "demo" ? demoCandles(sym, s.tf, 150) : await fetchKlinesSmart(sym, s.tf, 150);
+      if (k.demo) throw new Error("no candles");     /* v50: no fake rows in a live scan */
       const rep = TA.analyze(k);
       if (rep.ok) s.rows.push({ sym, verdict: rep.verdict, score: rep.score, conf: rep.confidence, price: rep.price, conflict: !!rep.conflict });
     } catch (e) { /* skip symbol */ }
@@ -2983,6 +3212,7 @@ async function paintMTF() {
     if (token !== mtfToken || sym !== state.sym) return;     // symbol/timeframe changed mid-flight
     try {
       const k = state.dataMode === "demo" ? demoCandles(sym, tf, 200) : await fetchKlinesSmart(sym, tf, 200);
+      if (k.demo) throw new Error("no candles");     /* v50: shows — instead of a fake verdict */
       const rep = TA.analyze(k);
       if (rep.verdict.indexOf("BUY") >= 0) buy++;
       else if (rep.verdict.indexOf("SELL") >= 0) sell++;
