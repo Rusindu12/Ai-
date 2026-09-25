@@ -3,7 +3,7 @@
    a new index.html), images are stale-while-revalidate, and everything falls back
    to the cache when offline. Exchange APIs and AI endpoints are never cached.
    Bump VERSION whenever app/ changes so installed copies refresh. */
-const VERSION = "cryptoai-pro-ai-v3";
+const VERSION = "cryptoai-pro-ai-v4";
 const SHELL = [
   "./", "./index.html", "./manifest.webmanifest", "./og-cover.png", "./robots.txt",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png",

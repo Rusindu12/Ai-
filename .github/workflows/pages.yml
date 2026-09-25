@@ -18,6 +18,7 @@ on:
       - "robots.txt"
       - "sitemap.xml"
       - "tools/check-site.py"
+      - "tools/app-tests.js"
       - ".github/workflows/pages.yml"
   workflow_dispatch: {}
 
@@ -42,6 +43,11 @@ jobs:
       # </html>, manifest is valid, APK link present — see tools/check-site.py
       - name: Sanity-check the site
         run: python3 tools/check-site.py
+
+      # the web app's paper engine, bot rules and live-order code in a Node vm (no
+      # browser, no exchange) — keeps the v50 audit fixes fixed; see tools/app-tests.js
+      - name: App regression tests
+        run: node tools/app-tests.js
 
       # enablement: true lets the workflow create the Pages site itself with the
       # workflow token (we already request pages: write). If the token is not

@@ -11,14 +11,17 @@ app** itself, plus PWA support so it can be installed to the home screen.
 │                         interactive live demo (real ta.js on live candles), phone preview,
 │                         features, included-matrix, install, safety, FAQ
 ├── robots.txt · sitemap.xml  search-engine files
-├── app/                  the web app (v49) — index.html, ta.js, patterns.js, brain.js,
-│                         app.js, sysmgmt.js, worker.js — a copy of the Rusindu12/1 terminal
+├── app/                  the web app (v50) — index.html, ta.js, patterns.js, brain.js,
+│                         app.js, sysmgmt.js, worker.js — the Rusindu12/1 terminal (v49)
+│                         plus the fixes from the v50 audit (see tools/upstream/)
 ├── manifest.webmanifest  PWA: name, icons, start_url ./app/, shortcuts
 ├── sw.js                 service worker: offline shell, never caches exchange APIs
 ├── icons/                generated icons (192/512/maskable/apple-touch/favicon)
 ├── og-cover.png          social share image (1200×630)
 ├── tools/sync-app.sh     pulls the latest terminal from Rusindu12/1 into app/
 ├── tools/check-site.py   pre-deploy checks (JS parses, SW precache list, no stray text…)
+├── tools/app-tests.js    regression tests for the app (paper, bot, live orders) — node only
+├── tools/upstream/       the v50 fixes as a patch for Rusindu12/1 (so the APK gets them)
 └── .github/workflows/pages.yml   deploys the site to GitHub Pages
 ```
 
@@ -26,15 +29,22 @@ The Android app and the terminal itself are developed in
 [`Rusindu12/1`](https://github.com/Rusindu12/1) (live at
 <https://rusindu12.github.io/1/>), whose CI publishes the
 [latest APK](https://github.com/Rusindu12/1/releases/download/cryptoai-apk-latest/CryptoAI-PRO.apk)
-on every push. This repo hosts the site and an identical copy of the web terminal.
+on every push. This repo hosts the site and a copy of the web terminal (for now with the
+v50 fixes on top — see below).
 (The older `Rs-et` APK stopped at the 20 Sep build; the download buttons now point at `Rusindu12/1`.)
 
 ## Keeping the web app in sync with Rusindu12/1
 
-`app/` must stay byte-identical to `crypto-app/app/src/main/assets/` in Rusindu12/1:
+`app/` is meant to be byte-identical to `crypto-app/app/src/main/assets/` in Rusindu12/1.
+**Right now it is one step ahead:** it has the v50 fixes (paper trading, bot, live
+orders — found in a full check of v49). Apply `tools/upstream/v50-app-fixes.patch` in
+Rusindu12/1 so the APK gets them too — see [`tools/upstream/README.md`](tools/upstream/README.md).
+Until then `tools/sync-app.sh` refuses to run, so a sync can't undo the fixes.
+
+Once both repos match again, a sync is:
 
 ```bash
-tools/sync-app.sh          # copies the latest files, then runs tools/check-site.py
+tools/sync-app.sh          # copies the latest files, then runs check-site.py + app-tests.js
 git diff --stat            # review
 # bump VERSION in sw.js (so installed copies refresh), add any new app/*.js to its SHELL list
 git commit -am "app: sync with Rusindu12/1@<sha>" && git push   # → Pages redeploys
