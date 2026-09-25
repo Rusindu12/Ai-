@@ -167,7 +167,12 @@ input,select{
 input:focus,select:focus{border-color:rgba(240,185,11,.5)}
 input[type=number]{font-variant-numeric:tabular-nums}
 .pos{background:#101728;border:1px solid var(--line);border-radius:var(--rs);padding:10px;margin-bottom:7px}
-.pos .hd{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700}
+.pos .hd{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:700}
+.pos-list-note{margin-bottom:10px}
+.ai-target-panel{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(67,137,255,.05);overflow-wrap:anywhere}
+.ai-target-panel .row{gap:8px;flex-wrap:wrap}
+.ai-target-history summary{cursor:pointer;padding:6px 0;min-height:30px}
+.ai-target-change{padding:7px 0;border-top:1px dashed var(--line)}
 .pnl{font-weight:800}
 .pbar{height:5px;border-radius:3px;background:#1b2540;margin-top:8px;position:relative;overflow:hidden}
 .pbar span{position:absolute;top:0;bottom:0;border-radius:3px}
@@ -481,6 +486,7 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
           <button class="chip on" id="bVol" data-i18n="bot.vol">Crash guard</button>
           <button class="chip on" id="bAiTp" data-i18n="bot.aitp">🎯 AI sell rate</button>
         </div>
+        <div class="hint mt" data-i18n="bot.aitpNote">When ON and the bot is running, AI can raise or lower an open bot trade’s original sell target using fresh market analysis. Manual targets stay unchanged. Targets are not guaranteed fills or profits.</div>
         <div class="grid3 mt">
           <label class="f" style="margin:0"><span class="lb" data-i18n="bot.dcaDrop">DCA drop %</span><input id="bDcaDrop" type="number" step="0.5" min="0.5" value="3"></label>
           <label class="f" style="margin:0"><span class="lb" data-i18n="bot.dcaMax">DCA max buys</span><input id="bDcaMax" type="number" step="1" min="1" max="5" value="1"></label>

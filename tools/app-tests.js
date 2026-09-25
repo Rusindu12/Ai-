@@ -160,6 +160,177 @@ const reset = () => R(`state.paper = freshPaper(); state.bot = null; state.botCf
   await sb.botEvalSymbol("BTCUSDT", R("botCfg()"));
   ok("the bot skips stale candles (last candle hours old)", R("paper().positions.length") === 0);
 
+  /* ------------------------------------------------------ adaptive AI sell rate */
+  const adjust = (metrics, px = 100, patterns = { hit: [] }) => {
+    sb.aiAdjustPos("BTCUSDT", R("botCfg()"), [{ t: Date.now(), c: px }],
+      { metrics: Object.assign({ atr: 1, macdHist: 0, rsi: 50 }, metrics) }, R("bot()"), 0.2, patterns);
+  };
+  const aiPos = (dir = 1, amount = 50, src = "bot") => {
+    const p = sb.openPaper("BTCUSDT", 100, amount, 4, 1, src, dir).pos;
+    p.aiTpPct = 4; p.aiTp0 = 4;
+    return p;
+  };
+  reset();
+  let ap = aiPos();
+  adjust({}, 99);
+  ok("AI lowers the original target even while recovering", ap.aiTpPct === 1.41 && ap.aiTp0 === 4 && near(ap.tp, 101.41), ap);
+  adjust({ atr: 4 }, 99);
+  ok("AI can raise the target again on stronger volatility", ap.aiTpPct === 5.66 && ap.aiTp0 === 4);
+  adjust({}, 101);
+  ok("AI can lower a profitable trade's target below its original rate", ap.aiTpPct === 1.39 && ap.aiTp0 === 4);
+  const heldTp = ap.tp, heldRate = ap.aiTpPct;
+  R("botCfg().aiTp = false"); adjust({ atr: 3 });
+  ok("AI sell rate OFF freezes existing targets", ap.tp === heldTp && ap.aiTpPct === heldRate);
+  R("botCfg().aiTp = true");
+  const manual = aiPos(1, 50, "manual"), limit = aiPos(1, 50, "limit");
+  adjust({ atr: 2 });
+  ok("AI never overwrites manual or limit trade targets", manual.aiTpPct === 4 && limit.aiTpPct === 4 && manual.tp === 104 && limit.tp === 104);
+
+  reset();
+  ap = aiPos();
+  const sp = aiPos(-1, 50, "bot-dca");
+  adjust({}, 100, { hit: [{ side: -1, v: 0.8, name: "bearish reversal" }] });
+  ok("reversal is evaluated per direction, not from the first position", ap.aiTpPct === 0.3 && sp.aiTpPct === 1.4 && sp.tp < sp.entry);
+  ok("AI updates a DCA trade too", sp.aiTpUpdatedAt > 0 && sp.aiTp0 === 4);
+  adjust({ macdHist: 1 });
+  ok("positive MACD fades a short but not a long", sp.aiTpPct === 0.3 && ap.aiTpPct === 1.4);
+  adjust({ rsi: 80 });
+  ok("RSI extreme lowers a long target to the fee-aware floor", ap.aiTpPct === 0.3 && ap.aiTpReason === "RSI extreme");
+
+  reset(); ap = aiPos(1, 1);
+  const tinyShort = aiPos(-1, 1);
+  R("botCfg().size = 10000; botCfg().minProfit = 0.1");
+  adjust({ macdHist: -1 });
+  ok("floor uses actual position size, not next buy size, even above the 8% cap", ap.aiTpPct > 8 && sb.posNetPnl(ap, ap.tp) >= 0.1 && sb.posNetPnl(tinyShort, tinyShort.tp) >= 0.1);
+  sb.splitPaper(ap, ap.qty / 2); adjust({ macdHist: -1 });
+  ok("partial sell remainder still meets the net-profit floor", sb.posNetPnl(ap, ap.tp) >= 0.1);
+
+  reset(); ap = aiPos();
+  adjust({}, 103); adjust({}, 100.4);
+  ok("peak-profit giveback lowers the target without changing the original", ap.aiTpPct === 0.3 && ap.aiTp0 === 4 && ap.aiTpReason.startsWith("profit lock"));
+  R("botCfg().exitMode = 'minprofit'");
+  sb.checkPaperPositions("BTCUSDT", 99);
+  ok("lowered AI target does not bypass min-profit checks at a loss", R("paper().positions.length") === 1);
+  sb.checkPaperPositions("BTCUSDT", 100.4);
+  ok("paper exit uses the revised target, not the original 4%", R("paper().positions.length") === 0 && R("paper().history[0].reason") === "profit");
+
+  reset(); ap = aiPos(); R("botCfg().exitMode = 'classic'");
+  adjust({ macdHist: -1 }); sb.checkPaperPositions("BTCUSDT", 100.4);
+  ok("classic paper TP uses the revised price", R("paper().positions.length") === 0 && near(R("paper().history[0].price"), 100.3));
+
+  reset(); ap = aiPos();
+  const protectedPos = JSON.stringify(ap);
+  R("state.dataMode = 'demo'"); adjust({ atr: 2 }); R("state.dataMode = 'live'");
+  const demoK = [{ t: Date.now(), c: 100 }]; demoK.demo = true;
+  for (const badK of [demoK, [{ t: Date.now() - 86400000, c: 100 }], [{ t: Date.now(), c: NaN }], []]) {
+    sb.aiAdjustPos("BTCUSDT", R("botCfg()"), badK, { metrics: { atr: 2 } }, R("bot()"), 0.2, { hit: [] });
+  }
+  ok("demo, stale and invalid data cannot revise real targets", JSON.stringify(ap) === protectedPos);
+
+  reset();
+  ap = sb.openPaper("BTCUSDT", 100, 50, 0, 1, "bot", 1).pos;
+  const liveAi = { id: "adaptive-live", sym: "BTCUSDT", qty: 0.5, entry: 100, tp: 104, sl: 99 };
+  R("bot()").livePos.push(liveAi);
+  // Capture debounced persistence requests (the VM normally stubs timers).
+  const originalSaveSoon = sb.saveSoon; let saveRequests = 0;
+  sb.saveSoon = () => { saveRequests++; sb.save(); };
+  adjust({});
+  ok("old paper and live positions are adopted, including missing TP/dir", ap.aiTpPct === 1.4 && near(ap.tp, 101.4) && liveAi.aiTpPct === 1.4 && near(liveAi.tp, 101.4) && Number.isFinite(liveAi.peakMove));
+  const initialAdopted = liveAi.aiTp0;
+  const lastUpdate = ap.aiTpUpdatedAt;
+  adjust({ atr: 1.01 });
+  ok("noise guard leaves target and update timestamp unchanged", ap.aiTpPct === 1.4 && ap.aiTpUpdatedAt === lastUpdate);
+  saveRequests = 0; adjust({}, 100.1);
+  ok("peak-only changes request persistence", saveRequests > 0 && ap.peakMove === 0.1);
+  adjust({ macdHist: -1 });
+  const storedAi = JSON.parse(sb.localStorage.getItem("cryptoai.pro.v2"));
+  ok("original and revised rates, reason and timestamp persist for paper + live", storedAi.paper.positions[0].aiTpPct === 0.3 && storedAi.livePos[0].aiTpPct === 0.3 && storedAi.livePos[0].aiTp0 === initialAdopted && storedAi.livePos[0].aiTpUpdatedAt > 0 && storedAi.livePos[0].aiTpReason === "momentum fade");
+  R("liveSelling.add('adaptive-live')"); adjust({ atr: 3 }); R("liveSelling.clear()");
+  ok("AI does not move the target while a live sell is in flight", liveAi.aiTpPct === 0.3);
+  sb.saveSoon = originalSaveSoon;
+  R("state.paper = null; state.bot = null; load()");
+  ok("saved AI rates survive an app reload", R("paper().positions[0].aiTp0") === 1.4 && R("bot().livePos[0].aiTpPct") === 0.3);
+
+  botSetup({ aiTp: true }); ap = sb.openPaper("BTCUSDT", 100000, 50, 7, 1, "bot", 1).pos;
+  ap.aiTpPct = 7; ap.aiTp0 = 7;
+  await sb.botEvalSymbol("BTCUSDT", R("botCfg()"));
+  ok("normal bot analysis actually invokes adaptive adjustment", ap.aiTpPct !== 7 && ap.aiTp0 === 7 && ap.aiTpUpdatedAt > 0);
+
+  /* ------------------------------------- position controls, audit and exit guard */
+  reset(); ap = aiPos();
+  R("bot().running = true");
+  const unpaused = aiPos(-1);
+  ok("one trade can pause AI revisions without changing global settings", sb.setAiTargetPaused(ap.id, false, true) && ap.aiTpPaused && R("botCfg().aiTp") === true);
+  adjust({ atr: 2 });
+  ok("paused target stays fixed; other positions still adapt", ap.aiTpPct === 4 && ap.tp === 104 && unpaused.aiTpPct === 2.8);
+  ok("AI pause control rejects missing and manual positions", !sb.setAiTargetPaused("missing", false, true) && !sb.setAiTargetPaused(aiPos(1, 50, "manual").id, false, true));
+  ok("status distinguishes a paused trade", sb.aiRevisionStatus(ap) === "pos.aiPaused");
+  sb.save(); R("state.paper = null; state.bot = null; load()");
+  ap = R("paper().positions[0]");
+  ok("pause survives reload", ap.aiTpPaused === true);
+  sb.setAiTargetPaused(ap.id, false, false); adjust({ atr: 2 });
+  ok("resume lets fresh analysis revise the target", ap.aiTpPct === 2.8 && ap.aiTpPaused === false);
+  for (const [setup, label] of [
+    ["bot().running = false", "pos.aiStopped"],
+    ["bot().running = true; botCfg().aiTp = false", "pos.aiOff"],
+    ["botCfg().aiTp = true; state.dataMode = 'demo'", "pos.aiWaiting"],
+    ["state.dataMode = 'live'; botCfg().symbols = []", "pos.aiUnselected"],
+    ["botCfg().symbols = ['BTCUSDT']", "pos.aiAuto"],
+  ]) { R(setup); ok("AI status: " + label, sb.aiRevisionStatus(ap) === label); }
+
+  reset(); ap = aiPos();
+  for (let i = 0; i < 14; i++) adjust({ atr: i % 2 ? 3 : 1 }, 99);
+  ok("target audit is newest-first and bounded to 10 entries", ap.aiTpHistory.length === 10 && ap.aiTpHistory[0].to === ap.aiTpPct && ap.aiTpHistory[0].from === ap.aiTpHistory[1].to);
+  const auditLength = ap.aiTpHistory.length, latestAudit = ap.aiTpHistory[0];
+  adjust({ atr: 3.001 }, 99);
+  ok("noise does not create an audit entry", ap.aiTpHistory.length === auditLength && ap.aiTpHistory[0] === latestAudit);
+  sb.save(); R("state.paper = null; state.bot = null; load()"); ap = R("paper().positions[0]");
+  ok("target audit survives reload", ap.aiTpHistory.length === 10 && ap.aiTpHistory[0].to === ap.aiTpPct);
+  const split = sb.splitPaper(ap, ap.qty / 2);
+  sb.setAiTargetPaused(split.id, false, true);
+  const splitAudit = JSON.stringify(split.aiTpHistory);
+  adjust({ atr: 2 }, 99);
+  ok("partial position histories are isolated on later updates", JSON.stringify(split.aiTpHistory) === splitAudit && ap.aiTpHistory !== split.aiTpHistory);
+
+  for (const dir of [1, -1]) {
+    reset(); ap = aiPos(dir);
+    adjust({ atr: 10 }, dir > 0 ? 104 : 96);
+    ok("reached " + (dir > 0 ? "long" : "short") + " target is not moved away before exit", ap.aiTpPct === 4 && near(ap.tp, dir > 0 ? 104 : 96) && !ap.aiTpHistory);
+    sb.setAiTargetPaused(ap.id, false, true);
+    sb.checkPaperPositions("BTCUSDT", dir > 0 ? 104.1 : 95.9);
+    ok("pausing AI does not block a paper profit exit (dir " + dir + ")", R("paper().positions.length") === 0);
+  }
+  reset(); ap = aiPos(); R("botCfg().minProfit = 5");
+  adjust({ atr: 10 }, 104);
+  ok("reached-target guard does not bypass the minimum net-profit floor", ap.aiTpPct > 4 && sb.posNetPnl(ap, ap.tp) >= 5);
+
+  reset(); ap = aiPos(); adjust({});
+  R("state.settings.lang = 'en'; state.tickers.BTCUSDT = { last: 100.1 }");
+  sb.paintPositions();
+  ok("position card shows fee-adjusted loss despite positive gross movement", els.posList.innerHTML.includes("Estimated net P/L") && els.posList.innerHTML.includes("-$0.05"));
+  ok("profit-only positions do not advertise an active stop loss", els.posList.innerHTML.includes("OFF (profit-only mode)"));
+  R("botCfg().exitMode = 'classic'"); sb.paintPositions();
+  ok("classic paper bot card discloses its minimum-profit stop restriction", els.posList.innerHTML.includes("Paper bot SL waits below minimum profit"));
+  ok("position card exposes revision reason, timestamp and history", els.posList.innerHTML.includes("Volatility + conviction") && els.posList.innerHTML.includes("Target updated") && els.posList.innerHTML.includes("Recent target changes"));
+  ap.aiTpReason = '<img src=x onerror=alert(1)>';
+  ap.aiTpHistory[0].reason = ap.aiTpReason;
+  sb.paintPositions();
+  ok("target reasons are HTML escaped", !els.posList.innerHTML.includes("<img") && els.posList.innerHTML.includes("&lt;img"));
+  R("state.dataMode = 'demo'"); sb.paintPositions();
+  ok("simulated quote does not fabricate P/L on a real trade", els.posList.innerHTML.includes("estimate unavailable") && /data-close="[^"]+" disabled/.test(els.posList.innerHTML));
+  R("state.dataMode = 'live'; state.tickers = {}; state.settings.liveMode = 'live'");
+  const visibleLive = { id: 12345, sym: "BTCUSDT", qty: 0.5, entry: 100, tp: 104, sl: 99, aiTpPct: 4, aiTp0: 4 };
+  R("bot()").livePos.push(visibleLive); sb.paintPositions();
+  ok("tracked live positions render without fabricating a live quote or paper close button", els.posList.innerHTML.includes("Tracked live bot positions") && els.posList.innerHTML.includes("estimate unavailable") && !els.posList.innerHTML.includes("data-close"));
+  ok("live pause handles numeric exchange order ids", sb.setAiTargetPaused("12345", true, true) && visibleLive.aiTpPaused);
+  R("liveSelling.add(12345)");
+  ok("in-flight live sells cannot be paused or resumed", !sb.setAiTargetPaused("12345", true, false));
+  R("liveSelling.clear(); state.paper = null; state.bot = null; load()");
+  ok("live pause persists", R("bot().livePos[0].aiTpPaused") === true);
+  R("state.settings.lang = 'si'");
+  ok("AI reasons and control labels support Sinhala", sb.aiReasonText("momentum fade") === R("t('pos.aiFade')") && !sb.aiTargetPanel(R("bot().livePos[0]"), true, false).includes("Pause AI revisions"));
+  R("state.settings.lang = 'en'");
+
   /* ------------------------------------------------- live orders (mocked bridge) */
   const sent = [];
   let wallet = { BTC: 0, USDT: 1000 }, syncs = 0;
@@ -224,6 +395,19 @@ const reset = () => R(`state.paper = freshPaper(); state.bot = null; state.botCf
   sent.length = 0; sb.botOnTick("BTCUSDT", 100600);
   await new Promise((r) => setImmediate(r));
   ok("no real orders while the prices are simulated", sent.length === 0);
+
+  for (const mode of ["minprofit", "classic"]) {
+    reset(); sent.length = 0; wallet = { BTC: 0.0005, USDT: 1000 };
+    R(`state.settings.exchange = "binance"; state.settings.liveMode = "live"; qtyFilters = {}; bot().running = true; botCfg().exitMode = "${mode}"; botCfg().aiTp = true;`);
+    const lp = { id: "ai-exit-" + mode, sym: "BTCUSDT", qty: 0.0005, entry: 100000, tp: 104000, sl: 99000, aiTp0: 4, aiTpPct: 4 };
+    R("bot()").livePos.push(lp);
+    sb.aiAdjustPos("BTCUSDT", R("botCfg()"), [{ t: Date.now(), c: 100400 }],
+      { metrics: { atr: 1000, macdHist: -1, rsi: 50 } }, R("bot()"), 0.2, { hit: [] });
+    sb.setAiTargetPaused(lp.id, true, true);
+    sb.botOnTick("BTCUSDT", 100400);
+    for (let i = 0; i < 3; i++) await new Promise((r) => setImmediate(r));
+    ok("live " + mode + " exit uses the revised AI target even while revisions are paused (mock exchange)", lp.aiTpPct === 0.3 && lp.aiTp0 === 4 && sent.filter((x) => x.side === "SELL").length === 1 && R("bot().livePos.length") === 0);
+  }
 
   /* ------------------------------------------------------------ backtest + brain */
   const bt = sb.TA.backtest(candles(400, 100, 0.001, 5), { minScore: 10, tpPct: 1.5, slPct: 0.8, feePct: 0.1 });

@@ -89,6 +89,51 @@ python3 -m http.server 8080     # → http://localhost:8080
 The landing page and the web app both work from a plain static server (the app
 falls back to clearly-labelled demo data when it cannot reach an exchange).
 
+## Adaptive AI sell targets
+
+In the terminal's **Bot** tab, keep **🎯 AI sell rate** enabled and the bot running.
+For symbols being analysed, the local AI/TA engine revises open bot and bot-DCA
+targets as fresh market data arrives. The original rate is no longer a lower bound:
+ATR, trend/conviction, momentum and reversal signals can raise **or lower** it,
+including while a trade is recovering. Manual and limit-trade targets stay unchanged.
+
+Paper and tracked-live position cards show **Initial AI → Current AI**, the revision
+status, reason and update time. Expand **Recent target changes** to see up to 10
+revisions per open position (newest first). These details persist across reloads;
+manual trades are not given AI controls. Pattern names retain the engine's names,
+while the common reasons and controls support English and Sinhala.
+
+Use **Pause AI revisions / Resume AI revisions** on a position card to freeze or
+resume *that trade's target changes* after confirmation. This is separate from
+the global AI sell-rate chip: it does **not** pause selling or change exit rules,
+signal-flip exits, the emergency brake or other trades. A paused trade can still
+close at its last target. The status explains when the bot is stopped, the symbol
+is not selected, or live data is unavailable. Resuming does not itself place an
+order. A live sell already in flight cannot be paused or revised.
+
+Once price has reached the current AI target **and** estimated minimum net profit,
+AI analysis leaves that target alone for the normal exit path rather than moving
+it farther away. This guard does not submit an order or guarantee a fill.
+
+Position cards show **estimated net P/L** including the engine's assumed 0.10%
+fee on each side, not gross profit. Without a usable quote, no P/L is invented and
+manual paper closing is disabled. Live cards are the bot's tracked positions,
+not a reconciliation of the exchange wallet; live targets are app-managed, not
+exchange-side orders. Keep the engine connected. SL labels reflect the existing
+profit-only / paper-bot holding rules rather than implying a guaranteed stop.
+
+Initial/current targets, pause state, history and update metadata persist
+for paper and tracked live positions. The profit floor uses each position's actual
+size and the engine's estimated fees, not the size configured for the next buy.
+This is not a profit or execution guarantee; actual fees, slippage and market gaps
+can differ. Existing exit-mode / emergency-brake rules still apply.
+
+Turning the AI sell-rate chip off stops revisions (the existing exit-mode rules
+still apply). After Stop, the watchdog uses the last target; it does not run fresh
+AI analysis. Browser operation still requires the app's engine to be active.
+These adaptive-target changes are additional to the archived v50 upstream patch;
+port them upstream before overwriting `app/` with `tools/sync-app.sh`.
+
 ## The live demo on the landing page
 
 The `#demo` section loads candles straight from Binance and runs **`app/ta.js`**

@@ -79,6 +79,18 @@ const STR = {
     "mp.target": "🎯 Daily profit target reached — bot resting", "mp.dca": "Auto-DCA · averaging down",
     "mp.volskip": "Crash guard — entry skipped", "mp.brake": "Emergency exit (max hold)",
     "bot.entry": "Entry strength (signal score 5–40; lower = more trades)", "bot.dayT": "Daily profit target USDT (0 = off)", "bot.maxHold": "Max hold days (0 = off)", "bot.maxLoss": "Brake loss %",
+    "bot.aitpNote": "When ON and the bot is running, AI can raise or lower an open bot trade’s original sell target using fresh market analysis. Manual targets stay unchanged. Targets are not guaranteed fills or profits.",
+    "pos.aiInitial": "Initial AI", "pos.aiCurrent": "Current AI",
+    "pos.slOff": "OFF (profit-only mode)", "pos.slHold": "Paper bot SL waits below minimum profit",
+    "pos.net": "Estimated net P/L", "pos.netNote": "Estimate includes 0.10% fee per side. Actual fees and slippage can differ.",
+    "pos.noQuote": "No live quote — estimate unavailable", "pos.trackedLive": "Tracked live bot positions only — not your full exchange wallet. Targets are managed by this app, not exchange-side orders; keep the engine connected.",
+    "pos.aiPause": "Pause AI revisions", "pos.aiResume": "Resume AI revisions", "pos.aiPaused": "AI revisions paused",
+    "pos.aiConfirm": "This only pauses or resumes AI target changes for this trade. It does NOT pause selling: exit rules, signal flips and the emergency brake still apply. Resume needs AI sell rate ON, a running bot, and this symbol selected.",
+    "pos.aiAuto": "AI revisions enabled", "pos.aiOff": "AI sell rate OFF — exit-mode rules apply", "pos.aiStopped": "Bot stopped — using last target",
+    "pos.aiWaiting": "Waiting for live market data", "pos.aiUnselected": "Symbol not selected — no fresh AI revisions",
+    "pos.aiUpdated": "Target updated {time} · {age} ago", "pos.aiHistory": "Recent target changes (up to 10)", "pos.aiNoHistory": "No revisions recorded yet",
+    "pos.aiAtr": "Volatility + conviction", "pos.aiFade": "Momentum weakening", "pos.aiRsi": "RSI extreme", "pos.aiLock": "Profit giveback after {peak}% peak",
+
     "bot.dca": "Auto-DCA", "bot.vol": "Crash guard", "bot.aitp": "🎯 AI sell rate", "bot.dcaDrop": "DCA drop %", "bot.dcaMax": "DCA max buys", "bot.volDrop": "Crash drop %", "mp.warn": "⚠️ SL is OFF in this mode: a losing trade is HELD until it recovers to ≥ min profit, then sold. If the market keeps falling the position can stay open for days — higher win-rate, less risk control. Use money you can leave in the market.",
     "conn.live": "live", "conn.demo": "demo data", "conn.off": "offline", "conn.loading": "loading…",
     "sort.vol": "🔥 Top volume", "sort.gain": "📈 Gainers", "sort.loss": "📉 Losers", "sort.fav": "★ Watchlist",
@@ -201,6 +213,18 @@ const STR = {
     "mp.target": "🎯 දෛනික ඉලක්කය ලැබුණා — bot එක අදට විවේකයි", "mp.dca": "Auto-DCA · average අඩු කරනවා",
     "mp.volskip": "Crash guard — entry එක skip කළා", "mp.brake": "හදිසි පිටවීම (max hold)",
     "bot.entry": "Entry ශක්තිය (score 5–40; අඩු නම් trades වැඩියි)", "bot.dayT": "දෛනික profit ඉලක්කය USDT (0 = නෑ)", "bot.maxHold": "උපරිම hold දින (0 = නෑ)", "bot.maxLoss": "Brake loss %",
+    "bot.aitpNote": "ON කරලා bot එක ක්‍රියාත්මකව තියෙද්දී, අලුත් market විශ්ලේෂණයට අනුව AI එකට open bot trade එකේ මුල් sell target එක වැඩි හෝ අඩු කරන්න පුළුවන්. Manual targets වෙනස් වෙන්නේ නැහැ. Target මිලට sell වීම හෝ ලාභ ලැබීම සහතික නැහැ.",
+    "pos.aiInitial": "මුල් AI", "pos.aiCurrent": "දැන් AI",
+    "pos.slOff": "OFF (ලාභයට පමණක් විකිණීම)", "pos.slHold": "අවම ලාභයට පහළදී paper bot SL ක්‍රියාත්මක නොවේ",
+    "pos.net": "ඇස්තමේන්තුගත ශුද්ධ ලාභ/අලාභය", "pos.netNote": "ගැනීමේදී හා විකිණීමේදී 0.10% බැගින් fee ඇතුළත් ඇස්තමේන්තුවක්. සැබෑ fees සහ slippage වෙනස් විය හැක.",
+    "pos.noQuote": "සජීවී මිලක් නැහැ — ඇස්තමේන්තුවක් පෙන්විය නොහැක", "pos.trackedLive": "මෙහි පෙන්වන්නේ app එක නිරීක්ෂණය කරන live bot trades පමණයි — මුළු exchange wallet එක නොවේ. Targets පාලනය කරන්නේ app එකෙන්; exchange එකේ තැබූ orders නොවේ. Engine එක සම්බන්ධව තබන්න.",
+    "pos.aiPause": "AI වෙනස්කම් නවත්වන්න", "pos.aiResume": "AI වෙනස්කම් යළි අරඹන්න", "pos.aiPaused": "AI target වෙනස්කම් නවත්වා ඇත",
+    "pos.aiConfirm": "මෙයින් නවත්වන්නේ හෝ යළි අරඹන්නේ මේ trade එකේ AI target වෙනස් කිරීම පමණයි. Sell කිරීම නවතින්නේ නැහැ: exit rules, signal flips සහ emergency brake තවදුරටත් ක්‍රියාත්මකයි. යළි වෙනස් කිරීමට AI sell rate ON, bot running සහ මේ symbol එක තෝරා තිබිය යුතුයි.",
+    "pos.aiAuto": "AI target වෙනස් කිරීමට ඉඩ ඇත", "pos.aiOff": "AI sell rate OFF — exit-mode නීති අදාළයි", "pos.aiStopped": "Bot නවත්වා ඇත — අවසන් target එක භාවිතා වේ",
+    "pos.aiWaiting": "සජීවී market දත්ත බලාපොරොත්තුවෙන්", "pos.aiUnselected": "Symbol එක තෝරා නැහැ — අලුත් AI වෙනස්කම් නැහැ",
+    "pos.aiUpdated": "Target වෙනස් කළේ {time} · {age} පෙර", "pos.aiHistory": "මෑත target වෙනස්වීම් (උපරිම 10)", "pos.aiNoHistory": "තවම වෙනස්වීම් සටහන් වී නැහැ",
+    "pos.aiAtr": "මිල විචලනය + AI විශ්වාසය", "pos.aiFade": "Momentum අඩු වෙමින්", "pos.aiRsi": "RSI අන්ත මට්ටමක", "pos.aiLock": "{peak}% උපරිම ලාභයෙන් පසු පහළ බැසීම",
+
     "bot.dca": "Auto-DCA", "bot.vol": "Crash guard", "bot.aitp": "🎯 AI විකුණුම් රේට්", "bot.dcaDrop": "DCA පහළවීම %", "bot.dcaMax": "DCA ගැනීම් ගණන", "bot.volDrop": "Crash %", "mp.warn": "⚠️ මේ mode එකේ SL වැඩ නෑ — loss වෙච්ච trade එක, ආයේත් ලාභ වෙනකම් hold කරලා ඉන්පස්සේ sell වෙනවා. Market එක දිගටම වැටුණොත් position එක දවස් ගානක් open වෙලා තියෙන්න පුළුවන් — win-rate වැඩි නමුත් risk control අඩුයි. Market එකේ තියාගන්න පුළුවන් සල්ලි විතරක් පාවිච්චි කරන්න.",
     "conn.live": "සජීවී", "conn.demo": "නියැදි දත්ත", "conn.off": "නොබැඳි", "conn.loading": "පූරණය…",
     "sort.vol": "🔥 වැඩිම පරිමාව", "sort.gain": "📈 ඉහළ ගිය", "sort.loss": "📉 පහළ ගිය", "sort.fav": "★ මගේ ලැයිස්තුව",
@@ -1756,42 +1780,100 @@ async function paintBalances() {
   }
 }
 
+/* Per-position controls never change global exit settings or place an order. */
+function setAiTargetPaused(id, live, paused) {
+  const positions = live ? bot().livePos || [] : paper().positions;
+  const p = positions.find((x) => String(x.id) === String(id));
+  if (!p || !Number.isFinite(p.aiTpPct) || (!live && p.src !== "bot" && p.src !== "bot-dca") || (live && liveSelling.has(p.id))) return false;
+  p.aiTpPaused = !!paused;
+  save();
+  return true;
+}
+function aiRevisionStatus(p) {
+  const cfg = botCfg(), b = bot();
+  if (p.aiTpPaused) return "pos.aiPaused";
+  if (cfg.aiTp === false) return "pos.aiOff";
+  if (!b.running) return "pos.aiStopped";
+  if (state.dataMode !== "live") return "pos.aiWaiting";
+  if (!cfg.symbols.includes(p.sym)) return "pos.aiUnselected";
+  return "pos.aiAuto";
+}
+function aiReasonText(reason) {
+  const key = { "ATR + conviction": "pos.aiAtr", "momentum fade": "pos.aiFade", "RSI extreme": "pos.aiRsi" }[reason];
+  if (key) return t(key);
+  const lock = /^profit lock ([\d.]+)%$/.exec(reason || "");
+  return lock ? t("pos.aiLock", { peak: lock[1] }) : reason || t("pos.aiNoHistory");
+}
+function aiTargetPanel(p, live, expanded) {
+  if (!Number.isFinite(p.aiTpPct) || (!live && p.src !== "bot" && p.src !== "bot-dca")) return "";
+  const history = Array.isArray(p.aiTpHistory) ? p.aiTpHistory.slice(0, 10) : [];
+  const status = aiRevisionStatus(p);
+  return `<div class="ai-target-panel">
+    <div class="row between tiny"><span>${t("pos.aiInitial")} <b>${esc(p.aiTp0 ?? p.aiTpPct)}%</b></span><span class="up">${t("pos.aiCurrent")} <b>${p.aiTpPct}%</b></span></div>
+    <div class="tiny mt ${status === "pos.aiAuto" ? "up" : "dim"}">${esc(t(status))}</div>
+    <div class="tiny mt">${esc(aiReasonText(p.aiTpReason))}</div>
+    ${p.aiTpUpdatedAt ? '<div class="tiny dim mt">' + esc(t("pos.aiUpdated", { time: fmtClock(p.aiTpUpdatedAt), age: ago(p.aiTpUpdatedAt) })) + '</div>' : ""}
+    ${history.length ? `<details class="ai-target-history tiny mt" data-history="${esc(p.id)}" ${expanded ? "open" : ""}>
+      <summary>${t("pos.aiHistory")}</summary>
+      ${history.map((h) => `<div class="ai-target-change"><div>${esc(fmtClock(h.ts))} · ${h.from == null ? "—" : esc(h.from) + "%"} → <b>${esc(h.to)}%</b></div><div class="dim">${esc(aiReasonText(h.reason))}</div></div>`).join("")}
+    </details>` : ""}
+    <button class="btn ghost sm block mt" data-ai-pause="${esc(p.id)}" ${live && liveSelling.has(p.id) ? "disabled" : ""}>${t(p.aiTpPaused ? "pos.aiResume" : "pos.aiPause")}</button>
+  </div>`;
+}
 function paintPositions() {
-  const box = $("posList");
-  const live = state.settings.liveMode === "live";
-  if (live) { box.innerHTML = '<div class="hint">' + t("trade.liveNote") + ' <span class="mut">(' + t("trade.none") + ")</span></div>"; return; }
-  const ps = paper().positions;
-  if (!ps.length) { box.innerHTML = '<div class="empty">' + t("trade.none") + "</div>"; return; }
-  box.innerHTML = ps.map((p) => {
-    const tk = state.tickers[p.sym] || { last: p.entry };
-    const pnl = p.dir * (tk.last - p.entry) * p.qty;
-    const pct = p.entry ? ((tk.last - p.entry) / p.entry) * 100 * p.dir : 0;
-    const lo = Math.min(p.tp || tk.last, p.sl || tk.last, p.entry), hi = Math.max(p.tp || tk.last, p.sl || tk.last, p.entry);
-    const at = hi > lo ? ((tk.last - lo) / (hi - lo)) * 100 : 50;
+  const box = $("posList"), live = state.settings.liveMode === "live";
+  const ps = live ? bot().livePos || [] : paper().positions;
+  const expanded = new Set(Array.from(box.querySelectorAll("details[open]")).map((x) => x.dataset.history));
+  const note = live ? '<div class="hint pos-list-note">' + t("pos.trackedLive") + '</div>' : "";
+  if (!ps.length) { box.innerHTML = note + '<div class="empty">' + t("trade.none") + "</div>"; return; }
+  box.innerHTML = note + '<div class="tiny dim pos-list-note">' + t("pos.netNote") + '</div>' + ps.map((p) => {
+    const tk = state.tickers[p.sym], dir = p.dir === -1 ? -1 : 1;
+    const botManaged = live || p.src === "bot" || p.src === "bot-dca";
+    const profitOnly = botManaged && botCfg().exitMode === "minprofit";
+    const hasQuote = tk && Number.isFinite(tk.last) && tk.last > 0 && (state.dataMode === "live" || (!live && p.demo && state.dataMode === "demo"));
+    const price = hasQuote ? tk.last : p.entry;
+    const pnl = hasQuote ? posNetPnl(p, price) : null;
+    const pct = hasQuote ? pnl / (p.entry * p.qty) * 100 : null;
+    const lo = Math.min(p.tp || price, p.sl || price, p.entry), hi = Math.max(p.tp || price, p.sl || price, p.entry);
+    const at = hi > lo ? ((price - lo) / (hi - lo)) * 100 : 50;
     const tpPos = hi > lo ? (((p.tp || hi) - lo) / (hi - lo)) * 100 : 100;
     const slPos = hi > lo ? (((p.sl || lo) - lo) / (hi - lo)) * 100 : 0;
     return `<div class="pos">
       <div class="hd"><span>${esc(p.sym.replace("USDT", "/USDT"))}
-        <span class="tiny ${p.dir > 0 ? "up" : "dn"}">${p.dir > 0 ? "LONG" : "SHORT"}</span>
-        <span class="tiny dim">${p.src === "bot" ? "🤖" : "👤"}</span></span>
-        <span class="pnl ${pnl >= 0 ? "up" : "dn"}">${fmtUsd(pnl)} (${fmtPct(pct)})</span></div>
+        <span class="tiny ${dir > 0 ? "up" : "dn"}">${dir > 0 ? "LONG" : "SHORT"}</span>
+        <span class="tiny dim">${live ? "LIVE 🤖" : p.src === "bot" || p.src === "bot-dca" ? "🤖" : "👤"}</span></span>
+        <span class="pnl ${pnl == null ? "dim" : pnl >= 0 ? "up" : "dn"}">${pnl == null ? "—" : fmtUsd(pnl) + " (" + fmtPct(pct) + ")"}</span></div>
+      <div class="tiny dim mt">${t(hasQuote ? "pos.net" : "pos.noQuote")}</div>
       <table class="kv"><tr>
         <td>${t("pos.entry")} <b>${fmtPrice(p.entry)}</b></td>
         <td>qty <b>${fmtQty(p.qty)}</b></td>
-        <td>${t("pos.now")} <b>${fmtPrice(tk.last)}</b></td>
+        <td>${t("pos.now")} <b>${hasQuote ? fmtPrice(price) : "—"}</b></td>
       </tr></table>
       <div class="pbar">
         <span style="left:${clamp(slPos, 0, 100)}%;width:2px;background:var(--dn)"></span>
         <span style="left:${clamp(tpPos, 0, 100)}%;width:2px;background:var(--up)"></span>
-        <span style="left:${clamp(at, 0, 100)}%;width:4px;background:var(--gold);margin-left:-2px"></span>
+        ${hasQuote ? `<span style="left:${clamp(at, 0, 100)}%;width:4px;background:var(--gold);margin-left:-2px"></span>` : ""}
       </div>
-      <div class="row between mt tiny dim"><span>SL ${p.sl ? fmtPrice(p.sl) : "—"}</span><span>${p.aiTpPct != null ? '<span class="up">🎯 AI ' + p.aiTpPct + (p.peakMove >= Math.max(0.5, (p.aiTp0 || p.aiTpPct) * 0.5) ? " 🔒" : "") + '%</span>' : ""}</span><span>TP ${p.tp ? fmtPrice(p.tp) : "—"}</span></div>
-      <button class="btn ghost sm block mt" data-close="${p.id}">${t("pos.close")}</button>
+      <div class="row between mt tiny dim" style="gap:8px;flex-wrap:wrap"><span>SL ${profitOnly ? t("pos.slOff") : p.sl ? fmtPrice(p.sl) : "—"}</span><span>TP ${p.tp ? fmtPrice(p.tp) : "—"}</span></div>
+      ${!live && botManaged && !profitOnly ? '<div class="tiny dim mt">' + t("pos.slHold") + '</div>' : ""}
+      ${aiTargetPanel(p, live, expanded.has(String(p.id)))}
+      ${live ? "" : `<button class="btn ghost sm block mt" data-close="${esc(p.id)}" ${hasQuote ? "" : "disabled"}>${t("pos.close")}</button>`}
     </div>`;
   }).join("");
-  box.querySelectorAll("[data-close]").forEach((b) => b.onclick = () => {
-    const pos = paper().positions.find((x) => x.id === b.dataset.close);
-    const tk = state.tickers[pos.sym] || { last: pos.entry };
+  box.querySelectorAll("[data-ai-pause]").forEach((button) => button.onclick = () => {
+    const positions = live ? bot().livePos || [] : paper().positions;
+    const pos = positions.find((x) => String(x.id) === button.dataset.aiPause);
+    if (!pos) return;
+    const paused = !pos.aiTpPaused;
+    openOk(t(paused ? "pos.aiPause" : "pos.aiResume"), esc(t("pos.aiConfirm")), () => {
+      if (setAiTargetPaused(pos.id, live, paused)) paintPositions();
+    });
+  });
+  box.querySelectorAll("[data-close]").forEach((button) => button.onclick = () => {
+    const pos = paper().positions.find((x) => x.id === button.dataset.close);
+    if (!pos) return;
+    const tk = state.tickers[pos.sym];
+    if (!tk || !Number.isFinite(tk.last) || tk.last <= 0 || (state.dataMode !== "live" && !(pos.demo && state.dataMode === "demo"))) { toast(t("pos.noQuote"), "bad"); return; }
     const r = closePaper(pos.id, tk.last, "manual");
     toast(`${t("trade.closed")} · ${fmtUsd(r.pnl)}`, r.pnl >= 0 ? "ok" : "bad");
     haptic(35); paintTrade(); paintBotStats();
@@ -2056,74 +2138,80 @@ function aiTarget(rep, klines, brainScore, brainTh) {
   return { tpP: +tpP.toFixed(2), slP: +slP.toFixed(2) };
 }
 
-/* move the sell rate of open AI trades as the market changes (2s cadence) */
+/* Re-evaluate bot sell targets on fresh analysis while the bot is running.
+   aiTp0 is an audit/display value, NOT a lower bound on future targets. */
 function aiAdjustPos(sym, cfg, klines, rep, b, brainTh, patPre) {
-  if (cfg.aiTp === false) return;
-  const px = klines[klines.length - 1].c, m = rep.metrics;
-  const mine = paper().positions.filter((x) => x.sym === sym);   /* v43: bot + DCA + manual trades all get the AI rate */
-  const live = (b.livePos || []).filter((x) => x.sym === sym);
-  if (!mine.length && !live.length) return;
-  const fresh = aiTarget(rep, klines, b._brainScore, brainTh);
-  /* v42: adopt trades opened EARLIER (before the AI rate existed, or with the chip off) —
-     they get an AI sell rate too and are managed from now on */
-  for (const hp of mine.concat(live)) {
-    if (hp.aiTpPct == null) {
-      hp.aiTpPct = fresh.tpP; hp.aiTp0 = fresh.tpP;
-      if (hp.tp) hp.tp = hp.dir > 0 ? hp.entry * (1 + fresh.tpP / 100) : hp.entry * (1 - fresh.tpP / 100);
-      b._tpLog = b._tpLog || {};
-      if (now() - (b._tpLog["ad" + sym] || 0) > 30000) {
-        b._tpLog["ad" + sym] = now();
-        logLine("🎯 AI rate " + sym + ": old trade adopted · sell rate " + fresh.tpP + "%", "ai");
-      }
-    }
-  }
+  if (cfg.aiTp === false || state.dataMode !== "live" || !klines || klines.demo || !klines.length || !rep || !rep.metrics) return;
+  const last = klines[klines.length - 1];
+  if (last.t && now() - last.t > 3 * (TF_MIN[cfg.tf] || 15) * 60000) return;
+  const px = (state.tickers[sym] && state.tickers[sym].last) || last.c, m = rep.metrics;
+  if (!Number.isFinite(px) || px <= 0 || !Number.isFinite(last.c) || last.c <= 0) return;
+  /* Manual/limit trades keep the user's TP/SL. Never revise an in-flight live exit. */
+  const mine = paper().positions.filter((x) => x.sym === sym && !x.demo && (x.src === "bot" || x.src === "bot-dca"));
+  const live = (b.livePos || []).filter((x) => x.sym === sym && !liveSelling.has(x.id));
   const all = mine.concat(live);
-  /* reversal pattern against the held direction? */
-  let revName = null;
+  if (!all.length) return;
+  const fresh = aiTarget(rep, klines, b._brainScore, brainTh);
+  if (!Number.isFinite(fresh.tpP)) return;
   try {
-    if (!patPre) patPre = (typeof Patterns !== "undefined") ? Patterns.detect(klines) : null;   /* v48: reuse botEvalSymbol's detection */
-    if (patPre) {
-      const rv = patPre.hit.find((x) => x.v >= 0.35 && x.side === -all[0].dir);
-      if (rv) revName = rv.name;
-    }
+    if (!patPre) patPre = (typeof Patterns !== "undefined") ? Patterns.detect(klines) : null;
   } catch (e) {}
-  /* profitable floor: fees + min profit + margin — AI can never target a loss */
-  const mpPct = Math.max(0.3, 0.2 + ((cfg.minProfit || 0.01) / Math.max(1, cfg.size || 50)) * 100 + 0.05);
-  const fade = (hp) => (hp.dir > 0 ? (m.macdHist != null && m.macdHist < 0) : (m.macdHist != null && m.macdHist > 0));
-  const rsiX = (hp) => (hp.dir > 0 ? (m.rsi != null && m.rsi > 75) : (m.rsi != null && m.rsi < 25));
   let changed = false;
   for (const hp of all) {
-    const move = ((px - hp.entry) / hp.entry) * 100 * hp.dir;
-    /* v44: track peak profit — once meaningful profit showed up, never let it round-trip away */
-    hp.peakMove = Math.max(hp.peakMove || 0, +move.toFixed(3));
-    const lockAt = Math.max(0.5, (hp.aiTp0 || fresh.tpP) * 0.5);
-    let np2, tag;
-    if (revName || fade(hp) || rsiX(hp)) {
-      np2 = mpPct;                                              /* exit soon — just above profit floor */
-      tag = revName || (rsiX(hp) ? "RSI extreme" : "momentum fade");
-    } else if (hp.peakMove >= lockAt && move <= mpPct * 1.6) {
-      np2 = mpPct;                                              /* 🔒 profit lock — bank it at the floor */
-      tag = "profit lock " + hp.peakMove.toFixed(1) + "%";
-    } else if (move > 0) {
-      np2 = Math.max(hp.aiTp0 || fresh.tpP, fresh.tpP);         /* in profit + trend alive → ride */
-      tag = "ATR " + fresh.tpP.toFixed(1) + "%";
-    } else {
-      np2 = hp.aiTp0 || fresh.tpP;                              /* recovering → keep the original target */
-      tag = "hold target";
+    if (hp.aiTpPaused === true) continue;
+    const dir = hp.dir === -1 ? -1 : 1;  // live spot positions have no dir field
+    const notional = hp.qty * hp.entry;
+    if (!Number.isFinite(notional) || notional <= 0 || !(hp.entry > 0)) continue;
+    /* Exact fee-aware floor for THIS position (including partial sells / DCA),
+       not the configured size of the next buy. Round UP so cents cannot undercut it. */
+    const minProfit = Math.max(0.01, Number(cfg.minProfit) || 0.01);
+    const move = ((px - hp.entry) / hp.entry) * 100 * dir;
+    // Do not move the goalposts once an existing target is executable. Let the
+    // normal exit path run; this guard itself never submits an exchange order.
+    if (Number.isFinite(hp.aiTpPct) && move + 1e-9 >= hp.aiTpPct && posNetPnl(hp, px) >= minProfit) continue;
+    const floor = Math.max(0.3, 100 * (2 * FEE_RATE + minProfit / notional) / (1 - dir * FEE_RATE) + 0.05);
+    const mpPct = Math.ceil(floor * 100) / 100;
+    // A tiny/dust short may not be able to reach the requested net profit at all.
+    if (!Number.isFinite(mpPct) || (dir < 0 && mpPct >= 100)) continue;
+    const adopting = !Number.isFinite(hp.aiTpPct);
+    if (!Number.isFinite(hp.aiTp0)) {
+      hp.aiTp0 = adopting ? fresh.tpP : hp.aiTpPct;
+      changed = true;
     }
-    np2 = Math.max(mpPct, Math.min(8, np2));
-    if (Math.abs(np2 - hp.aiTpPct) < 0.05) continue;            /* noise guard */
-    const oldP = hp.aiTpPct;
-    hp.aiTpPct = +np2.toFixed(2);
-    if (hp.tp) hp.tp = hp.dir > 0 ? hp.entry * (1 + np2 / 100) : hp.entry * (1 - np2 / 100);
+    const peak = Math.max(hp.peakMove || 0, +move.toFixed(3));
+    if (peak !== hp.peakMove) { hp.peakMove = peak; changed = true; }
+    const lockAt = Math.max(0.5, hp.aiTp0 * 0.5);
+    const reversal = patPre && Array.isArray(patPre.hit) && patPre.hit.find((x) => x.v >= 0.35 && x.side === -dir);
+    const fade = m.macdHist != null && m.macdHist * dir < 0;
+    const extreme = m.rsi != null && (dir > 0 ? m.rsi > 75 : m.rsi < 25);
+    let next = fresh.tpP, reason = "ATR + conviction";
+    if (reversal || fade || extreme) {
+      next = mpPct;
+      reason = reversal ? reversal.name : extreme ? "RSI extreme" : "momentum fade";
+    } else if (peak >= lockAt && move <= mpPct * 1.6) {
+      next = mpPct;
+      reason = "profit lock " + peak.toFixed(1) + "%";
+    }
+    // Both recovering and profitable trades can move UP or DOWN with the market.
+    // The safety floor wins over the normal 8% volatility cap for small positions.
+    next = Math.max(mpPct, Math.min(8, next));
+    next = +next.toFixed(2);
+    if (!adopting && hp.aiTpPct >= mpPct && Math.abs(next - hp.aiTpPct) < 0.05) continue;
+    const old = hp.aiTpPct;
+    hp.aiTpPct = next;
+    hp.tp = hp.entry * (1 + dir * next / 100);
+    hp.aiTpReason = reason;
+    hp.aiTpUpdatedAt = now();
+    hp.aiTpHistory = [{ ts: hp.aiTpUpdatedAt, from: adopting ? null : old, to: next, reason },
+      ...(Array.isArray(hp.aiTpHistory) ? hp.aiTpHistory : [])].slice(0, 10);
     changed = true;
     b._tpLog = b._tpLog || {};
     if (now() - (b._tpLog[sym] || 0) > 30000) {
       b._tpLog[sym] = now();
-      logLine("🎯 AI sell rate " + sym + ": " + oldP.toFixed(2) + "% → " + np2.toFixed(2) + "% · " + tag, "ai");
+      logLine("🎯 AI sell rate " + sym + ": " + (adopting ? "adopted" : old.toFixed(2) + "%") + " → " + next.toFixed(2) + "% · " + reason, "ai");
     }
   }
-  if (changed) saveSoon();   /* v48: debounced */
+  if (changed) saveSoon();  // includes adoption and peak-only changes
 }
 
 async function botTick() {
@@ -2232,6 +2320,7 @@ async function botEvalSymbol(sym, cfg) {
       if (bias < 0 && !cfg.allowShort) bias = 0;
     }
   } else {
+    b._brainScore = null;
     bias = decide(rep, klines, cfg.strategy, cfg.allowShort);
   }
   const price = (state.tickers[sym] && state.tickers[sym].last) || klines[klines.length - 1].c;
