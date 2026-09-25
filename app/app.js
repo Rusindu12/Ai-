@@ -1006,7 +1006,8 @@ function renderChart() {
   const cv = $("chart");
   const wrap = cv.parentElement;
   const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-  const W = wrap.clientWidth, H = 260;
+  /* v50: desktop layout (≥1100px) gets a taller chart that fits the window */
+  const W = wrap.clientWidth, H = window.innerWidth >= 1100 ? Math.max(300, Math.min(620, window.innerHeight - 400)) : 260;
   cv.width = W * dpr; cv.height = H * dpr;
   cv.style.height = H + "px";
   const ctx = cv.getContext("2d");

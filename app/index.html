@@ -252,6 +252,37 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
 .sm-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .sm-key{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font-size:19px;font-weight:600;cursor:pointer}
 .sm-key:active{background:rgba(240,185,11,.15);border-color:var(--gold)}
+
+/* ============================ desktop (v50) ==============================
+   ≥1100px wide: the phone column becomes a dashboard — tabs in a left sidebar,
+   cards in two columns, a taller chart, markets in two columns. Phones and
+   tablets (<1100px) keep the exact phone layout above. */
+@media (min-width:1100px){
+  .app{display:grid;grid-template-columns:196px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);
+       grid-template-areas:"top top" "tick tick" "nav main";max-width:1440px;
+       border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .top{grid-area:top;padding-left:18px;padding-right:18px}
+  .ticker{grid-area:tick}
+  main{grid-area:main;padding:16px 20px 26px;min-height:0}
+  nav{grid-area:nav;flex-direction:column;gap:4px;padding:14px 10px;border-top:0;border-right:1px solid var(--line);overflow-y:auto}
+  nav button{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 14px;border-radius:10px;font-size:13px;color:var(--mut)}
+  nav button i{font-size:18px}
+  nav button:hover{background:rgba(255,255,255,.04)}
+  nav button.on{background:rgba(240,185,11,.09)}
+  nav button.on::before{top:9px;bottom:9px;left:0;width:3px;height:auto}
+  nav .nb{top:50%;right:12px;transform:translateY(-50%)}
+  /* two-column card flow (masonry) — the first block of a tab spans both */
+  #t-signals.on,#t-trade.on,#t-bot.on,#t-sys.on{column-count:2;column-gap:14px}
+  #t-signals>*,#t-trade>*,#t-bot>*,#t-sys>*{break-inside:avoid}
+  #t-signals>.verdict,#t-trade>#modeSeg,#t-bot>.card.tight,#t-sys>.sm-head,#t-sys>.sm-procs-card{column-span:all;margin-bottom:12px}
+  .card.mt{margin-top:0}
+  #mList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px}
+  .toasts{bottom:24px}
+}
+@media (min-width:1600px){
+  #t-signals.on,#t-bot.on,#t-sys.on{column-count:3}
+  #mList{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>

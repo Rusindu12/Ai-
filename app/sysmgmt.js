@@ -534,7 +534,7 @@ function buildDOM() {
   sec.appendChild(head);
 
   /* process management */
-  const pc = h("div", "card");
+  const pc = h("div", "card sm-procs-card");      /* v50: class — spans the desktop columns */
   pc.innerHTML = '<h3>' + T("mod.proc") + '</h3><div class="hint">' + T("mod.proc.d") + '</div><div id="smProcs" class="mt"></div>';
   sec.appendChild(pc);
 
