@@ -1,0 +1,154 @@
+name: Build APK (Android app)
+
+# Builds the CryptoAI PRO Android app from the web app in this repo (app/) and the
+# Android shell (Kotlin + Gradle) from Rusindu12/1 at the commit pinned below.
+#
+#   every push that touches app/  ->  the APK is attached to the run (artifact)
+#   pushes to main                ->  it is also published to this repo's
+#                                     "cryptoai-apk-latest" release, which the
+#                                     site's Download APK buttons link to
+#
+# Like the Rusindu12/1 builds, the APK is debug-signed on a fresh runner, so
+# Android won't install it over an older CryptoAI PRO: uninstall that one first.
+#
+# To use a newer Android shell, change SHELL_REF (and VERSION_CODE / VERSION_NAME).
+on:
+  push:
+    paths:
+      - "app/**"
+      - "tools/app-tests.js"
+      - ".github/workflows/apk.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # only the "Publish" step (main only) writes: the release upload
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash     # -e -o pipefail
+
+env:
+  SHELL_REPO: Rusindu12/1
+  SHELL_REF: 666ccd0f342c576eccf6551ee81089e950cb53ff   # Rusindu12/1 main, 24 Sep (app v49)
+  VERSION_CODE: "50"
+  VERSION_NAME: "50.0"
+  RELEASE_TAG: cryptoai-apk-latest
+  APK_NAME: CryptoAI-PRO.apk
+
+jobs:
+  apk:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # the paper engine, bot rules and live-order code, in a Node vm
+      - name: App regression tests
+        run: node tools/app-tests.js
+
+      - name: Get the Android shell (Rusindu12/1)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SHELL_REPO }}
+          ref: ${{ env.SHELL_REF }}
+          path: shell
+          persist-credentials: false
+
+      - name: Put app/ into the APK and set the version
+        run: |
+          A=shell/crypto-app/app/src/main/assets
+          G=shell/crypto-app/app/build.gradle.kts
+          test -f "$A/index.html"
+          test -f "$G"
+          rm -rf "$A"
+          mkdir -p "$A"
+          cp -a app/. "$A/"
+          sed -i -E "s/versionCode = [0-9]+/versionCode = $VERSION_CODE/; s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/" "$G"
+          grep -nE "versionCode|versionName" "$G"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      - name: Build
+        working-directory: shell/crypto-app
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      # the right package and version, a valid signature, and exactly our app/ inside
+      - name: Check the APK
+        run: |
+          APK=$(ls shell/crypto-app/app/build/outputs/apk/debug/*.apk)
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$BT/aapt2" dump badging "$APK" > badging.txt 2>/dev/null || "$BT/aapt" dump badging "$APK" > badging.txt
+          grep -E "^package:|^sdkVersion|^targetSdkVersion|^application-label:" badging.txt
+          grep -q "name='com.cryptoai.pro' versionCode='$VERSION_CODE' versionName='$VERSION_NAME'" badging.txt
+          "$BT/apksigner" verify --print-certs "$APK" | grep -E "^Signer #1 certificate (DN|SHA-256)"
+          rm -rf apk-assets
+          mkdir apk-assets
+          unzip -q "$APK" 'assets/*' -d apk-assets
+          n=0
+          while IFS= read -r f; do
+            cmp -s "app/$f" "apk-assets/assets/$f" || { echo "::error::assets/$f in the APK is not app/$f"; exit 1; }
+            n=$((n + 1))
+          done < <(cd app && find . -type f | sed 's|^\./||')
+          echo "all $n files of app/ are in the APK, byte for byte"
+          cp "$APK" "$APK_NAME"
+          sha256sum "$APK_NAME" | tee "$APK_NAME.sha256"
+          {
+            echo "### CryptoAI PRO for Android v$VERSION_NAME"
+            echo ""
+            echo "- $(grep '^package:' badging.txt | cut -d' ' -f2-4)"
+            echo "- size: $(du -k "$APK_NAME" | cut -f1) KB, SHA-256 \`$(cut -d' ' -f1 "$APK_NAME.sha256")\`"
+            echo "- web app: \`app/\` at ${GITHUB_SHA::7}, Android shell: $SHELL_REPO@${SHELL_REF::7}"
+            echo "- download: the artifact below (a zip with the APK inside)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CryptoAI-PRO-v${{ env.VERSION_NAME }}-apk
+          path: |
+            ${{ env.APK_NAME }}
+            ${{ env.APK_NAME }}.sha256
+          if-no-files-found: error
+
+      - name: Publish to the release (main only)
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          R="$GITHUB_REPOSITORY"
+          SUM=$(cut -d' ' -f1 "$APK_NAME.sha256")
+          cat > notes.md <<EOF
+          **CryptoAI PRO for Android v$VERSION_NAME** (versionCode $VERSION_CODE): the web app from
+          [\`app/\`](https://github.com/$R/tree/$GITHUB_SHA/app) at ${GITHUB_SHA::7} in the Android shell
+          from [$SHELL_REPO@${SHELL_REF::7}](https://github.com/$SHELL_REPO/tree/$SHELL_REF/crypto-app).
+
+          - Android 7.0 or newer. Debug-signed, so Android asks you to allow "install unknown apps".
+          - **Already have CryptoAI PRO?** Uninstall it first. Every build is signed with a new
+            key, so Android won't install over it ("App not installed"). Uninstalling clears the
+            app's data (paper account, brain, saved API keys), so keep your keys at hand.
+          - SHA-256: \`$SUM\`
+
+          The same app in the browser: https://rusindu12.github.io/Ai-/app/
+          EOF
+          if gh release view "$RELEASE_TAG" --repo "$R" >/dev/null 2>&1; then
+            gh release edit "$RELEASE_TAG" --repo "$R" --notes-file notes.md
+          else
+            gh release create "$RELEASE_TAG" --repo "$R" --target "$GITHUB_SHA" \
+              --title "CryptoAI PRO — Android APK (latest build)" --notes-file notes.md
+          fi
+          gh release upload "$RELEASE_TAG" "$APK_NAME" "$APK_NAME.sha256" --repo "$R" --clobber
+          echo "- published: https://github.com/$R/releases/download/$RELEASE_TAG/$APK_NAME" >> "$GITHUB_STEP_SUMMARY"
+          echo "APK: https://github.com/$R/releases/download/$RELEASE_TAG/$APK_NAME"
