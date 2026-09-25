@@ -210,6 +210,79 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
 .toast{background:rgba(18,26,43,.97);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:11px;padding:9px 13px;font-size:12.5px;max-width:88%;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:up .2s ease}
 .toast.ok{border-left-color:var(--up)}.toast.bad{border-left-color:var(--dn)}
 .grab{width:38px;height:4px;border-radius:3px;background:#2a3757;margin:8px auto 0}
+/* ----------------------- sysmgmt — System / Meheyuma engine ---------------- */
+.sm-chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px;vertical-align:middle}
+.sm-live{background:rgba(14,203,129,.14);color:var(--up);border:1px solid rgba(14,203,129,.4)}
+.sm-warn{background:rgba(240,185,11,.12);color:var(--gold);border:1px solid rgba(240,185,11,.4)}
+.sm-off{background:rgba(131,148,180,.12);color:var(--mut);border:1px solid var(--line)}
+.sm-ok{color:var(--up)} .sm-bad{color:var(--dn)} .sm-mid{color:var(--gold)}
+.sm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:8px}
+.sm-stat{background:var(--card2);border:1px solid var(--line);border-radius:var(--rs);padding:8px 10px;text-align:center}
+.sm-stat b{display:block;font-size:14px} .sm-stat span{font-size:11px;color:var(--mut)}
+.sm-prow{display:grid;grid-template-columns:minmax(120px,1.4fr) 64px 1fr 42px 40px 74px 96px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.sm-prow:last-child{border-bottom:0}
+.sm-pname{display:flex;align-items:center;gap:8px;min-width:0}
+.sm-pname i{font-style:normal;font-size:17px}
+.sm-pname span{display:block;font-size:10px}
+.sm-pname b{font-size:12.5px}
+.sm-gauge{height:6px;border-radius:4px;background:var(--card2);overflow:hidden}
+.sm-gauge i{display:block;height:100%;background:linear-gradient(90deg,var(--up),var(--gold));border-radius:4px}
+.sm-cpu{font-size:11px;text-align:right}
+.sm-sel{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:4px 6px;font-size:11.5px}
+.sm-act{display:flex;gap:4px;justify-content:flex-end}
+.sm-act button{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:8px;min-width:30px;height:28px;font-size:13px;cursor:pointer}
+.sm-act button:active{border-color:var(--gold)}
+.sm-kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.sm-kv:last-child{border-bottom:0}
+.sm-kv .small{font-size:11px}
+.sm-log{max-height:150px;overflow:auto}
+.sm-spark{width:100%;height:64px;background:var(--card2);border:1px solid var(--line);border-radius:var(--rs);margin-top:6px}
+.sm-hist{display:flex;align-items:flex-end;gap:2px;height:28px}
+.sm-hist i{width:5px;background:var(--up);border-radius:2px;display:block;opacity:.85}
+.sm-hist i.bad{background:var(--dn)}
+@media(max-width:420px){.sm-prow{grid-template-columns:minmax(100px,1.3fr) 56px 1fr 70px;grid-auto-rows:auto}
+ .sm-prow .sm-sel,.sm-prow .sm-act{grid-column:auto}}
+.sm-lock{position:fixed;inset:0;background:rgba(5,8,14,.96);z-index:9999;display:none;align-items:center;justify-content:center}
+.sm-lock.on{display:flex}
+.sm-lockcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;width:min(88vw,320px);text-align:center}
+.sm-lockt{font-size:15px;font-weight:700;margin-top:8px;min-height:20px}
+.sm-pindots{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.sm-pindots i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--mut);display:block}
+.sm-pindots i.on{background:var(--gold);border-color:var(--gold)}
+.sm-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sm-key{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font-size:19px;font-weight:600;cursor:pointer}
+.sm-key:active{background:rgba(240,185,11,.15);border-color:var(--gold)}
+
+/* ============================ desktop (v50) ==============================
+   ≥1100px wide: the phone column becomes a dashboard — tabs in a left sidebar,
+   cards in two columns, a taller chart, markets in two columns. Phones and
+   tablets (<1100px) keep the exact phone layout above. */
+@media (min-width:1100px){
+  .app{display:grid;grid-template-columns:196px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);
+       grid-template-areas:"top top" "tick tick" "nav main";max-width:1440px;
+       border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .top{grid-area:top;padding-left:18px;padding-right:18px}
+  .ticker{grid-area:tick}
+  main{grid-area:main;padding:16px 20px 26px;min-height:0}
+  nav{grid-area:nav;flex-direction:column;gap:4px;padding:14px 10px;border-top:0;border-right:1px solid var(--line);overflow-y:auto}
+  nav button{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 14px;border-radius:10px;font-size:13px;color:var(--mut)}
+  nav button i{font-size:18px}
+  nav button:hover{background:rgba(255,255,255,.04)}
+  nav button.on{background:rgba(240,185,11,.09)}
+  nav button.on::before{top:9px;bottom:9px;left:0;width:3px;height:auto}
+  nav .nb{top:50%;right:12px;transform:translateY(-50%)}
+  /* two-column card flow (masonry) — the first block of a tab spans both */
+  #t-signals.on,#t-trade.on,#t-bot.on,#t-sys.on{column-count:2;column-gap:14px}
+  #t-signals>*,#t-trade>*,#t-bot>*,#t-sys>*{break-inside:avoid}
+  #t-signals>.verdict,#t-trade>#modeSeg,#t-bot>.card.tight,#t-sys>.sm-head,#t-sys>.sm-procs-card{column-span:all;margin-bottom:12px}
+  .card.mt{margin-top:0}
+  #mList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px}
+  .toasts{bottom:24px}
+}
+@media (min-width:1600px){
+  #t-signals.on,#t-bot.on,#t-sys.on{column-count:3}
+  #mList{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
@@ -389,6 +462,31 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
           <label class="f" style="margin:0"><span class="lb">TP %</span><input id="bTp" type="number" inputmode="decimal" value="1.5"></label>
           <label class="f" style="margin:0"><span class="lb">SL %</span><input id="bSl" type="number" inputmode="decimal" value="0.8"></label>
         </div>
+        <div class="grid2 mt">
+          <label class="f" style="margin:0"><span class="lb" data-i18n="mp.mode">Exit mode</span>
+            <select id="bExit">
+              <option value="classic" data-i18n-opt="mp.classic">Classic (TP/SL)</option>
+              <option value="minprofit" data-i18n-opt="mp.minprofit">✅ Sell at ANY profit — never at a loss</option>
+            </select></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="mp.min">Min profit (USDT, net of fees)</span><input id="bMinP" type="number" step="0.01" min="0.01" value="0.01"></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="bot.entry">Entry strength (signal score 5–40)</span><input id="bEntry" type="number" step="1" min="5" max="40" value="20"></label>
+        </div>
+        <div class="hint mt" id="mpWarn" style="display:none"></div>
+        <div class="grid2 mt">
+          <label class="f" style="margin:0"><span class="lb" data-i18n="bot.dayT">Daily profit target USDT (0 = off)</span><input id="bDayT" type="number" step="0.5" min="0" value="0"></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="bot.maxHold">Max hold days (0 = off)</span><input id="bMaxHold" type="number" step="1" min="0" value="0"></label>
+        </div>
+        <div class="row mt" style="gap:6px;flex-wrap:wrap">
+          <button class="chip" id="bDca" data-i18n="bot.dca">Auto-DCA</button>
+          <button class="chip on" id="bVol" data-i18n="bot.vol">Crash guard</button>
+          <button class="chip on" id="bAiTp" data-i18n="bot.aitp">🎯 AI sell rate</button>
+        </div>
+        <div class="grid3 mt">
+          <label class="f" style="margin:0"><span class="lb" data-i18n="bot.dcaDrop">DCA drop %</span><input id="bDcaDrop" type="number" step="0.5" min="0.5" value="3"></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="bot.dcaMax">DCA max buys</span><input id="bDcaMax" type="number" step="1" min="1" max="5" value="1"></label>
+          <label class="f" style="margin:0"><span class="lb" data-i18n="bot.volDrop">Crash drop %</span><input id="bVolDrop" type="number" step="1" min="2" value="5"></label>
+        </div>
+        <label class="f mt" style="margin:0"><span class="lb" data-i18n="bot.maxLoss">Brake loss %</span><input id="bMaxLoss" type="number" step="5" min="5" value="25"></label>
       </div>
       <div class="card">
         <h3 id="lblSym" data-i18n="bot.symbols">Symbols</h3>
@@ -410,11 +508,41 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
         <button class="btn primary" id="botStart" data-i18n="bot.start">▶ Start bot</button>
         <button class="btn ghost" id="botStop" data-i18n="bot.stop">■ Stop</button>
       </div>
+      <div class="card mt" id="brainCard">
+        <div class="row between">
+          <h3 style="margin:0">🧠 <span data-i18n="brain.title">AI Brain</span></h3>
+          <span class="chip on" id="brainChip">—</span>
+        </div>
+        <div class="hint mt" data-i18n="brain.desc"></div>
+        <div class="grid4 mt" id="brainStats"></div>
+        <div id="brainWeights" class="mt"></div>
+        <div class="row mt" style="gap:6px">
+          <button class="btn ghost sm" id="brainTrain">🎓 <span data-i18n="brain.train">Train on history</span></button>
+          <button class="btn ghost sm" id="brainReset">♻️ <span data-i18n="brain.reset">Reset</span></button>
+        </div>
+        <div class="hint mt" id="brainNote"></div>
+      </div>
+      <div class="card mt" id="c247">
+        <div class="row between">
+          <h3 style="margin:0">⏰ <span data-i18n="bot24.title">24/7 trading</span></h3>
+          <span class="chip" id="btBgChip">—</span>
+        </div>
+        <div class="hint mt" data-i18n="bot24.desc"></div>
+        <div class="grid2 mt">
+          <button class="btn ghost sm" id="btBatFix">🔋 <span data-i18n="bot24.batfix">Allow unrestricted battery</span></button>
+          <button class="btn ghost sm" id="btTest">🧪 <span data-i18n="bot24.test">Close app (bot continues)</span></button>
+        </div>
+        <div class="hint mt" id="btBatLine">—</div>
+        <div class="hint mt" data-i18n="bot24.tips"></div>
+      </div>
       <div class="card mt">
         <div class="row between"><h3 style="margin:0" data-i18n="bot.log">Activity log</h3><button class="btn ghost sm" id="botClear" data-i18n="bot.clear">clear</button></div>
         <div class="log mt" id="botLog"></div>
       </div>
     </section>
+
+    <!-- ============================== system ============================= -->
+    <section class="tab" id="t-sys"></section>
   </main>
 
   <!-- ================================ nav =============================== -->
@@ -424,6 +552,7 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
     <button data-tab="signals"><i>🎯</i><span data-i18n="nav.signals">Signals</span></button>
     <button data-tab="trade"><i>💱</i><span data-i18n="nav.trade">Trade</span><span class="nb" id="navBadge" style="display:none">0</span></button>
     <button data-tab="bot"><i>🤖</i><span data-i18n="nav.bot">Bot</span></button>
+    <button data-tab="sys"><i>🖥️</i><span data-i18n="nav.sys">System</span></button>
   </nav>
 </div>
 
@@ -453,8 +582,8 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
 
       <div class="card">
         <h3 data-i18n="set.keys">API keys (live trading)</h3>
-        <label class="f"><span class="lb">API key</span><input id="setKey" autocomplete="off" spellcheck="false"></label>
-        <label class="f"><span class="lb">API secret</span><input id="setSecret" type="password" autocomplete="off"></label>
+        <label class="f"><span class="lb">API key</span><input id="setKey" autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" inputmode="text" placeholder="64-char key — Copy button එකෙන් paste"></label>
+        <label class="f"><span class="lb">API secret</span><input id="setSecret" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="64-char secret — Copy button එකෙන් paste"></label>
         <div class="row">
           <button class="btn primary sm" id="setSaveKeys" data-i18n="set.save">Save</button>
           <button class="btn ghost sm" id="setTestKeys" data-i18n="set.test">Test connection</button>
@@ -561,6 +690,9 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
 <div class="toasts" id="toasts"></div>
 
 <script src="ta.js"></script>
+<script src="patterns.js"></script>
+<script src="brain.js"></script>
 <script src="app.js"></script>
+<script src="sysmgmt.js"></script>
 </body>
 </html>
