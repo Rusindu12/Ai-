@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -54,7 +54,7 @@ jobs:
         run: node tools/app-tests.js
 
       - name: Get the Android shell (Rusindu12/1)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.SHELL_REPO }}
           ref: ${{ env.SHELL_REF }}
@@ -73,12 +73,12 @@ jobs:
           sed -i -E "s/versionCode = [0-9]+/versionCode = $VERSION_CODE/; s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/" "$G"
           grep -nE "versionCode|versionName" "$G"
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: "8.7"
 
@@ -89,33 +89,42 @@ jobs:
       # the right package and version, a valid signature, and exactly our app/ inside
       - name: Check the APK
         run: |
+          trap 'echo "::error title=Check the APK::line $LINENO (exit $?): $BASH_COMMAND"' ERR
           APK=$(ls shell/crypto-app/app/build/outputs/apk/debug/*.apk)
-          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-          "$BT/aapt2" dump badging "$APK" > badging.txt 2>/dev/null || "$BT/aapt" dump badging "$APK" > badging.txt
-          grep -E "^package:|^sdkVersion|^targetSdkVersion|^application-label:" badging.txt
-          grep -q "name='com.cryptoai.pro' versionCode='$VERSION_CODE' versionName='$VERSION_NAME'" badging.txt
-          "$BT/apksigner" verify --print-certs "$APK" | grep -E "^Signer #1 certificate (DN|SHA-256)"
-          rm -rf apk-assets
-          mkdir apk-assets
-          unzip -q "$APK" 'assets/*' -d apk-assets
-          n=0
-          while IFS= read -r f; do
-            cmp -s "app/$f" "apk-assets/assets/$f" || { echo "::error::assets/$f in the APK is not app/$f"; exit 1; }
-            n=$((n + 1))
-          done < <(cd app && find . -type f | sed 's|^\./||')
-          echo "all $n files of app/ are in the APK, byte for byte"
+          BT="$ANDROID_HOME/build-tools/34.0.0"          # what AGP 8 builds with
+          [ -x "$BT/aapt2" ] || BT=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
+          echo "APK: $APK  build-tools: $BT"
+          "$BT/aapt2" dump badging "$APK" > badging.txt || echo "::warning title=aapt2::dump badging exit $?"
+          PKG=$(grep -m1 "^package:" badging.txt)
+          echo "::notice title=APK::$PKG"
+          [[ "$PKG" == *"name='com.cryptoai.pro' versionCode='$VERSION_CODE' versionName='$VERSION_NAME'"* ]]
+          grep -E "^(minSdkVersion|sdkVersion|targetSdkVersion|application-label):" badging.txt || true
+          "$BT/apksigner" verify --print-certs "$APK" > signer.txt
+          echo "::notice title=Signature::$(grep -m1 "certificate DN" signer.txt)"
+          python3 - "$APK" <<'PY'
+          import pathlib, sys, zipfile
+          z = zipfile.ZipFile(sys.argv[1]); names = set(z.namelist())
+          files = sorted(p for p in pathlib.Path("app").rglob("*") if p.is_file())
+          bad = [p for p in files if "assets/" + p.relative_to("app").as_posix() not in names
+                 or z.read("assets/" + p.relative_to("app").as_posix()) != p.read_bytes()]
+          for p in bad:
+              print(f"::error title=APK assets::{p} is missing from the APK or different")
+          print(f"all {len(files)} files of app/ are in the APK, byte for byte" if not bad else "")
+          sys.exit(1 if bad else 0)
+          PY
           cp "$APK" "$APK_NAME"
           sha256sum "$APK_NAME" | tee "$APK_NAME.sha256"
           {
             echo "### CryptoAI PRO for Android v$VERSION_NAME"
             echo ""
-            echo "- $(grep '^package:' badging.txt | cut -d' ' -f2-4)"
+            echo "- $(echo "$PKG" | cut -d' ' -f2-4)"
             echo "- size: $(du -k "$APK_NAME" | cut -f1) KB, SHA-256 \`$(cut -d' ' -f1 "$APK_NAME.sha256")\`"
             echo "- web app: \`app/\` at ${GITHUB_SHA::7}, Android shell: $SHELL_REPO@${SHELL_REF::7}"
             echo "- download: the artifact below (a zip with the APK inside)"
           } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=APK size::$(du -k "$APK_NAME" | cut -f1) KB, sha256 $(cut -d' ' -f1 "$APK_NAME.sha256")"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: CryptoAI-PRO-v${{ env.VERSION_NAME }}-apk
           path: |
