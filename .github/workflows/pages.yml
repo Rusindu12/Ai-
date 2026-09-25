@@ -19,6 +19,8 @@ on:
       - "sitemap.xml"
       - "tools/check-site.py"
       - "tools/app-tests.js"
+      - "INSTALL_SI.md"                  # check-site.py compares the APK links here and in
+      - ".github/workflows/apk.yml"      # index.html with the release apk.yml publishes
       - ".github/workflows/pages.yml"
   workflow_dispatch: {}
 
@@ -40,7 +42,8 @@ jobs:
 
       # JS parses (app, service worker, inline scripts), every script the app loads
       # exists, every file the service worker precaches exists, no stray text after
-      # </html>, manifest is valid, APK link present — see tools/check-site.py
+      # </html>, manifest is valid, APK links = the release apk.yml publishes — see
+      # tools/check-site.py
       - name: Sanity-check the site
         run: python3 tools/check-site.py
 

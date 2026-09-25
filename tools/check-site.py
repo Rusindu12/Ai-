@@ -9,6 +9,8 @@ Fails (exit 1) when something would break the live site:
   * a file listed in the service worker's SHELL is missing (the worker would never install)
   * anything but whitespace follows </html> (it shows up as stray text on the page)
   * the manifest is not valid JSON, or the APK download link is gone
+  * an APK link (index.html, INSTALL_SI.md) is not the release .github/workflows/apk.yml
+    publishes
   * the landing page contains letters that are neither Sinhala nor Latin (a stray line of
     another script once slipped into a Sinhala string and showed up as gibberish)
 """
@@ -92,6 +94,20 @@ except ValueError as e:
     fail(f"manifest.webmanifest is not valid JSON ({e})")
 if "releases/download" not in read("index.html"):
     fail("index.html: APK download link missing")
+
+# 5b. every APK link goes to the release that .github/workflows/apk.yml publishes
+wf = read(".github/workflows/apk.yml") if os.path.isfile(".github/workflows/apk.yml") else ""
+tag = re.search(r"^\s*RELEASE_TAG:\s*\"?([\w.-]+)", wf, re.M)
+apk = re.search(r"^\s*APK_NAME:\s*\"?([\w.-]+)", wf, re.M)
+if not (tag and apk):
+    fail(".github/workflows/apk.yml: RELEASE_TAG / APK_NAME not found")
+else:
+    rel = "https://github.com/Rusindu12/Ai-/releases"
+    want = {"download": f"{rel}/download/{tag.group(1)}/{apk.group(1)}", "tag": f"{rel}/tag/{tag.group(1)}"}
+    for f in ("index.html", "INSTALL_SI.md"):
+        for m in re.finditer(r"https://github\.com/[^\s\"'<>()*`\]]+/releases/(download|tag)/[^\s\"'<>()*`\]]+", read(f)):
+            if m.group(0) != want[m.group(1)]:
+                fail(f"{f}: links {m.group(0)} but apk.yml publishes {want[m.group(1)]}")
 
 # 6. the landing page is English + Sinhala only
 for n, line in enumerate(read("index.html").splitlines(), 1):

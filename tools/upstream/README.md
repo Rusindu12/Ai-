@@ -3,8 +3,10 @@
 The web terminal in `app/` is the same code the Android app ships
 (`crypto-app/app/src/main/assets/` in [Rusindu12/1](https://github.com/Rusindu12/1)).
 A full check of v49 found bugs in paper trading, the bot and — in the APK only — live
-trading. They are fixed in `app/` here; the APK gets them once Rusindu12/1 has the same
-files. `v50-app-fixes.patch` does exactly that, made against Rusindu12/1@666ccd0:
+trading. They are fixed in `app/` here, and the APK this repo builds
+(`.github/workflows/apk.yml`) already has them. Rusindu12/1's own APK and its site
+(rusindu12.github.io/1/) get them once Rusindu12/1 has the same files.
+`v50-app-fixes.patch` does exactly that, made against Rusindu12/1@666ccd0:
 
 - `crypto-app/app/src/main/assets/` and `web/app/`: `app.js`, `brain.js`, `index.html`,
   `sysmgmt.js`, `ta.js` (afterwards byte-identical to `app/` here)
@@ -22,8 +24,9 @@ node tools/app-tests.js && node tools/regression.js     # both must pass
 git commit -am "app v50: fixes from the v49 audit" && git push
 ```
 
-The push triggers the APK workflow, which publishes the new build to the
-`cryptoai-apk-latest` release (the download buttons on both sites point there).
+The push triggers the APK workflow there, which publishes the new build to Rusindu12/1's
+`cryptoai-apk-latest` release (the download buttons on rusindu12.github.io/1/ point there;
+this repo's site links to its own build).
 
 Without git: copy those five files from `app/` in this repo into
 `crypto-app/app/src/main/assets/` (and `web/app/`) in Rusindu12/1 and change
@@ -53,7 +56,12 @@ built or tested from here:
 4. The APK workflow runs on pushes to **any** branch and uploads to the same "latest"
    release, so an unfinished branch replaces the public download (the release notes
    say "Auto-built from main").
-5. Design choice worth a second look: bot trades are never sold at a loss in either exit
+5. **Export / import do nothing in the APK.** The WebView has no `DownloadListener` and
+   the `WebChromeClient` no `onShowFileChooser`, so on the phone the System → Files buttons
+   (Trades CSV, Settings backup, Activity log, Signal report, Import settings) have no
+   effect; they work in the web app. Fix: a `DownloadListener` that saves `blob:` downloads
+   (or a bridge method that writes the file through MediaStore) plus `onShowFileChooser`.
+6. Design choice worth a second look: bot trades are never sold at a loss in either exit
    mode (v44). In "Classic" mode the bot's SL field therefore does nothing below the
    minimum profit and the daily-loss stop can't trigger from bot trades; a coin that
    keeps falling is held indefinitely (the max-hold brake exists only in the min-profit
