@@ -350,7 +350,8 @@ const reset = () => R(`state.paper = freshPaper(); state.bot = null; state.botCf
     binanceSigned: signed("binance"), bybitSigned: signed("bybit"),
     binanceSyncTime: () => { syncs++; return 0; }, bybitSyncTime: () => { syncs++; return 0; },
   };
-  sb.bc = (m, ...a) => (bridge[m] ? bridge[m](...a) : null);
+  const phone = [];
+  sb.bc = (m, ...a) => { phone.push([m, a[0]]); return bridge[m] ? bridge[m](...a) : null; };
   sb.httpGet = async (url) => /bybit/.test(url)
     ? JSON.stringify({ retCode: 0, result: { list: [{ lotSizeFilter: { basePrecision: "0.000001", minOrderQty: "0.000011", minOrderAmt: "5" } }] } })
     : JSON.stringify({ symbols: [{ filters: [{ filterType: "LOT_SIZE", stepSize: "0.00001000", minQty: "0.00001000" }] }] });
@@ -384,12 +385,28 @@ const reset = () => R(`state.paper = freshPaper(); state.bot = null; state.botCf
   ok("live bot: one buy per coin, and Max positions counts live positions", buys.length === 1 && buys[0].symbol === "BTCUSDT", buys.map((x) => x.symbol));
   const saved = JSON.parse(sb.localStorage.getItem("cryptoai.pro.v2") || "{}");
   ok("live positions are saved (they used to vanish on restart)", Array.isArray(saved.livePos) && saved.livePos.length === 1 && near(saved.livePos[0].qty, 0.0004995));
-  R(`bot().running = false; bot().watchdog = true`);                   // ■ Stop with an open live position
-  sb.botOnTick("BTCUSDT", 100600);
-  await new Promise((r) => setImmediate(r)); await new Promise((r) => setImmediate(r)); await new Promise((r) => setImmediate(r));
+  phone.length = 0;
+  await sb.botStop();                                                 // ■ Stop with an open live position
   const sells = sent.filter((x) => x.side === "SELL");
-  ok("after Stop the watchdog sells the live position (it never did)", sells.length === 1, sent);
-  ok("…and sells what the wallet holds, rounded to the step (0.00049, not 0.0005 → -2010)", sells[0] && sells[0].quantity === "0.00049" && R("bot().livePos.length") === 0, sells[0]);
+  const parkedTp = R("plainNum(bot().livePos[0].parkedPx)");
+  ok("after Stop a resting LIMIT sell stays on the exchange", sells.length === 1 && sells[0].type === "LIMIT" && sells[0].timeInForce === "GTC" && sells[0].quantity === "0.00049" && sells[0].price === parkedTp, sells[0]);
+  ok("the live position stays until the exchange fills that order", R("bot().livePos.length") === 1 && !!R("bot().livePos[0].exitOrderId"));
+  ok("Stop does not keep the phone awake", R("bot().running") === false && R("bot().watchdog") === false
+    && phone.some((c) => c[0] === "stopBgService")
+    && phone.some((c) => c[0] === "setTradingActive" && c[1] === false)
+    && phone.some((c) => c[0] === "setKeepScreenOn" && c[1] === false)
+    && !phone.some((c) => c[0] === "startBgService" || c[0] === "requestBatteryExemption" || (c[0] === "setTradingActive" && c[1] === true) || (c[0] === "setKeepScreenOn" && c[1] === true)));
+  phone.length = 0;
+  sb.liveWatchdogResume();
+  await new Promise((r) => setImmediate(r)); await new Promise((r) => setImmediate(r));
+  ok("reopening does not start the wake-lock service for a parked live exit", !phone.some((c) => c[0] === "startBgService" || (c[0] === "setTradingActive" && c[1] === true)) && sent.filter((x) => x.side === "SELL").length === 1);
+
+  reset(); sent.length = 0; wallet = { BTC: 0.0005, USDT: 1000 };
+  R(`state.settings.exchange = "binance"; state.settings.liveMode = "live"; state.dataMode = "live"; qtyFilters = {}; bot().running = false; botCfg().exitMode = "classic";`);
+  R(`bot().livePos = [{ id: "c1", sym: "BTCUSDT", qty: 0.0005, entry: 100000, tp: 104000, sl: 99000 }]`);
+  await sb.parkLiveExits();
+  const oco = sent.filter((x) => x.stopPrice);
+  ok("classic Stop parks a Binance OCO so both target and stop live on the exchange", oco.length === 1 && oco[0].side === "SELL" && oco[0].price === "104000" && oco[0].stopPrice === "99000" && oco[0].stopLimitTimeInForce === "GTC", oco[0]);
 
   R(`state.dataMode = "demo"; bot().running = true; bot().watchdog = false; bot().livePos = [{ sym: "BTCUSDT", qty: 0.0004, entry: 90000, tp: 91000, sl: 89000, id: "x" }]`);
   sent.length = 0; sb.botOnTick("BTCUSDT", 100600);
