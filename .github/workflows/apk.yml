@@ -161,3 +161,33 @@ jobs:
           gh release upload "$RELEASE_TAG" "$APK_NAME" "$APK_NAME.sha256" --repo "$R" --clobber
           echo "- published: https://github.com/$R/releases/download/$RELEASE_TAG/$APK_NAME" >> "$GITHUB_STEP_SUMMARY"
           echo "APK: https://github.com/$R/releases/download/$RELEASE_TAG/$APK_NAME"
+
+      # This session's branch is not main, so the step above does not run. Publish a
+      # separate public download the phone can open without an Actions login.
+      - name: Publish phone download (arena branch)
+        if: github.ref == 'refs/heads/arena/01a0dbef-ai'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          R="$GITHUB_REPOSITORY"
+          TAG=cryptoai-apk-sleep
+          SUM=$(cut -d' ' -f1 "$APK_NAME.sha256")
+          cat > notes.md <<EOF
+          **CryptoAI PRO v$VERSION_NAME** — AI bot Stop leaves live sells on the exchange and releases the phone.
+
+          Stop කළාම අලුත් AI entries නවතිනවා. Open live trade එක exchange එකේ limit sell (Binance classic නම් OCO) විදිහට තියෙනවා. ඊට පස්සේ screen-on, wake lock, background service එක ඔක්කොම නවතිනවා.
+
+          - Android 7.0 or newer. Debug-signed.
+          - **පරණ CryptoAI PRO එක uninstall කරන්න.** අලුත් signature එකක් නිසා උඩින් install වෙන්නේ නෑ.
+          - Uninstall කළාම paper ගිණුම, brain, API යතුරු මැකෙනවා. යතුරු ළඟ තියාගෙන ආයෙත් දාන්න.
+          - SHA-256: \`$SUM\`
+          - commit: ${GITHUB_SHA::7}
+          EOF
+          if gh release view "$TAG" --repo "$R" >/dev/null 2>&1; then
+            gh release edit "$TAG" --repo "$R" --notes-file notes.md --target "$GITHUB_SHA" --prerelease
+          else
+            gh release create "$TAG" --repo "$R" --target "$GITHUB_SHA" --prerelease \
+              --title "CryptoAI PRO — phone sleeps after Stop" --notes-file notes.md
+          fi
+          gh release upload "$TAG" "$APK_NAME" "$APK_NAME.sha256" --repo "$R" --clobber
+          echo "APK: https://github.com/$R/releases/download/$TAG/$APK_NAME"
