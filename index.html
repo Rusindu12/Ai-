@@ -511,7 +511,7 @@ table.matrix tr:last-child td{border-bottom:0}
       <div class="card reveal"><div class="ic">🧮</div><h3 data-i18n="f4.t">Entry · target · stop</h3><p data-i18n="f4.d">Levels come from ATR volatility with a target/stop plan and reward-to-risk, plus a fee-aware backtest on 500 candles.</p></div>
       <div class="card reveal"><div class="ic">📝</div><h3 data-i18n="f5.t">Paper trading</h3><p data-i18n="f5.d">10,000 USDT practice account with long and short, TP/SL, limit orders, 0.10% fees, history and live P&amp;L.</p></div>
       <div class="card reveal"><div class="ic">⚡</div><h3 data-i18n="f6.t">Live trading (opt-in)</h3><p data-i18n="f6.d">Binance and Bybit spot with keys you keep: requests are HMAC-signed on the device, so the secret never leaves it.</p></div>
-      <div class="card reveal"><div class="ic">🤖</div><h3 data-i18n="f7.t">Auto-bot with brakes</h3><p data-i18n="f7.d">Four strategies, multi-symbol, max positions, per-symbol cooldown and a daily-loss stop that halts the bot by itself.</p></div>
+      <div class="card reveal"><div class="ic">🤖</div><h3 data-i18n="f7.t">Auto-bot with brakes</h3><p data-i18n="f7.d">Several strategies, many coins, max positions, a cooldown and a daily-loss stop. Press Stop and new AI entries end. The web app then releases the screen wake lock. On Android, open live trades stay as exchange sells and the phone sleeps.</p></div>
       <div class="card reveal"><div class="ic">🔔</div><h3 data-i18n="f8.t">Alerts &amp; voice</h3><p data-i18n="f8.d">Price alerts with notification, sound, vibration and spoken replies — and full Sinhala or English labels.</p></div>
     </div>
   </section>
@@ -529,7 +529,7 @@ table.matrix tr:last-child td{border-bottom:0}
         <div class="tabcard reveal"><div class="ic">🕯️</div><h3 data-i18n="tab.chart">Chart</h3><p data-i18n="in.chart">Candles, indicators, crosshair, timeframe chips.</p></div>
         <div class="tabcard reveal"><div class="ic">🎯</div><h3 data-i18n="tab.signal">Signal</h3><p data-i18n="in.signal">Verdict, confidence, reasons, metrics, trade plan, backtest.</p></div>
         <div class="tabcard reveal"><div class="ic">💱</div><h3 data-i18n="tab.trade">Trade</h3><p data-i18n="in.trade">Paper or live orders, open positions, history.</p></div>
-        <div class="tabcard reveal"><div class="ic">🤖</div><h3 data-i18n="tab.bot">Bot</h3><p data-i18n="in.bot">Strategy, symbols, risk limits, run log.</p></div>
+        <div class="tabcard reveal"><div class="ic">🤖</div><h3 data-i18n="tab.bot">Bot</h3><p data-i18n="in.bot">Strategy, symbols, risk limits, run log. Stop releases the screen wake lock.</p></div>
       </div>
     </div>
   </section>
@@ -570,7 +570,7 @@ table.matrix tr:last-child td{border-bottom:0}
 
     <div class="card reveal" style="margin-top:22px">
       <h3 data-i18n="ins.web.t">Prefer the browser?</h3>
-      <p data-i18n="ins.web.d">The web app is the same terminal (paper mode — for live orders use the Android app, where API requests are signed on-device). On Android/Chrome or iPhone/Safari use “Add to Home Screen” and it runs full-screen like an app.</p>
+      <p data-i18n="ins.web.d">The web app is the same terminal. Press Stop and new AI entries end, and the page releases the screen wake lock so the browser does not stay awake. Paper trading works here with no keys. A browser cannot sign live exchange orders — use the Android app for that. It leaves the live sell on the exchange, then the phone sleeps. On Android/Chrome or iPhone/Safari, “Add to Home Screen” runs it full-screen.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
         <a class="btn primary sm" href="app/" data-i18n="cta.open">Open web app</a>
         <button class="btn ghost sm" id="pwaBtn2" hidden data-i18n="cta.pwa">Add to home screen</button>
@@ -644,7 +644,7 @@ table.matrix tr:last-child td{border-bottom:0}
       <details class="reveal"><summary data-i18n="q2">Is it really free?</summary><p data-i18n="a2">Yes — free and open source (this repo). There is no subscription and no paid indicator tier. Optional AI explanations use your own provider key if you choose to add one; without a key the built-in explanation is used.</p></details>
       <details class="reveal"><summary data-i18n="q3">Does it work offline?</summary><p data-i18n="a3">The app opens offline and shows clearly-labelled simulated demo data, so you can explore every screen. Real prices need internet.</p></details>
       <details class="reveal"><summary data-i18n="q4">Which exchanges are supported?</summary><p data-i18n="a4">Public market data from Binance, Bybit and OKX (switchable in settings, with automatic fallback). Live trading is supported on Binance and Bybit spot. Binance testnet is supported too.</p></details>
-      <details class="reveal"><summary data-i18n="q5">How safe is the bot?</summary><p data-i18n="a5">It enforces a maximum number of open positions, a per-symbol cooldown and a daily-loss stop that halts trading by itself, and it runs in a foreground service with a visible notification. Still: test in paper mode first, and only risk what you can afford to lose.</p></details>
+      <details class="reveal"><summary data-i18n="q5">How safe is the bot?</summary><p data-i18n="a5">It enforces a maximum number of open positions, a per-symbol cooldown and a daily-loss stop that halts new entries by itself. Press Stop and the web app releases the screen wake lock. On Android, open live trades are left on the exchange and the phone is not kept awake. Still: test in paper mode first, and only risk what you can afford to lose.</p></details>
       <details class="reveal"><summary data-i18n="q6">Where is the source?</summary><p data-i18n="a6">This site, the web terminal (ta.js, brain.js, app.js …) and the build of the APK you download here live in the <a href="https://github.com/Rusindu12/Ai-" target="_blank" rel="noopener">Ai-</a> repository. The Android shell — the Kotlin signing bridge and the background bot service — comes from the <a href="https://github.com/Rusindu12/1" target="_blank" rel="noopener">Rusindu12/1</a> repository, where the terminal was first built.</p></details>
     </div>
   </section>
@@ -752,21 +752,21 @@ const STR = {
     "f4.t": "ඇතුල්වීම · ඉලක්කය · නැවතුම", "f4.d": "මිල මට්ටම් ATR වෙනස්වීම් මත ගණනය වේ, ලාභ:අවදානම සමඟ — සහ කැන්ඩල් 500ක ගාස්තු සහිත backtest එකක්.",
     "f5.t": "පුහුණු වෙළඳාම", "f5.d": "10,000 USDT පුහුණු ගිණුමක් — long/short, TP/SL, limit ඇණවුම්, 0.10% ගාස්තු, ඉතිහාසය සහ සජීවී ලාභ/පාඩුව.",
     "f6.t": "සැබෑ වෙළඳාම (ඔබ කැමති නම්)", "f6.d": "Binance සහ Bybit spot — යතුරු ඔබ ළඟමයි: ඉල්ලීම් උපාංගයේදීම HMAC අත්සන් වන නිසා secret එක කවදාවත් එළියට යන්නේ නෑ.",
-    "f7.t": "තිරිංග සහිත auto-රොබෝ", "f7.d": "උපාය 4ක්, කොයින් කිහිපයක්, උපරිම ස්ථාපන සංඛ්‍යාව, නැවත ඇතුල්වීමට නියමිත කාලයක් සහ දෛනික පාඩු සීමාවෙන් තමන්ම නවතින රොබෝවක්.",
+    "f7.t": "තිරිංග සහිත auto-රොබෝ", "f7.d": "උපාය කිහිපයක්, කොයින් කිහිපයක්, උපරිම ස්ථාපන, cooldown එකක් සහ දෛනික පාඩු සීමාව. Stop ගැහුවම අලුත් AI entries නවතිනවා. Web app එක screen wake lock එක අයින් කරනවා. Android එකේ open live trades exchange sell විදිහට තියෙනවා, phone එක නිදාගන්නවා.",
     "f8.t": "සටහන් සහ හඬ", "f8.d": "මිල සටහන් — notification, හඬ, කම්පනය සහ කථන පිළිතුරු සමඟ. සම්පූර්ණ සිංහල හෝ English labels.",
     "in.eyebrow": "Tab පහක්, අනවශ්‍ය දේවල් නෑ", "in.h2": "දත්ත ඔක්කොම එක තැනක", "in.sub": "වෙළඳපොල → ප්‍රස්තාරය → සංඥා → වෙළඳාම → රොබෝ. වෙන කිසිවක් බාධාවට නෑ.",
     "in.markets": "පරිමාව/ලාභ/පාඩු දර්ශන, සෙවීම, watchlist තරු.",
     "in.chart": "කැන්ඩල්, දර්ශක, crosshair, කාල රාමු chips.",
     "in.signal": "තීරණය, විශ්වාසය, හේතු, දර්ශක, වෙළඳ සැලැස්ම, backtest.",
     "in.trade": "පුහුණු හෝ සැබෑ ඇණවුම්, විවෘත ස්ථාපන, ඉතිහාසය.",
-    "in.bot": "උපාය, කොයින්, අවදානම් සීමා, ක්‍රියාකාරකම් සටහන.",
+    "in.bot": "උපාය, කොයින්, අවදානම් සීමා, ක්‍රියාකාරකම් සටහන. Stop ගැහුවම screen wake lock එක නවතිනවා.",
     "ins.eyebrow": "අරගන්න", "ins.h2": "APK එක හෝ web app එක — දෙකම නොමිලේ",
     "ins.sub": "Android 7.0+ · ~3.8 MB · debug-signed (Android එකෙන් \"unknown apps\" ගැන අහයි — ඒක සාමාන්‍යයි).",
     "ins.dlt": "CryptoAI PRO.apk", "ins.meta": "Android 7.0+ · හැම push එකකටම GitHub Actions එකෙන් build වේ",
     "st1.t": "APK එක බාගන්න", "st1.d": "Phone එකෙන් උඩ තියෙන බොත්තම ඔබන්න. File එක Downloads folder එකට එයි.",
     "st2.t": "Install එකට අවසර දෙන්න", "st2.d": "File එක අරින්න → Android එකෙන් \"install unknown apps\" අවසර අහයි (browser/file manager එකට) → allow → Install. පරණ CryptoAI PRO එකක් phone එකේ තියෙනවා නම් මුලින්ම ඒක uninstall කරන්න — හැම build එකකටම වෙනම signature එකක් තියෙන නිසා Android එක ඒ උඩින් install කරන්නේ නෑ.",
     "st3.t": "ඇරලා කොයින් එකක් තෝරන්න", "st3.d": "යතුරු හෝ ලියාපදිංචියක් අවශ්‍ය නෑ. සංඥා, ප්‍රස්තාර සහ පුහුණු වෙළඳාම ඒ මොහොතේම වැඩ කරයි; සැබෑ වෙළඳාමට පමණයි පස්සේ API යතුරු එක් කරන්නේ.",
-    "ins.web.t": "Browser එකෙන්ම කැමතිද?", "ins.web.d": "Web app එකත් මේ ටර්මිනල් එකමයි (paper mode — සැබෑ ඇණවුම් සඳහා Android app එක පාවිච්චි කරන්න, එහි API ඉල්ලීම් උපාංගයේදීම අත්සන් වේ). Android/Chrome හෝ iPhone/Safari එකේ \"Add to Home Screen\" දාන්න — app එකක් වගේ full-screen වැඩ කරයි.",
+    "ins.web.t": "Browser එකෙන්ම කැමතිද?", "ins.web.d": "Web app එකත් මේ ටර්මිනල් එකමයි. Stop ගැහුවම අලුත් AI entries නවතිනවා, screen wake lock එකත් නවතිනවා — browser එක අවදියෙන් තියෙන්නේ නෑ. Paper trading මෙතන යතුරු නැතුව වැඩ කරනවා. Browser එකට live exchange orders sign කරන්න බෑ — ඒකට Android app එක පාවිච්චි කරන්න. එතන live sell එක exchange එකේ තියලා phone එක නිදාගන්නවා. Android/Chrome හෝ iPhone/Safari එකේ \"Add to Home Screen\" දාන්න — full-screen වැඩ කරයි.",
     "safe.h2": "🔐 යතුරු සහ දත්ත සමඟ කරන දේ",
     "safe.1": "API යතුරු phone එකේ app එකේ පෞද්ගලික ගබඩාවේ — කවදාවත් upload වෙන්නේ නෑ, web page එකකට යන්නේ නෑ.",
     "safe.2": "හැම ඇණවුමක්ම උපාංගයේ Kotlin පැත්තෙන් HMAC-SHA256 අත්සන් කරයි.",
@@ -782,7 +782,7 @@ const STR = {
     "q2": "මේක ඇත්තටම නොමිලේද?", "a2": "ඔව් — නොමිලේ සහ open source (මේ repo එකේම). Subscription එකක් හෝ ගෙවන දර්ශක නෑ. Optional AI පැහැදිලි කිරීම් සඳහා ඔබේම provider යතුරක් දාන්න පුළුවන්; යතුරක් නැත්නම් ගොඩනඟා ඇති පැහැදිලි කිරීම භාවිතා වේ.",
     "q3": "අන්තර්ජාලය නැතුව වැඩ කරයිද?", "a3": "App එක offline එකේත් ඕපන් වෙනවා — පැහැදිලිව \"නියැදි දත්ත\" කියලා පෙන්වලා. සැබෑ මිලට ඉන්ටර්නෙට් ඕන.",
     "q4": "කොයි හුවමාරුද support කරන්නේ?", "a4": "Binance, Bybit සහ OKX වලින් පොදු මිල දත්ත (සැකසුම්වලින් මාරු කරන්න පුළුවන්, fallback ස්වයංක්‍රීයව). සැබෑ වෙළඳාම Binance සහ Bybit spot වලට. Binance testnet එකත් වැඩ කරයි.",
-    "q5": "රොබෝ එක කොච්චර ආරක්ෂිතද?", "a5": "උපරිම විවෘත ස්ථාපන සංඛ්‍යාවක්, කොයින් එකකට නැවත ඇතුල්වීමට නියමිත කාලයක් සහ දෛනික පාඩු සීමාවෙන් තමන්ම නවතින රීතියක් තියෙනවා; ඒ වගේම foreground notification එකක් සමඟ ධාවනය වේ. ඒත්: පළමුව paper mode එකෙන් පරීක්ෂා කරන්න, අහිමි කර ගැනීමට හැකි මුදලට වඩා කිසිසේත් නොදෙන්න.",
+    "q5": "රොබෝ එක කොච්චර ආරක්ෂිතද?", "a5": "උපරිම විවෘත ස්ථාපන සංඛ්‍යාවක්, කොයින් එකකට නැවත ඇතුල්වීමට නියමිත කාලයක් සහ දෛනික පාඩු සීමාවෙන් අලුත් entries තමන්ම නවතින රීතියක් තියෙනවා. Stop ගැහුවම web app එක screen wake lock එක අයින් කරනවා. Android එකේ open live trades exchange එකේ තියෙනවා, phone එක අවදියෙන් තියෙන්නේ නෑ. ඒත්: පළමුව paper mode එකෙන් පරීක්ෂා කරන්න, අහිමි කර ගැනීමට හැකි මුදලට වඩා කිසිසේත් නොදෙන්න.",
     "q6": "Source code එක කොහෙද?", "a6": "මේ site එක, web ටර්මිනල් එක (ta.js, brain.js, app.js …) සහ මෙතනින් බාගන්න APK එක build කරන්නේ <a href='https://github.com/Rusindu12/Ai-' target='_blank' rel='noopener'>Ai-</a> repository එකේ. Android shell එක — Kotlin අත්සන් bridge එකයි background bot service එකයි — එන්නේ ටර්මිනල් එක මුලින්ම හැදුව <a href='https://github.com/Rusindu12/1' target='_blank' rel='noopener'>Rusindu12/1</a> repository එකෙන්.",
     "foot.releases": "APK releases", "foot.repo": "Source code", "foot.guide": "සිංහල install guide",
     "foot.made": "සිංහල traders ලා වෙනුවෙන් ❤️ එක්ක හැදුවා",
