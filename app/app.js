@@ -59,11 +59,35 @@ const ago = (ts) => { const s = Math.floor((now() - ts) / 1000); return s < 60 ?
 const STR = {
   en: {
     "nav.markets": "Markets", "nav.chart": "Chart", "nav.signals": "Signal", "nav.trade": "Trade", "nav.bot": "Bot",
-    "bot24.title": "24/7 trading", "bot24.desc": "The bot keeps trading with the app closed, screen off and after a reboot — a background engine auto-resumes it (paper & live).",
-    "bot24.batfix": "Allow unrestricted battery", "bot24.test": "Close app (bot continues)",
-    "bot24.batbody": "Android battery optimization can stop the 24/7 background engine.<br><br>Allow <b>Unrestricted</b> battery so the bot can keep buying & selling while the app is closed?",
-    "bot24.batok": "🔋 battery: unrestricted ✓", "bot24.batbad": "🔋 battery: restricted — tap fix",
-    "bot24.tips": "Xiaomi/Huawei/Oppo: Settings → Autostart ON + Battery → No restrictions. Trades & TP/SL still fire notifications while you are away.",
+    "bot24.title": "24/7 trading", "bot24.desc": "While the AI bot is ON it can scan in the background. Press Stop and new AI entries end. Open live trades are left as exchange limit sells, then the phone sleeps — no screen-on, no wake lock.",
+    "bot24.batfix": "Phone sleeps after Stop", "bot24.test": "Close app (only while the bot is ON)",
+    "bot24.batbody": "After Stop the phone is not kept awake. The exchange holds the live sell.",
+    "bot24.batok": "🔋 phone asleep — battery not held", "bot24.batbad": "🔋 phone asleep after Stop",
+    "bot24.tips": "After Stop the phone does not stay awake. The exchange holds the live sell until the target price. Open the app later to see the fill.",
+    "bot24.web": "A browser cannot sign live orders. Use the Android app so Stop can leave the sell on the exchange, or the Cloud bot card for a server.",
+    "bot24.sleep": "AI bot stopped — live exit is on the exchange. Phone battery is not used.",
+    "bot24.sleepIdle": "AI bot stopped. The phone is not kept awake.",
+    "bot24.runningNote": "AI bot is on. Press Stop to end new entries, leave live sells on the exchange, and release the battery.",
+    "bot24.closeBody": "This only applies while the AI bot is ON. After Stop the phone sleeps and the exchange holds the live sell.",
+    "cloud.title": "Cloud bot",
+    "cloud.desc": "The same bot engine runs on your server. Closing this page, the tab, or the phone does not stop it.",
+    "cloud.url": "Server URL", "cloud.token": "Control token",
+    "cloud.save": "Save connection", "cloud.check": "Check",
+    "cloud.start": "Start on server", "cloud.stop": "Stop server bot",
+    "cloud.note": "The server has its own paper account (starts at 10,000 USDT). It is not this browser’s paper account. Exchange API keys are never sent from this page — set them on the server if you want live orders.",
+    "cloud.need": "Paste the server URL and token first. See the cloud setup guide.",
+    "cloud.running": "Server bot running", "cloud.idle": "Server bot idle",
+    "cloud.watch": "Server watchdog — selling at a profit only",
+    "cloud.off": "Not connected",
+    "cloud.confirm": "Send these bot settings to the server and start it? It keeps running after you close this page. Paper trades on the server are simulated, not real money.",
+    "cloud.stopped": "Server bot stopped",
+    "cloud.started": "Server bot started — you can close this page",
+    "cloud.guide": "Cloud setup guide",
+    "cloud.equity": "Equity", "cloud.day": "Today", "cloud.mode": "Mode",
+    "cloud.liveReady": "server has live keys",
+    "cloud.demo": "no live prices — the bot is waiting",
+    "cloud.nopos": "No open positions",
+    "cloud.https": "This page is HTTPS, so the cloud URL must be https:// too.",
     "mp.mode": "Exit mode", "mp.classic": "Classic (TP/SL)", "mp.minprofit": "✅ Sell at ANY profit — never at a loss", "mp.min": "Min profit (USDT, net of fees)",
     "mp.done": "Profit taken ✅",
     "brain.title": "AI Brain", "brain.desc": "Analyzes 12 market factors (trend, momentum, volatility, volume, structure, BTC context) — and LEARNS from every trade outcome. Train it on history for instant experience.",
@@ -139,6 +163,8 @@ const STR = {
     "bot.desc.revert": "Buys oversold (RSI < 30) and sells overbought (RSI > 70) with tight stops.",
     "bot.desc.breakout": "Buys a close above the 20-bar high, sells below the 20-bar low.",
     "bot.started": "Bot started", "bot.stopped": "Bot stopped", "bot.dailyStop": "Daily loss limit reached — bot stopped",
+    "bot.parked": "Live sell left on the exchange. The phone is asleep — no screen-on, no wake lock.",
+    "bot.parkFail": "Could not leave the live sell on the exchange. The phone is still asleep — open the app to retry that coin.",
     "bot.noSymbol": "Pick at least one symbol.",
     "set.title": "Settings", "set.general": "General", "set.lang": "Language", "set.sound": "Sound alerts",
     "set.haptic": "Haptic feedback", "set.tts": "Speak signals (TTS)", "set.keep": "Keep screen awake",
@@ -193,11 +219,35 @@ const STR = {
   },
   si: {
     "nav.markets": "වෙළඳපොල", "nav.chart": "ප්‍රස්තාරය", "nav.signals": "සංඥා", "nav.trade": "වෙළඳාම", "nav.bot": "රොබෝ",
-    "bot24.title": "24/7 වෙළඳාම", "bot24.desc": "App එක close කරාමත්, screen off වුණාමත්, phone reboot වුණාට පස්සෙත් bot එක trade කරනවා — background engine එක auto ම resume කරනවා (paper & live).",
-    "bot24.batfix": "Battery optimization ඉවත් කරන්න", "bot24.test": "App එක close කරන්න (bot එක continue වෙනවා)",
-    "bot24.batbody": "Android battery optimization එකෙන් 24/7 background engine එක නවතින්න පුළුවන්.<br><br>App එක close වෙලා හිටපුවත් bot එකට buy/sell කරන්න <b>Unrestricted</b> battery allow කරන්නද?",
-    "bot24.batok": "🔋 battery: unrestricted ✓", "bot24.batbad": "🔋 battery: restricted — fix කරන්න",
-    "bot24.tips": "Xiaomi/Huawei/Oppo: Settings → Autostart ON + Battery → No restrictions. ඔයා ඈත හිටියත් trades & TP/SL notifications එනවා.",
+    "bot24.title": "24/7 වෙළඳාම", "bot24.desc": "AI bot එක ON වෙලා තියෙනකොට background එකේ scan කරනවා. Stop ගැහුවම අලුත් AI entries නවතිනවා. Open live trades exchange limit sell විදිහට තියෙනවා, ඊට පස්සේ phone එක නිදාගන්නවා — screen on නෑ, wake lock නෑ.",
+    "bot24.batfix": "Stop ගැහුවම phone එක නිදාගන්නවා", "bot24.test": "App එක close කරන්න (bot එක ON වෙලා තියෙනකොට විතරයි)",
+    "bot24.batbody": "Stop ගැහුවම phone එක අවදියෙන් තියෙන්නේ නෑ. Live sell එක exchange එකේ තියෙනවා.",
+    "bot24.batok": "🔋 phone එක නිදාගෙන — battery තියෙන්නේ නෑ", "bot24.batbad": "🔋 Stop ගැහුවම phone එක නිදාගන්නවා",
+    "bot24.tips": "Stop ගැහුවම phone එක අවදියෙන් තියෙන්නේ නෑ. Live sell එක target price එකට එනකම් exchange එකේ තියෙනවා. Fill එක බලන්න පස්සේ app එක open කරන්න.",
+    "bot24.web": "Browser එකේ live orders sign කරන්න බෑ. Stop ගැහුවම sell එක exchange එකේ තියන්න Android app එක පාවිච්චි කරන්න, නැත්නම් Cloud රොබෝ card එක.",
+    "bot24.sleep": "AI bot නැවතුණා — live exit එක exchange එකේ. Phone battery පාවිච්චි වෙන්නේ නෑ.",
+    "bot24.sleepIdle": "AI bot නැවතුණා. Phone එක අවදියෙන් තියෙන්නේ නෑ.",
+    "bot24.runningNote": "AI bot එක on. Stop ගැහුවම අලුත් entries නවතිනවා, live sell exchange එකේ තියෙනවා, battery එක නිදහස් වෙනවා.",
+    "bot24.closeBody": "මේක AI bot එක ON වෙලා තියෙනකොට විතරයි. Stop ගැහුවම phone එක නිදාගන්නවා, live sell එක exchange එකේ තියෙනවා.",
+    "cloud.title": "Cloud රොබෝ",
+    "cloud.desc": "මේ එකම bot engine එක server එකක run වෙනවා. මේ page එක, tab එක, හෝ phone එක close කළත් ඒක නවතින්නේ නෑ.",
+    "cloud.url": "Server URL", "cloud.token": "Control token",
+    "cloud.save": "සම්බන්ධය save කරන්න", "cloud.check": "පරීක්ෂා කරන්න",
+    "cloud.start": "Server එකේ start", "cloud.stop": "Server bot නවත්වන්න",
+    "cloud.note": "Server එකේ වෙනම paper ගිණුමක් තියෙනවා (10,000 USDT ඉඳන් පටන් ගන්නවා). Browser එකේ paper ගිණුම නෙවෙයි. Exchange API යතුරු මේ page එකෙන් යවන්නේ නෑ — live orders ඕන නම් යතුරු server එකේම දාන්න.",
+    "cloud.need": "පළමුව server URL එකයි token එකයි දාන්න. Cloud setup guide එක බලන්න.",
+    "cloud.running": "Server bot දුවනවා", "cloud.idle": "Server bot නවතී",
+    "cloud.watch": "Watchdog — ලාභයට විකුණනවා",
+    "cloud.off": "සම්බන්ධ නෑ",
+    "cloud.confirm": "මේ bot settings server එකට යවලා start කරන්නද? Page එක close කළත් ඒක දිගටම run වෙනවා. Server එකේ paper trades අනුකරණයක් විතරයි — සැබෑ මුදල් නෙවෙයි.",
+    "cloud.stopped": "Server bot නැවැත්වුවා",
+    "cloud.started": "Server bot start වුණා — page එක close කළත් දිගටම දුවනවා",
+    "cloud.guide": "Cloud setup guide",
+    "cloud.equity": "වටිනාකම", "cloud.day": "අද", "cloud.mode": "මාදිලිය",
+    "cloud.liveReady": "server එකේ live යතුරු සූදානම්",
+    "cloud.demo": "සැබෑ මිල නෑ — bot එක රැඳී සිටියි",
+    "cloud.nopos": "විවෘත ස්ථාපන නෑ",
+    "cloud.https": "Site එක HTTPS. Cloud URL එකත් https:// වෙන්න ඕන.",
     "mp.mode": "ඉවත්වීමේ ක්‍රමය", "mp.classic": "සම්භාව්‍ය (TP/SL)", "mp.minprofit": "✅ සතයක් හරි ලාභයි නම් sell — loss වෙලා විකුණන්නේ නෑ", "mp.min": "අවම ලාභය (USDT, fees අඩුවෙලා)",
     "mp.done": "ලාභය අරගත්තා ✅",
     "brain.title": "AI Brain", "brain.desc": "Market factors 18ක් (ප්‍රවණතාව, ගම්‍යතාව, වාෂ්පශීලීනාත්වය, volume, ව්‍යුහය, BTC සන්දර්භය) analyze කරලා — හැම trade ප්‍රතිඵලයකින්ම ඉගෙන ගන්නවා. History training එකෙන් instant අත්දැකීම්.",
@@ -273,6 +323,8 @@ const STR = {
     "bot.desc.revert": "RSI < 30 විට මිලදී ගනී, RSI > 70 විට විකුණයි — කුඩා නැවතුම් සමඟ.",
     "bot.desc.breakout": "20-කැන්ඩල් ඉහළම මිලට ඉහළින් වැසුණු විට buy, පහළම මිලට පහළින් විකුණුම්.",
     "bot.started": "රොබෝ ආරම්භ කළා", "bot.stopped": "රොබෝ නැවැත්වූවා", "bot.dailyStop": "දෛනික පාඩු සීමාවට ළඟා විය — රොබෝ නැවතුණි",
+    "bot.parked": "Live sell එක exchange එකේ තියෙනවා. Phone එක නිදාගෙන — screen on නෑ, wake lock නෑ.",
+    "bot.parkFail": "Live sell එක exchange එකේ තියන්න බැරි වුණා. Phone එක නිදාගෙන ඉන්නවා — ඒ coin එකට app එක open කරලා ආයෙත් බලන්න.",
     "bot.noSymbol": "අවම වශයෙන් එක් කොයින් එකක් තෝරන්න.",
     "set.title": "සැකසුම්", "set.general": "සාමාන්‍ය", "set.lang": "භාෂාව", "set.sound": "හඬ දැනුම්දීම්",
     "set.haptic": "කම්පන ප්‍රතිචාර", "set.tts": "සංඥා හඬින් කියවන්න (TTS)", "set.keep": "තිරය අවදිව තබන්න",
@@ -1640,17 +1692,19 @@ async function qtyFilter(sym) {
   try {
     if (liveEx() === "bybit") {
       const j = JSON.parse(await httpGet(`https://api.bybit.com/v5/market/instruments-info?category=spot&symbol=${sym}`));
-      const x = (((j.result || {}).list || [])[0] || {}).lotSizeFilter || {};
+      const inst = (((j.result || {}).list || [])[0] || {});
+      const x = inst.lotSizeFilter || {};
       /* v50: basePrecision IS the step ("0.000001") — 10^-0.000001 made the step ≈ 1 coin,
          so every fractional order (0.0004 BTC…) rounded to 0 and was refused */
       const step = +x.basePrecision || +x.qtyStep || 0.000001;
-      f = { step: step || 0.000001, min: +(x.minOrderQty || 0), dp: Math.max(0, Math.round(-Math.log10(step || 0.000001))) };
+      f = { step: step || 0.000001, min: +(x.minOrderQty || 0), dp: Math.max(0, Math.round(-Math.log10(step || 0.000001))), tick: +((inst.priceFilter || {}).tickSize || 0) };
     } else {
       const j = JSON.parse(await httpGet("https://api.binance.com/api/v3/exchangeInfo?symbol=" + sym));
       const s = (j.symbols || [])[0] || {};
       const lot = (s.filters || []).find((x) => x.filterType === "LOT_SIZE") || {};
+      const pxf = (s.filters || []).find((x) => x.filterType === "PRICE_FILTER") || {};
       const step = +(lot.stepSize || 0.000001);
-      f = { step, min: +(lot.minQty || 0), dp: Math.max(0, Math.round(-Math.log10(step))) };
+      f = { step, min: +(lot.minQty || 0), dp: Math.max(0, Math.round(-Math.log10(step))), tick: +(pxf.tickSize || 0) };
     }
   } catch (e) { /* keep defaults */ }
   qtyFilters[sym] = f;
@@ -1905,7 +1959,11 @@ function paintOrders() {
 }
 async function refreshLiveOrders() {
   if (state.settings.liveMode !== "live" || !canTradeLive()) return;
-  try { state.toOpenOrders = await liveOpenOrders(); paintOrders(); } catch (e) { }
+  try {
+    state.toOpenOrders = await liveOpenOrders();
+    await noteParkedFills(state.toOpenOrders);
+    paintOrders();
+  } catch (e) { }
 }
 
 function paintHistory() {
@@ -2549,16 +2607,17 @@ function botStart() {
   b.running = true; b.startedAt = now(); b.dayStartPnl = paper().dayPnl;
   b.watchdog = false;                              /* v47: fresh start retires the watchdog */
   if (b.wdLoop) { clearInterval(b.wdLoop); b.wdLoop = null; }
+  parkGen++;
+  unparkLiveExits();                               /* bot is managing exits again — free the coins */
   if (cfg.keep || state.settings.keep) { bc("setKeepScreenOn", true); }
   bc("setAutoOn", true);
-  bc("setTradingActive", true);
   bc("startBgService", "CryptoAI bot · " + cfg.symbols.length + " pairs · " + cfg.strategy);
   if (b.loop) clearInterval(b.loop);
   b.loop = setInterval(botTick, 2000);   /* v40: scan every 2s */
   if (!hasBridge()) {
-    wdStart(); wdWake(true);
+    wdStart();
     try { if (typeof Notification !== "undefined" && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
-    logLine("🌐 web 24/7: worker heartbeat + wake lock ON — the bot keeps running while this tab stays open", "");
+    logLine("🌐 web: the bot scans while this tab stays open. Stop leaves a live sell on the exchange and releases the phone.", "");
   }
   logLine("── bot started · " + cfg.strategy + " · " + cfg.tf + " · ⏱2s scan · " + cfg.symbols.join(", ") + " ──", "ok");
   /* v45: auto history training — the brain starts every session with backtested
@@ -2581,39 +2640,127 @@ function botStart() {
   notify(t("bot.started"), cfg.strategy + " · " + cfg.symbols.length + " pairs", "ok");
   paintBot(); paintBotStats(); paint247();
   setTimeout(botTick, 1200);
-  /* 24/7 — battery optimization would let Android kill the background engine:
-     ask the user once per session to allow unrestricted battery. */
-  if (!BGQ && bc("batteryOptimized") === true && !bot()._batAsked) {
-    bot()._batAsked = true;
-    openOk("⏰ " + t("bot24.title"), t("bot24.batbody"), () => bc("requestBatteryExemption"));
+}
+/* Stop never keeps the phone awake. Live exits are resting orders on the exchange. */
+let parkGen = 0;
+function releasePhone() {
+  const b = bot();
+  b.watchdog = false;
+  if (b.wdLoop) { clearInterval(b.wdLoop); b.wdLoop = null; }
+  bc("setAutoOn", false);          /* no auto-resume after swipe-away or reboot */
+  bc("stopBgService");             /* drops the foreground service and its wake lock */
+  bc("setTradingActive", false);   /* Kotlin also clears FLAG_KEEP_SCREEN_ON */
+  bc("setKeepScreenOn", false);
+  try { wdStop(); wdWake(false); } catch (e) {}
+}
+function roundPx(px, tick) {
+  if (!(tick > 0) || !(px > 0)) return px;
+  const dp = Math.max(0, Math.round(-Math.log10(tick)));
+  return +((Math.round(px / tick) * tick).toFixed(dp));
+}
+function liveExitPrice(p) {
+  if (p.tp > 0) return p.tp;
+  const cfg = botCfg();
+  const pct = p.aiTpPct != null ? p.aiTpPct : (cfg.exitMode === "minprofit" ? Math.max(0.01, Number(cfg.minProfit) || 0.01) : Number(cfg.tp) || 1.5);
+  return p.entry * (1 + pct / 100);
+}
+async function parkLiveExits() {
+  const b = bot();
+  if (b.running || state.dataMode !== "live" || !canTradeLive()) return 0;
+  const live = (b.livePos || []).filter((p) => !p.exitOrderId);
+  let n = 0;
+  for (const p of live) {
+    if (bot().running) return n;
+    try {
+      const f = await qtyFilter(p.sym);
+      const have = await liveSellable(p.sym, p.qty);
+      if (bot().running) return n;
+      const q = roundQty(have.qty, f);
+      if (!(q > 0) || q < (f.min || 0)) {
+        if (have.locked > 0) { p.exitOrderId = "locked"; n++; logLine(p.sym + ": coins already in an exchange order — phone can sleep", "ok"); }
+        else logLine(p.sym + ": nothing free to park on the exchange", "warn");
+        continue;
+      }
+      const px = roundPx(liveExitPrice(p), f.tick);
+      const classic = botCfg().exitMode === "classic" && p.sl > 0 && p.sl < px && liveEx() === "binance";
+      let res;
+      if (classic) {
+        try {
+          res = await liveCall("POST", "/api/v3/order/oco", {
+            symbol: p.sym, side: "SELL", quantity: plainNum(q, f.dp),
+            price: plainNum(px), stopPrice: plainNum(roundPx(p.sl, f.tick)),
+            stopLimitPrice: plainNum(roundPx(p.sl, f.tick)), stopLimitTimeInForce: "GTC",
+          });
+          if (bot().running) { try { await liveCall("DELETE", "/api/v3/orderList", { symbol: p.sym, orderListId: res.orderListId }); } catch (e) {} return n; }
+          p.exitOrderId = String(res.orderListId || res.orderId || "oco");
+          p.exitKind = "oco";
+        } catch (e) {
+          res = await livePlaceOrder(p.sym, "SELL", q, px, "LIMIT");
+          if (bot().running) { try { await liveCancel(p.sym, res.orderId); } catch (e2) {} return n; }
+          p.exitOrderId = String(res.orderId || (res.result && res.result.orderId) || "parked");
+          p.exitKind = "limit";
+        }
+      } else {
+        res = await livePlaceOrder(p.sym, "SELL", q, px, "LIMIT");
+        const id = res.orderId || (res.result && res.result.orderId) || "parked";
+        if (bot().running) { try { await liveCancel(p.sym, id); } catch (e) {} return n; }
+        p.exitOrderId = String(id);
+        p.exitKind = "limit";
+      }
+      p.parkedQty = q; p.parkedPx = px; n++;
+      logLine("live exit parked: " + (p.exitKind === "oco" ? "OCO" : "LIMIT") + " SELL " + fmtQty(q) + " " + p.sym + " @ " + fmtPrice(px) + " — phone sleeps", "ok");
+    } catch (e) { logLine("could not park live exit for " + p.sym + ": " + e.message, "bad"); }
+  }
+  save();
+  return n;
+}
+async function unparkLiveExits() {
+  const b = bot();
+  for (const p of (b.livePos || [])) {
+    if (!p.exitOrderId || p.exitOrderId === "locked") { p.exitOrderId = null; p.exitKind = null; continue; }
+    try {
+      if (p.exitKind === "oco" && liveEx() === "binance") await liveCall("DELETE", "/api/v3/orderList", { symbol: p.sym, orderListId: p.exitOrderId });
+      else await liveCancel(p.sym, p.exitOrderId);
+    } catch (e) {}
+    p.exitOrderId = null; p.exitKind = null;
+  }
+  save();
+}
+async function noteParkedFills(open) {
+  const b = bot();
+  if (!b.livePos || !b.livePos.some((p) => p.exitOrderId)) return;
+  const ids = new Set((open || []).map((o) => String(o.id)));
+  const syms = new Set((open || []).map((o) => o.sym));
+  const next = [];
+  for (const p of b.livePos) {
+    if (!p.exitOrderId || ids.has(String(p.exitOrderId)) || syms.has(p.sym)) { next.push(p); continue; }
+    let held = true;
+    try {
+      const have = await liveSellable(p.sym, p.qty);
+      held = (have.qty || 0) + (have.locked || 0) > 0;
+    } catch (e) { held = true; }
+    if (held) next.push(p);
+  }
+  if (next.length !== b.livePos.length) {
+    b.livePos = next; save();
+    logLine("exchange filled a parked live exit — local position cleared", "ok");
   }
 }
-function botStop() {
-  const b = bot(), cfg = botCfg();
+async function botStop() {
+  const b = bot();
   if (!b.running) return;
   b.running = false;
   if (b.loop) { clearInterval(b.loop); b.loop = null; }
-  /* v47: 🛡️ watchdog — open positions are NEVER abandoned: keep the 24/7 engine
-     alive purely to sell them at PROFIT (never at a loss), no new entries */
-  const openN = paper().positions.filter((x) => x.src === "bot" || x.src === "bot-dca").length + (b.livePos || []).length;
-  bc("setAutoOn", false);          /* explicit stop → no auto-resume after relaunch/reboot */
-  if (openN > 0) {
-    b.watchdog = true;
-    wdStart();                           /* v49: worker keeps watchdog ticking in background tabs too */
-    if (b.wdLoop) clearInterval(b.wdLoop);
-    b.wdLoop = setInterval(botWatchdog, 3000);
-    bc("startBgService", "⏱ watchdog · " + openN + " pos — selling at profit only");
-    bc("setTradingActive", true);
-    logLine("⏱ watchdog: " + openN + " open positions keep waiting for profit (no new entries)", "ai");
-    notify(t("bot.stopped"), "⏱ " + openN + " positions open — watchdog sells at profit", "");
-  } else {
-    bc("stopBgService");
-    bc("setTradingActive", false);
-    wdStop(); wdWake(false);             /* v49: nothing to guard → release web keep-alives */
-    notify(t("bot.stopped"), "", "bad");
-  }
-  bc("setKeepScreenOn", !!(state.settings.keep));
-  logLine("── bot stopped ──", "warn");
+  const liveN = (b.livePos || []).filter((p) => !p.exitOrderId).length;
+  let parked = 0;
+  try {
+    if (liveN && canTradeLive() && state.dataMode === "live") parked = await parkLiveExits();
+  } catch (e) { logLine("live exit park failed: " + e.message, "bad"); }
+  finally { releasePhone(); }
+  if (liveN && parked >= liveN) notify(t("bot.stopped"), t("bot.parked"), "ok");
+  else if (liveN) notify(t("bot.stopped"), t("bot.parkFail"), "bad");
+  else notify(t("bot.stopped"), t("bot24.sleepIdle"), "");
+  logLine("── bot stopped · battery released ──", "warn");
   paintBot(); paintBotStats(); paint247();
 }
 
@@ -2632,17 +2779,22 @@ function botHalt() {
   bc("setKeepScreenOn", !!state.settings.keep);
   try { wdStop(); wdWake(false); } catch (e) { }
 }
-/* v50: live positions are saved now — after a restart (or a paper reset) with the bot
-   not running, the watchdog keeps selling them at profit, same as after ■ Stop */
+/* Open live positions after a restart are parked on the exchange once. No timer,
+   no wake lock, no screen-on — the phone is not the exit engine anymore. */
 function liveWatchdogResume() {
   const b = bot();
-  if (b.running || b.wdLoop || !(b.livePos || []).length || !canTradeLive()) return;
-  b.watchdog = true;
-  b.wdLoop = setInterval(botWatchdog, 3000);
-  bc("startBgService", "⏱ watchdog · " + b.livePos.length + " pos — selling at profit only");
-  bc("setTradingActive", true);
-  logLine("⏱ watchdog: " + b.livePos.length + " live position(s) restored — selling at profit only", "ai");
-  paintBot(); paint247();
+  if (b.running) return;
+  const gen = ++parkGen;
+  const finish = () => {
+    if (gen !== parkGen || bot().running) return;
+    releasePhone();
+    paintBot(); paint247();
+  };
+  if (!(b.livePos || []).length || !canTradeLive() || state.dataMode !== "live") { finish(); return; }
+  parkLiveExits().then((n) => {
+    if (n) logLine(t("bot.parked"), "ok");
+    finish();
+  }).catch(() => finish());
 }
 
 /* v47: watchdog tick — profit exits ONLY for open bot/live positions */
@@ -2731,13 +2883,166 @@ function paintBrain() {
 function paint247() {
   const chip = $("btBgChip"); if (!chip) return;
   const b = bot();
-  chip.textContent = b.running ? t("bot24.title") + " ✓" : t("bot24.off");
+  const parked = (b.livePos || []).filter((p) => p.exitOrderId).length;
+  chip.textContent = b.running ? t("bot24.title") + " ✓" : (parked ? t("bot24.sleep") : t("bot24.sleepIdle"));
   chip.className = "chip " + (b.running ? "on" : "");
   const batLine = $("btBatLine");
   if (batLine) {
-    const opt = bc("batteryOptimized");
-    batLine.innerHTML = (opt === true) ? '<span style="color:var(--gold)">' + t("bot24.batbad") + "</span>" : (opt === false ? '<span style="color:var(--up)">' + t("bot24.batok") + "</span>" : "");
+    batLine.innerHTML = b.running
+      ? '<span style="color:var(--gold)">' + t("bot24.runningNote") + "</span>"
+      : '<span style="color:var(--up)">' + (parked ? t("bot24.sleep") : t("bot24.sleepIdle")) + "</span>";
   }
+  const web = $("btWebNote");
+  if (web) web.style.display = hasBridge() ? "none" : "block";
+}
+
+/* Cloud bot — the browser tab stops when it is closed. A server running
+   server/cloud-bot.js keeps the same engine going. Keys never leave this page. */
+const CLOUD_LS = "cryptoai.cloud.v1";
+function cloudLocal() {
+  try { return JSON.parse(localStorage.getItem(CLOUD_LS) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function cloudStore(patch) {
+  const c = Object.assign(cloudLocal(), patch || {});
+  c.url = String(c.url || "").trim().replace(/\/+$/, "");
+  c.token = String(c.token || "").trim();
+  try { localStorage.setItem(CLOUD_LS, JSON.stringify({ url: c.url, token: c.token })); } catch (e) {}
+  return c;
+}
+function cloudBase() {
+  const u = cloudLocal().url || "";
+  return /^https?:\/\/[^/]+/i.test(u) ? u.replace(/\/+$/, "") : "";
+}
+function cloudPayload() {
+  const c = botCfg();
+  return {
+    strategy: c.strategy, tf: c.tf, size: c.size, tp: c.tp, sl: c.sl,
+    symbols: c.symbols.slice(), allowShort: !!c.allowShort, maxPos: c.maxPos,
+    cooldown: c.cooldown, dailyLoss: c.dailyLoss,
+    exitMode: c.exitMode === "classic" ? "classic" : "minprofit",
+    minProfit: c.minProfit, aiTp: c.aiTp !== false, entryScore: c.entryScore,
+    dayTarget: c.dayTarget || 0, maxHoldDays: c.maxHoldDays || 0, maxHoldLoss: c.maxHoldLoss || 25,
+    dca: !!c.dca, dcaDrop: c.dcaDrop, dcaMax: c.dcaMax,
+    volGuard: c.volGuard !== false, volDrop: c.volDrop,
+    exchange: state.settings.exchange,
+  };
+}
+async function cloudApi(path, body) {
+  const base = cloudBase(), token = cloudLocal().token;
+  if (!base || !token) throw new Error(t("cloud.need"));
+  if (location.protocol === "https:" && base.startsWith("http://") && !/^http:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(base)) {
+    throw new Error(t("cloud.https"));
+  }
+  const res = await fetch(base + path, {
+    method: body ? "POST" : "GET",
+    headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+    cache: "no-store",
+  });
+  let j = {};
+  try { j = await res.json(); } catch (e) { j = {}; }
+  if (!res.ok) throw new Error(j.error || ("HTTP " + res.status));
+  return j;
+}
+function paintCloud() {
+  const chip = $("cloudChip");
+  if (!chip) return;
+  const st = state.cloudView;
+  const box = $("cloudBody");
+  if (!cloudBase() || !cloudLocal().token) {
+    chip.textContent = t("cloud.off");
+    chip.className = "chip";
+    if (box && !st) box.textContent = t("cloud.need");
+    return;
+  }
+  if (!st) {
+    chip.textContent = "…";
+    chip.className = "chip";
+    return;
+  }
+  if (st.error) {
+    chip.textContent = t("cloud.off");
+    chip.className = "chip";
+    if (box) box.textContent = st.error;
+    return;
+  }
+  const run = !!st.running, wd = !!st.watchdog;
+  chip.textContent = run ? t("cloud.running") : wd ? t("cloud.watch") : t("cloud.idle");
+  chip.className = "chip " + (run || wd ? "on" : "");
+  if (!box) return;
+  const ps = st.positions || [];
+  const lines = [
+    (st.dataMode === "live" ? "● " + (st.dataSource || "live") : "⚠ " + t("cloud.demo")) +
+      " · " + (st.strategy || "") + " · " + (st.tf || "") + " · " + ((st.symbols || []).join(", ")),
+    t("cloud.equity") + " " + fmtUsd(st.equity) + " · " + t("cloud.day") + " " + fmtUsd(st.dayPnl || 0) +
+      " · PnL " + fmtUsd((st.stats && st.stats.pnl) || 0),
+    t("cloud.mode") + ": " + (st.liveMode === "live" ? "LIVE" : "paper") + (st.liveReady ? " · " + t("cloud.liveReady") : ""),
+  ];
+  box.innerHTML = lines.map((l) => "<div>" + esc(l) + "</div>").join("") +
+    (ps.length
+      ? ps.slice(0, 8).map((p) => '<div class="tiny mt">' + esc(String(p.sym).replace("USDT", "/USDT")) +
+        " " + (p.dir < 0 ? "SHORT" : "LONG") + " @ " + esc(fmtPrice(p.entry)) +
+        (p.pnl == null ? "" : " · " + fmtUsd(p.pnl)) + "</div>").join("")
+      : '<div class="tiny dim mt">' + esc(t("cloud.nopos")) + "</div>");
+}
+async function cloudRefresh() {
+  if (!cloudBase() || !cloudLocal().token) { paintCloud(); return; }
+  try {
+    state.cloudView = await cloudApi("/api/status");
+    state.cloudView.error = "";
+  } catch (e) {
+    state.cloudView = { error: e.message || String(e) };
+  }
+  paintCloud();
+}
+async function cloudControl(action) {
+  const body = { action };
+  if (action === "start") body.config = cloudPayload();
+  const j = await cloudApi("/api/control", body);
+  state.cloudView = j.status || j;
+  paintCloud();
+  toast(action === "start" ? t("cloud.started") : t("cloud.stopped"), action === "start" ? "ok" : "");
+}
+async function cloudDetect() {
+  if (cloudBase()) return;
+  try {
+    const res = await fetch(location.origin + "/health", { cache: "no-store" });
+    const j = await res.json();
+    if (j && j.service === "cryptoai-cloud-bot") {
+      cloudStore({ url: location.origin, token: cloudLocal().token || "" });
+      const url = $("cloudUrl");
+      if (url && !url.value) url.value = location.origin;
+    }
+  } catch (e) {}
+}
+function bindCloudUI() {
+  const url = $("cloudUrl"), tok = $("cloudToken");
+  if (!url || !tok) return;
+  const c = cloudLocal();
+  if (!url.value) url.value = c.url || "";
+  if (!tok.value) tok.value = c.token || "";
+  $("cloudSave").onclick = () => {
+    cloudStore({ url: url.value, token: tok.value });
+    toast(t("saved"), "ok");
+    cloudRefresh();
+  };
+  $("cloudCheck").onclick = () => cloudRefresh().catch((e) => toast(e.message, "bad"));
+  $("cloudStart").onclick = () => {
+    cloudStore({ url: url.value, token: tok.value });
+    if (!cloudBase() || !cloudLocal().token) { toast(t("cloud.need"), "bad"); return; }
+    openOk("☁️ " + t("cloud.title"), esc(t("cloud.confirm")), () => {
+      cloudControl("start").catch((e) => toast(e.message, "bad"));
+    });
+  };
+  $("cloudStop").onclick = () => {
+    cloudStore({ url: url.value, token: tok.value });
+    cloudControl("stop").catch((e) => toast(e.message, "bad"));
+  };
+  cloudDetect().finally(() => {
+    cloudRefresh();
+    if (!state._cloudPoll) state._cloudPoll = setInterval(cloudRefresh, 8000);
+  });
 }
 function paintBot() {
   const cfg = botCfg(), b = bot();
@@ -2777,6 +3082,7 @@ function paintBot() {
   const box = $("botLog");
   box.innerHTML = b.log.map((l) => `<div class="${l.cls}"><span class="t">${fmtClock(l.ts)}</span>${esc(l.msg)}</div>`).join("");
   box.scrollTop = box.scrollHeight;
+  try { paintCloud(); } catch (e) {}
 }
 
 /* ============================================================================
@@ -3070,11 +3376,11 @@ function bindUI() {
   if (bEntry) bEntry.onchange = () => { botCfg().entryScore = Math.min(40, Math.max(5, Number(bEntry.value) || 20)); save(); paintBot(); };
   // 24/7 card
   const batFix = $("btBatFix");
-  if (batFix) batFix.onclick = () => bc("requestBatteryExemption");
+  if (batFix) batFix.onclick = () => toast(t("bot24.sleep"), "ok");
   const btTest = $("btTest");
   if (btTest) btTest.onclick = () => {
-    if (!bot().running) { toast(t("bot24.off"), "bad"); return; }
-    openOk("🧪 " + t("bot24.title"), t("bot24.desc"), () => { try { bc("exitApp"); } catch (e) {} });
+    if (!bot().running) { toast(t("bot24.sleepIdle"), ""); return; }
+    openOk("🧪 " + t("bot24.title"), t("bot24.closeBody"), () => { try { bc("exitApp"); } catch (e) {} });
   };
 
   // settings fields
@@ -3163,6 +3469,7 @@ function bindUI() {
     if (state.tab === "chart") renderChart();
     if (state.tab === "signals") paintSignals();
   });
+  try { bindCloudUI(); } catch (e) { console.warn("cloud", e); }
 }
 
 /* ============================================================================

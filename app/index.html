@@ -528,18 +528,39 @@ nav .nb{position:absolute;top:4px;right:calc(50% - 22px);min-width:15px;height:1
         </div>
         <div class="hint mt" id="brainNote"></div>
       </div>
+      <div class="card mt" id="cloudCard">
+        <div class="row between">
+          <h3 style="margin:0">☁️ <span data-i18n="cloud.title">Cloud bot</span></h3>
+          <span class="chip" id="cloudChip">—</span>
+        </div>
+        <div class="hint mt" data-i18n="cloud.desc">The same bot engine runs on your server. Closing this page, the tab, or the phone does not stop it.</div>
+        <label class="f mt"><span class="lb" data-i18n="cloud.url">Server URL</span><input id="cloudUrl" autocomplete="off" spellcheck="false" placeholder="https://bot.example.com"></label>
+        <label class="f"><span class="lb" data-i18n="cloud.token">Control token</span><input id="cloudToken" type="password" autocomplete="off" spellcheck="false" placeholder="token from the server log"></label>
+        <div class="row" style="gap:6px;flex-wrap:wrap">
+          <button class="btn ghost sm" id="cloudSave" type="button" data-i18n="cloud.save">Save connection</button>
+          <button class="btn ghost sm" id="cloudCheck" type="button" data-i18n="cloud.check">Check</button>
+          <a class="btn ghost sm" href="../CLOUD_SI.md" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block" data-i18n="cloud.guide">Cloud setup guide</a>
+        </div>
+        <div class="hint mt" id="cloudBody">—</div>
+        <div class="grid2 mt">
+          <button class="btn primary" id="cloudStart" type="button" data-i18n="cloud.start">Start on server</button>
+          <button class="btn ghost" id="cloudStop" type="button" data-i18n="cloud.stop">Stop server bot</button>
+        </div>
+        <div class="hint mt" data-i18n="cloud.note">The server has its own paper account (starts at 10,000 USDT). It is not this browser’s paper account. Exchange API keys are never sent from this page — set them on the server if you want live orders.</div>
+      </div>
       <div class="card mt" id="c247">
         <div class="row between">
           <h3 style="margin:0">⏰ <span data-i18n="bot24.title">24/7 trading</span></h3>
           <span class="chip" id="btBgChip">—</span>
         </div>
-        <div class="hint mt" data-i18n="bot24.desc"></div>
+        <div class="hint mt" data-i18n="bot24.desc">While the AI bot is ON it can scan in the background. Press Stop and new AI entries end. Open live trades are left as exchange limit sells, then the phone sleeps — no screen-on, no wake lock.</div>
         <div class="grid2 mt">
-          <button class="btn ghost sm" id="btBatFix">🔋 <span data-i18n="bot24.batfix">Allow unrestricted battery</span></button>
-          <button class="btn ghost sm" id="btTest">🧪 <span data-i18n="bot24.test">Close app (bot continues)</span></button>
+          <button class="btn ghost sm" id="btBatFix" type="button">🔋 <span data-i18n="bot24.batfix">Phone sleeps after Stop</span></button>
+          <button class="btn ghost sm" id="btTest" type="button">🧪 <span data-i18n="bot24.test">Close app (only while the bot is ON)</span></button>
         </div>
         <div class="hint mt" id="btBatLine">—</div>
-        <div class="hint mt" data-i18n="bot24.tips"></div>
+        <div class="hint mt" id="btWebNote" data-i18n="bot24.web">A browser cannot sign live orders. Use the Android app so Stop can leave the sell on the exchange, or the Cloud bot card for a server.</div>
+        <div class="hint mt" data-i18n="bot24.tips">After Stop the phone does not stay awake. The exchange holds the live sell until the target price. Open the app later to see the fill.</div>
       </div>
       <div class="card mt">
         <div class="row between"><h3 style="margin:0" data-i18n="bot.log">Activity log</h3><button class="btn ghost sm" id="botClear" data-i18n="bot.clear">clear</button></div>
